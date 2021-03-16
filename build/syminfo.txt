@@ -1,0 +1,169 @@
+# --- SJC syminfo--- #
+
+BaseAddress: 0x00100000
+Image size: 724 b = 1 kb
+Code size: 244 b = 1 kb in 12 methods
+Strings: 1 with 11 characters using 80 b = 1 kb
+ramInitAddr: 0x00000000, ramInitSize: 0 b, constMemorySize: 80 b = 1 kb
+In-image symbol size: 0 b = 0 kb
+
+----------
+struct java.lang.STRUCT 
+clssRelocTableEntries: 0, clssScalarTableSize: 0
+statRelocTableEntries: 0, statScalarTableSize: 0
+instRelocTableEntries: 0, instScalarTableSize: 0, instIndirScalarTableSize: 0
+- added vars:
+- added statically allocated objects:
+- methods:
+- size of code for methods: 0 bytes
+- added imports:
+- added interface-maps:
+
+----------
+class java.lang.FLASH 
+clssRelocTableEntries: 4, clssScalarTableSize: 8
+statRelocTableEntries: 0, statScalarTableSize: 0
+instRelocTableEntries: 2, instScalarTableSize: 8, instIndirScalarTableSize: 0
+- added vars:
+- added statically allocated objects:
+- methods:
+- size of code for methods: 0 bytes
+- added imports:
+- added interface-maps:
+
+----------
+class java.lang.Object (may be reduced to protected) 
+clssRelocTableEntries: 4, clssScalarTableSize: 8
+statRelocTableEntries: 0, statScalarTableSize: 0
+instRelocTableEntries: 2, instScalarTableSize: 8, instIndirScalarTableSize: 0
+- added vars:
+FFFFFFFC->inst-r/1: rte.SClassDesc _r_type (skip candidate)
+FFFFFFF8->inst-r/1: java.lang.Object _r_next (skip candidate)
+00000000->inst-s/4: int _r_relocEntries (skip candidate)
+00000004->inst-s/4: int _r_scalarSize (skip candidate)
+- added statically allocated objects:
+- methods:
+- size of code for methods: 0 bytes
+- added imports:
+- added interface-maps:
+
+----------
+class java.lang.String 
+clssRelocTableEntries: 4, clssScalarTableSize: 8
+statRelocTableEntries: 0, statScalarTableSize: 0
+instRelocTableEntries: 3, instScalarTableSize: 12, instIndirScalarTableSize: 0
+- added vars:
+FFFFFFF4->inst-r/1: char[] value
+00000008->inst-s/4: int count
+- added statically allocated objects:
+- methods:
+no entry->0010010C: int length() (statCall) (stmtCnt==1, 4 bytes)
+no entry->00100120: char charAt(int) (statCall) (stmtCnt==1, 27 bytes)
+- size of code for methods: 31 bytes
+- added imports:
+- added interface-maps:
+
+----------
+class rte.SArray at 00100078
+clssRelocTableEntries: 4, clssScalarTableSize: 8
+statRelocTableEntries: 0, statScalarTableSize: 0
+instRelocTableEntries: 3, instScalarTableSize: 20, instIndirScalarTableSize: 0
+- added vars:
+00000008->inst-s/4: int length (skip candidate)
+0000000C->inst-s/4: int _r_dim (skip candidate)
+00000010->inst-s/4: int _r_stdType (skip candidate)
+FFFFFFF4->inst-r/1: java.lang.Object _r_unitType (skip candidate)
+- added statically allocated objects:
+- methods:
+- size of code for methods: 0 bytes
+- added imports:
+- added interface-maps:
+
+----------
+class rte.SClassDesc at 00100030
+clssRelocTableEntries: 4, clssScalarTableSize: 8
+statRelocTableEntries: 0, statScalarTableSize: 0
+instRelocTableEntries: 4, instScalarTableSize: 8, instIndirScalarTableSize: 0
+- added vars:
+FFFFFFF4->inst-r/1: rte.SClassDesc parent (skip candidate)
+FFFFFFF0->inst-r/1: rte.SIntfMap implementations (skip candidate)
+- added statically allocated objects:
+- methods:
+- size of code for methods: 0 bytes
+- added imports:
+- added interface-maps:
+
+----------
+class rte.SIntfDesc at 00100048
+clssRelocTableEntries: 4, clssScalarTableSize: 8
+statRelocTableEntries: 0, statScalarTableSize: 0
+instRelocTableEntries: 2, instScalarTableSize: 8, instIndirScalarTableSize: 0
+- added vars:
+- added statically allocated objects:
+- methods:
+- size of code for methods: 0 bytes
+- added imports:
+- added interface-maps:
+
+----------
+class rte.SIntfMap at 00100060
+clssRelocTableEntries: 4, clssScalarTableSize: 8
+statRelocTableEntries: 0, statScalarTableSize: 0
+instRelocTableEntries: 4, instScalarTableSize: 8, instIndirScalarTableSize: 0
+- added vars:
+FFFFFFF4->inst-r/1: rte.SIntfDesc owner (skip candidate)
+FFFFFFF0->inst-r/1: rte.SIntfMap next (skip candidate)
+- added statically allocated objects:
+- methods:
+- size of code for methods: 0 bytes
+- added imports:
+- added interface-maps:
+
+----------
+class rte.SMthdBlock at 00100090
+clssRelocTableEntries: 4, clssScalarTableSize: 8
+statRelocTableEntries: 0, statScalarTableSize: 0
+instRelocTableEntries: 2, instScalarTableSize: 8, instIndirScalarTableSize: 0
+- added vars:
+- added statically allocated objects:
+- methods:
+- size of code for methods: 0 bytes
+- added imports:
+- added interface-maps:
+
+----------
+class rte.DynamicRuntime 
+clssRelocTableEntries: 4, clssScalarTableSize: 8
+statRelocTableEntries: 0, statScalarTableSize: 0
+instRelocTableEntries: 2, instScalarTableSize: 8, instIndirScalarTableSize: 0
+- added vars:
+- added statically allocated objects:
+- methods:
+no entry->0010014C: java.lang.Object newInstance(int,int,rte.SClassDesc) (statCall) (stmtCnt==1, 9 bytes)
+no entry->00100168: rte.SArray newArray(int,int,int,int,java.lang.Object) (statCall) (stmtCnt==1, 9 bytes)
+no entry->00100184: void newMultArray(rte.SArray[],int,int,int,int,int,int,java.lang.Object) (statCall) (stmtCnt==1, 9 bytes)
+no entry->001001A0: boolean isInstance(java.lang.Object,rte.SClassDesc,boolean) (statCall) (stmtCnt==1, 9 bytes)
+no entry->001001BC: rte.SIntfMap isImplementation(java.lang.Object,rte.SIntfDesc,boolean) (statCall) (stmtCnt==1, 9 bytes)
+no entry->001001D8: boolean isArray(rte.SArray,int,java.lang.Object,int,boolean) (statCall) (stmtCnt==1, 9 bytes)
+no entry->001001F4: void checkArrayStore(java.lang.Object,rte.SArray) (statCall) (stmtCnt==1, 9 bytes)
+- size of code for methods: 63 bytes
+- added imports:
+- added interface-maps:
+
+----------
+class kernel.Kernel at 001000A8
+clssRelocTableEntries: 4, clssScalarTableSize: 8
+statRelocTableEntries: 0, statScalarTableSize: 4
+instRelocTableEntries: 2, instScalarTableSize: 8, instIndirScalarTableSize: 0
+- added vars:
+001000B0->clss-s/4: int vidMem
+- added statically allocated objects:
+          001000C0: Hello World
+- methods:
+no entry->00100210: void main() (statCall) (stmtCnt==2, 14 bytes)
+no entry->00100230: void print(java.lang.String) (may be reduced to private) (statCall) (stmtCnt==3, 99 bytes)
+no entry->001002A4: void print(char) (may be reduced to private) (statCall) (stmtCnt==2, 37 bytes)
+- size of code for methods: 150 bytes
+- added imports:
+- added interface-maps:
+

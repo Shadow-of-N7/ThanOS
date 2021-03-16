@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/ThanOS.iml" filepath="$PROJECT_DIR$/ThanOS.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../compatib/compatib.iml" filepath="$PROJECT_DIR$/../compatib/compatib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../rte/rte.iml" filepath="$PROJECT_DIR$/../rte/rte.iml" />
+    </modules>
+  </component>
+</project>
