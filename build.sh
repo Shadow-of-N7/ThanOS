@@ -11,7 +11,7 @@ echo $start
 
 ./compile rte/rte/*.java rte/java/**/*.java ThanOS/src/**/*.java -o boot
 
-if [ $? -eq 1 ]
+if [ $? -ne 0 ]
   then
     exit
 fi

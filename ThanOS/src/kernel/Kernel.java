@@ -1,13 +1,16 @@
 package kernel;
 
+import Collections.Stack;
 import IO.Console;
 import IO.Console.ConsoleColor;
+import rte.DynamicRuntime;
 
 public class Kernel {
 
 
     public static void main() {
         MAGIC.doStaticInit();
+        DynamicRuntime.initializeFreeAddresses();
 
         Console.clear();
         Console.setColor(ConsoleColor.Purple);
