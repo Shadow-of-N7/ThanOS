@@ -13,7 +13,7 @@ public class Console {
     private static int _videoMemoryPosition = 0xB8000;
     private static int _caretX = 0;
     private static int _caretY = 0;
-    private static byte _currentColor = ConsoleColor.LightGray;
+    private static byte _currentColor = ConsoleColor.Gray;
 
 
     public static void println(String text) {
@@ -89,10 +89,25 @@ public class Console {
 
     /**
      * Sets the current text color. Use it with the ConsoleColor class to get the values.
-     * @param color
+     * @param foregroundColor The foreground color.
+     * @param backgroundColor The background color.
+     * @param bright Whether the color shall be of a bright tone.
+     * @param blink Whether the cursor shall blink.
      */
-    public static void setColor(byte color)
+    public static void setColor(byte foregroundColor, byte backgroundColor, boolean bright, boolean blink)
     {
+        // Set foregroundColors first; bits 0-2
+        byte color = foregroundColor;
+        // Bitshift the background color bits to the correct position; bits 4-6
+        color |= backgroundColor << 4;
+        // Apply the bright bit if chosen; bit 3
+        if(bright) {
+            color |= 0x08;
+        }
+        // Apply the blink bit if chosen; bit 7
+        if(blink) {
+            color |= 0x80;
+        }
         _currentColor = color;
     }
 
@@ -141,18 +156,10 @@ public class Console {
         public static final byte Black = 0x00;
         public static final byte Blue = 0x01;
         public static final byte Green = 0x02;
-        public static final byte LightBlue = 0x03;
+        public static final byte Turquoise = 0x03;
         public static final byte Red = 0x04;
-        public static final byte Pink = 0x05;
-        public static final byte Orange = 0x06;
-        public static final byte LightGray = 0x07;
-        public static final byte Gray = 0x08;
-        public static final byte Purple = 0x09;
-        public static final byte LightGreen = 0x0A;
-        public static final byte Cyan = 0x0B;
-        public static final byte LightRed = 0x0C;
-        public static final byte LightPink = 0x0D;
-        public static final byte Yellow = 0x0E;
-        public static final byte White = 0x0F;
+        public static final byte Purple = 0x05;
+        public static final byte Brown = 0x06;
+        public static final byte Gray = 0x07;
     }
 }
