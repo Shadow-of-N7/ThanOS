@@ -110,6 +110,7 @@ public class Console {
 
     /**
      * Prints a given double with the stated precision.
+     * Careful: Machine precision becomes an issue at some point.
      * @param number The double to print.
      * @param precision The amount of digits after the separator to be displayed.
      */
@@ -150,7 +151,7 @@ public class Console {
         int digitCount = list.getLength();
         int digitCounter = 0;
         for (int i = 1; i <= digitCount; i++) {
-            if(digitCounter++ > precision) {
+            if(digitCounter++ >= precision) {
                 return;
             }
             char temp = list.elementAt(i);
@@ -325,11 +326,9 @@ public class Console {
             return;
         }
 
-        int i = 0;
         while (value > 0) {
-            chars.push(hexChars[(int)value % base]);
+            chars.push(hexChars[value % base]);
             value /= value;
-            i++;
         }
 
         int charSize = chars.getSize();

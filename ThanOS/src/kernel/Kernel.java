@@ -47,7 +47,7 @@ public class Kernel {
         console.println();
         double pi = 3.14159265D;
         double baz = 0.1;
-        console.print(pi, 5);
+        console.print(pi, 8);
 
         while(true);
     }
