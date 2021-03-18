@@ -2,9 +2,6 @@ package IO;
 
 import Collections.CharStack;
 
-/*
-This class can be static, as Console I/O is basically being used all the time.
- */
 public class Console {
     // Set some fix values
     private static final int VIDEO_MEMORY_BASE = 0xB8000;
@@ -18,14 +15,14 @@ public class Console {
     private static byte _currentColor = ConsoleColor.Gray;
 
 
-    public static void println(String text) {
+    public void println(String text) {
         for (int i=0; i<text.length(); i++) {
             print(text.charAt(i));
         }
         print('\n');
     }
 
-    public static void println() {
+    public void println() {
         print('\n');
     }
 
@@ -34,7 +31,7 @@ public class Console {
      * Prints a string, beginning at the current caret position.
      * @param text The string to print.
      */
-    public static void print(String text) {
+    public void print(String text) {
         for (int i = 0; i < text.length(); i++) {
             print(text.charAt(i));
         }
@@ -45,19 +42,23 @@ public class Console {
      * Prints a char array, beginning at the current caret position.
      * @param text The char array to print.
      */
-    public static void print(char[] text) {
+    public void print(char[] text) {
         for (char c : text) {
             print(c);
         }
     }
 
 
-    public static void print(int number) {
+    public void print(int number) {
         print((long)number);
     }
 
 
-    public static void print(long number) {
+    public void print(long number) {
+        boolean isNegative = false;
+        if(number < 0) {
+            isNegative = true;
+        }
         CharStack stack = new CharStack();
         while (number > 0) {
             int digit = (int)(number % 10);
@@ -66,9 +67,12 @@ public class Console {
         }
 
         int stackSize = stack.getSize();
+        if(isNegative) {
+            print('-');
+        }
         for (int i = 0; i < stackSize; i++) {
             char temp = stack.pop();
-            Console.print(temp);
+            print(temp);
         }
     }
 
@@ -118,7 +122,7 @@ public class Console {
      * Prints a single character to the current caret position.
      * @param c The character to print.
      */
-    public static void print(char c) {
+    public void print(char c) {
         switch (c) {
             case '\n':
                 breakLine();
@@ -136,7 +140,7 @@ public class Console {
      * Prints a single character to the current caret position.
      * @param b The character to print.
      */
-    public static void print(byte b) {
+    public void print(byte b) {
         switch (b) {
             case '\n':
                 breakLine();
@@ -150,10 +154,15 @@ public class Console {
     }
 
 
+    public void printHex(long number) {
+
+    }
+
+
     /**
      * Clears the entire screen and resets the caret to 0,0 position.
      */
-    public static void clear()
+    public void clear()
     {
         resetCaret();
         for (int i = 0; i < CHARACTER_AMOUNT; i++)
@@ -169,7 +178,7 @@ public class Console {
      * @param x X Position of the cursor.
      * @param y Y Position of the cursor.
      */
-    public static void setCursor(int x, int y)
+    public void setCursor(int x, int y)
     {
         if(x >= 0 && x < SCREEN_WIDTH && y >= 0 && y < SCREEN_HEIGHT)
         {
@@ -187,7 +196,7 @@ public class Console {
      * @param bright Whether the color shall be of a bright tone.
      * @param blink Whether the cursor shall blink.
      */
-    public static void setColor(byte foregroundColor, byte backgroundColor, boolean bright, boolean blink)
+    public void setColor(byte foregroundColor, byte backgroundColor, boolean bright, boolean blink)
     {
         // Set foregroundColors first; bits 0-2
         byte color = foregroundColor;
@@ -208,7 +217,7 @@ public class Console {
     /**
      * Resets the caret to 0,0 position.
      */
-    private static void resetCaret() {
+    private void resetCaret() {
         _videoMemoryPosition = VIDEO_MEMORY_BASE;
         _caretX = 0;
         _caretY = 0;
@@ -218,7 +227,7 @@ public class Console {
     /**
      * Places a line break.
      */
-    private static void breakLine() {
+    private void breakLine() {
         _caretX = 0;
         ++_caretY;
         _videoMemoryPosition = getMemoryAddressFromCaretPosition();
@@ -228,7 +237,7 @@ public class Console {
     /**
      * Returns the caret to the first position of the same line.
      */
-    private static void returnCarriage() {
+    private void returnCarriage() {
         _caretX = 0;
         _videoMemoryPosition = getMemoryAddressFromCaretPosition();
     }
@@ -238,7 +247,7 @@ public class Console {
      * Get the memory address of the current caret position.
      * @return Memory address.
      */
-    private static int getMemoryAddressFromCaretPosition()
+    private int getMemoryAddressFromCaretPosition()
     {
         // Bit shifting required here as every second memory address marks a color code instead if a position.
         // Not shifting would offset by one byte length, resulting in strange behavior.
