@@ -1,21 +1,25 @@
 package Helpers;
 
-import Collections.IntStack;
+import Collections.CharStack;
+import IO.Console;
 
+// Does not work yet - requires arrays, which are not yet present.
+@SJC.IgnoreUnit
 public class IntHelper {
     public String toString(int number) {
-        IntStack stack = new IntStack();
+        CharStack stack = new CharStack();
         while (number > 0) {
             int digit = number % 10;
-            stack.push(digit);
+            stack.push((char)(digit + 48));
             number /= 10;
         }
 
-        char[] chars = new char[stack.getLength()];
-        for (int i = 0; i < stack.getLength(); i++) {
-            chars[i] = (char) (stack.pop() + 48);
+        String string = new String();
+        int stackSize = stack.getSize();
+        for (int i = 0; i < stackSize; i++) {
+            char temp = stack.pop();
+            Console.print(temp);
         }
-        // Doesn't work yet - TODO
-        return new String(chars);
+        return string;
     }
 }

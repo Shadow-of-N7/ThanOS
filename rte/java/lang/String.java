@@ -12,8 +12,8 @@ public class String
 
 
 	public String(char[] chars) {
-		value = chars;
 		count = chars.length;
+		value = chars;
 	}
 
 	@SJC.Inline

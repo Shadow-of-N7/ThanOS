@@ -33,7 +33,7 @@ public class CharStack {
     }
 
 
-    public int getLength() {
+    public int getSize() {
         return _elementCount;
     }
 

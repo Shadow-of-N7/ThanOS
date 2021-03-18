@@ -1,5 +1,7 @@
 package rte;
 
+import IO.Console;
+
 import java.lang.Object;
 
 public class DynamicRuntime
@@ -72,5 +74,11 @@ public class DynamicRuntime
 	public static void checkArrayStore(Object dest, SArray newEntry)
 	{
 		while (true) ;
+	}
+
+	public static void nullException() {
+		Console.println();
+		Console.println("Null reference exception!");
+		while (true);
 	}
 }

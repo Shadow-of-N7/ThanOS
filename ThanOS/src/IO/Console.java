@@ -1,5 +1,7 @@
 package IO;
 
+import Collections.CharStack;
+
 /*
 This class can be static, as Console I/O is basically being used all the time.
  */
@@ -23,21 +25,88 @@ public class Console {
         print('\n');
     }
 
+    public static void println() {
+        print('\n');
+    }
+
 
     /**
      * Prints a string, beginning at the current caret position.
      * @param text The string to print.
      */
     public static void print(String text) {
-        for (int i=0; i<text.length(); i++) {
+        for (int i = 0; i < text.length(); i++) {
             print(text.charAt(i));
         }
     }
 
 
-    public static void print(int number) {
-        // TODO
+    /**
+     * Prints a char array, beginning at the current caret position.
+     * @param text The char array to print.
+     */
+    public static void print(char[] text) {
+        for (char c : text) {
+            print(c);
+        }
     }
+
+
+    public static void print(int number) {
+        CharStack stack = new CharStack();
+        while (number > 0) {
+            int digit = number % 10;
+            stack.push((char)(digit + 48));
+            number /= 10;
+        }
+
+        int stackSize = stack.getSize();
+        for (int i = 0; i < stackSize; i++) {
+            char temp = stack.pop();
+            Console.print(temp);
+        }
+    }
+
+
+    /*
+    @SJC.IgnoreUnit
+    public static void print(double number) {
+
+        // First print all pre-separator digits
+        CharStack stack = new CharStack();
+        while (number > 0) {
+            int digit = (int)(number % 10);
+            stack.push((char)(digit + 48));
+            number /= 10;
+            if(number < 1)
+            {
+                break;
+            }
+        }
+
+        int stackSize = stack.getSize();
+        for (int i = 0; i < stackSize; i++) {
+            char temp = stack.pop();
+            Console.print(temp);
+        }
+        // Separator
+        Console.print('.');
+
+        while (number > 0) {
+            // Multiply the after-separator value by 10 to get the digit
+            int digit = (int)number * 10;
+            stack.push((char)(digit + 48));
+            // Num * 10 - digit -> 0.14 * 10 = 1.4, digit 1 -> 1.4 - digit = 0.4
+            number = (number * 10) - digit;
+        }
+
+        stackSize = stack.getSize();
+        for (int i = 0; i < stackSize; i++) {
+            char temp = stack.pop();
+            Console.print(temp);
+        }
+    }
+    */
 
 
     /**
@@ -56,6 +125,25 @@ public class Console {
         MAGIC.wMem8(_videoMemoryPosition++, (byte)c);
         MAGIC.wMem8(_videoMemoryPosition++, _currentColor);
     }
+
+
+    /**
+     * Prints a single character to the current caret position.
+     * @param b The character to print.
+     */
+    public static void print(byte b) {
+        switch (b) {
+            case '\n':
+                breakLine();
+                return;
+            case '\r':
+                returnCarriage();
+                return;
+        }
+        MAGIC.wMem8(_videoMemoryPosition++, b);
+        MAGIC.wMem8(_videoMemoryPosition++, _currentColor);
+    }
+
 
     /**
      * Clears the entire screen and resets the caret to 0,0 position.
@@ -82,7 +170,7 @@ public class Console {
         {
             _caretX = x;
             _caretY = y;
-            _videoMemoryPosition = getMemPositionFromCaretPosition();
+            _videoMemoryPosition = getMemoryAddressFromCaretPosition();
         }
     }
 
@@ -116,7 +204,6 @@ public class Console {
      * Resets the caret to 0,0 position.
      */
     private static void resetCaret() {
-        // For some reason, getting the value from _videoMemoryBase just won't work.
         _videoMemoryPosition = VIDEO_MEMORY_BASE;
         _caretX = 0;
         _caretY = 0;
@@ -129,7 +216,7 @@ public class Console {
     private static void breakLine() {
         _caretX = 0;
         ++_caretY;
-        _videoMemoryPosition = getMemPositionFromCaretPosition();
+        _videoMemoryPosition = getMemoryAddressFromCaretPosition();
     }
 
 
@@ -138,12 +225,18 @@ public class Console {
      */
     private static void returnCarriage() {
         _caretX = 0;
-        _videoMemoryPosition = getMemPositionFromCaretPosition();
+        _videoMemoryPosition = getMemoryAddressFromCaretPosition();
     }
 
 
-    private static int getMemPositionFromCaretPosition()
+    /**
+     * Get the memory address of the current caret position.
+     * @return Memory address.
+     */
+    private static int getMemoryAddressFromCaretPosition()
     {
+        // Bit shifting required here as every second memory address marks a color code instead if a position.
+        // Not shifting would offset by one byte length, resulting in strange behavior.
         return VIDEO_MEMORY_BASE + (_caretY * (SCREEN_WIDTH << 1)) + (_caretX << 1);
     }
 

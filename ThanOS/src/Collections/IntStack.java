@@ -33,7 +33,7 @@ public class IntStack {
     }
 
 
-    public int getLength() {
+    public int getSize() {
         return _elementCount;
     }
 

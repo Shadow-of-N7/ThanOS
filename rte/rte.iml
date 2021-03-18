@@ -9,5 +9,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="Kompatibilitätsklassen" />
     <orderEntry type="module" module-name="compatib" />
+    <orderEntry type="module" module-name="ThanOS" />
   </component>
 </module>
