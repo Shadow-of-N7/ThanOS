@@ -53,9 +53,14 @@ public class Console {
 
 
     public static void print(int number) {
+        print((long)number);
+    }
+
+
+    public static void print(long number) {
         CharStack stack = new CharStack();
         while (number > 0) {
-            int digit = number % 10;
+            int digit = (int)(number % 10);
             stack.push((char)(digit + 48));
             number /= 10;
         }

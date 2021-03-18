@@ -7,6 +7,7 @@ import java.lang.Object;
 public class DynamicRuntime
 {
 	private static int _nextFreeAddress = 0;
+	public static int _previousObjectAddress = -1;
 
 	public static void initializeFreeAddresses() {
 		if(_nextFreeAddress == 0) {
@@ -35,13 +36,24 @@ public class DynamicRuntime
 		for (int i = startAddress; i < _nextFreeAddress; i += 4) {
 			MAGIC.wMem32(i, 0);
 		}
+
+		int objectAddress = startAddress + relocs;
 		// Set the object - If IntelliJ shows a type error here, ignore it
-		object = MAGIC.cast2Obj(startAddress + relocs);
+		object = MAGIC.cast2Obj(objectAddress);
 		MAGIC.assign(object._r_relocEntries, relocEntries);
 		// object._r_relocEntries = relocEntries;
 		MAGIC.assign(object._r_scalarSize, scalarSize);
 		//object._r_scalarSize = scalarSize;
 		object._r_type = type;
+
+		// Update the previous object
+		if (_previousObjectAddress != -1)
+		{
+			Object lastObject = MAGIC.cast2Obj(_previousObjectAddress);
+			MAGIC.assign(lastObject._r_next, object);
+		}
+		_previousObjectAddress = objectAddress;
+
 
 		return object;
 	}

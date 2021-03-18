@@ -1,5 +1,6 @@
 package kernel;
 
+import Collections.CharStack;
 import IO.Console;
 import IO.Console.ConsoleColor;
 import rte.DynamicRuntime;
@@ -26,7 +27,16 @@ public class Kernel {
         int testInt = 12347;
         Console.print(testInt);
         Console.println();
-        //Console.print(3.14159265f);
+
+        // Test several new calls - Works
+        CharStack foo = new CharStack();
+        CharStack bar = new CharStack();
+        foo.push('a');
+        bar.push('b');
+        foo.push('c');
+        Console.print(foo.pop());
+        Console.print(bar.pop());
+        Console.print(foo.pop());
 
         while(true);
     }
