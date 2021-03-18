@@ -397,6 +397,16 @@ public class Console {
     }
 
 
+    public void clearLine() {
+        _caretX = 0;
+        _videoMemoryPosition = getMemoryAddressFromCaretPosition();
+        int lineEndAddress = _videoMemoryPosition + (SCREEN_WIDTH << 1);
+        for(int i = _videoMemoryPosition; i < lineEndAddress; i ++) {
+            MAGIC.wMem8(_videoMemoryPosition++, (byte)0);
+        }
+    }
+
+
     /**
      * Get the memory address of the current caret position.
      * @return Memory address.

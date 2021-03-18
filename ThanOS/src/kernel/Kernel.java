@@ -48,6 +48,20 @@ public class Kernel {
         double baz = 0.1;
         console.print(pi, 8);
 
+        console.setCursor(0, 10);
+        testIncrementPrint(console);
         while(true);
+    }
+
+
+    public static void testIncrementPrint(Console console) {
+        // This stops at 709746. Educated guess: Printing an int initializes an object which isn't being
+        // cleaned up, as there is currently no GC present.
+        // UPDATE: Tests without objects run indefinitely, which seems to confirm my guess.
+        int inc = 0;
+        while(true) {
+            console.print('\r');
+            console.print(inc++);
+        }
     }
 }
