@@ -45,6 +45,9 @@ public class Kernel {
         console.println();
         console.printHex(1489259);
         console.println();
+        double pi = 3.14159265D;
+        double baz = 0.1;
+        console.print(pi, 5);
 
         while(true);
     }

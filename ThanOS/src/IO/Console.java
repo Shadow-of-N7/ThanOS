@@ -20,6 +20,10 @@ public class Console {
     };
 
 
+    /**
+     * Prints a given string and terminates with a newline.
+     * @param text The string to print.
+     */
     public void println(String text) {
         for (int i=0; i<text.length(); i++) {
             print(text.charAt(i));
@@ -27,6 +31,10 @@ public class Console {
         print('\n');
     }
 
+
+    /**
+     * Prints a new line.
+     */
     public void println() {
         print('\n');
     }
@@ -54,11 +62,19 @@ public class Console {
     }
 
 
+    /**
+     * Prints an integer.
+     * @param number The integer to print.
+     */
     public void print(int number) {
         print((long)number);
     }
 
 
+    /**
+     * Prints a long.
+     * @param number The long value to print.
+     */
     public void print(long number) {
         boolean isNegative = false;
         if(number < 0) {
@@ -82,14 +98,26 @@ public class Console {
     }
 
 
-    /*
-    @SJC.IgnoreUnit
-    public static void print(double number) {
+    /**
+     * Prints a given double with the stated precision.
+     * @param number The float to print.
+     * @param precision The amount of digits after the separator to be displayed.
+     */
+    public void print(float number, int precision) {
+        print((double)number, precision);
+    }
 
+
+    /**
+     * Prints a given double with the stated precision.
+     * @param number The double to print.
+     * @param precision The amount of digits after the separator to be displayed.
+     */
+    public void print(double number, int precision) {
         // First print all pre-separator digits
         CharStack stack = new CharStack();
         while (number > 0) {
-            int digit = (int)(number % 10);
+            int digit = ((int)number % 10);
             stack.push((char)(digit + 48));
             number /= 10;
             if(number < 1)
@@ -101,26 +129,34 @@ public class Console {
         int stackSize = stack.getSize();
         for (int i = 0; i < stackSize; i++) {
             char temp = stack.pop();
-            Console.print(temp);
+            print(temp);
         }
         // Separator
-        Console.print('.');
+        print('.');
 
+        // Remove the pre-separator digit
+        number -= (int)number;
+
+        CharList list = new CharList();
         while (number > 0) {
             // Multiply the after-separator value by 10 to get the digit
-            int digit = (int)number * 10;
-            stack.push((char)(digit + 48));
+            int digit = (int)(number * 10);
+            list.add((char)(digit + 48));
             // Num * 10 - digit -> 0.14 * 10 = 1.4, digit 1 -> 1.4 - digit = 0.4
             number = (number * 10) - digit;
         }
 
-        stackSize = stack.getSize();
-        for (int i = 0; i < stackSize; i++) {
-            char temp = stack.pop();
-            Console.print(temp);
+        // Take everything from the list and omit everything beyond the precision limit
+        int digitCount = list.getLength();
+        int digitCounter = 0;
+        for (int i = 1; i <= digitCount; i++) {
+            if(digitCounter++ > precision) {
+                return;
+            }
+            char temp = list.elementAt(i);
+            print(temp);
         }
     }
-    */
 
 
     /**
@@ -202,11 +238,9 @@ public class Console {
             return;
         }
 
-        int i = 0;
         while (number > 0) {
-            chars.push(hexChars[(int)number % 16]);
+            chars.push(hexChars[(int) number % 16]);
             number /= 16;
-            i++;
         }
 
         int charSize = chars.getSize();
@@ -269,6 +303,69 @@ public class Console {
             color |= 0x80;
         }
         _currentColor = color;
+    }
+
+
+    /**
+     * Prints an integer directly to the specified position, using the given color.
+     * @param value The integer to print.
+     * @param base The base the int shall be displayed in, i.E. 2 for binary or 16 for hex.
+     * @param x Starting X position of the caret.
+     * @param y Starting Y position of the caret.
+     * @param color The color to display the text in. Only affects foreground color.
+     */
+    public static void directPrintInt(int value, int base, int x, int y, byte color) {
+        CharStack chars = new CharStack();
+        Console console = new Console();
+        console.setCursor(x, y);
+        console.setColor(color, (byte)0, false, false);
+
+        if (value == 0) {
+            console.print('0');
+            return;
+        }
+
+        int i = 0;
+        while (value > 0) {
+            chars.push(hexChars[(int)value % base]);
+            value /= value;
+            i++;
+        }
+
+        int charSize = chars.getSize();
+        for(int j = 0; j < charSize; j++) {
+            console.print(chars.pop());
+        }
+    }
+
+
+    /**
+     * Prints a character directly to the specified position, using the given color.
+     * @param c The char to print.
+     * @param x Starting X position of the caret.
+     * @param y Starting Y position of the caret.
+     * @param color The color to display the text in. Only affects foreground color.
+     */
+    public static void directPrintChar(char c, int x, int y, byte color) {
+        Console console = new Console();
+        console.setColor(color, (byte)0, false, false);
+        console.setCursor(x, y);
+        console.print(c);
+    }
+
+
+    /**
+     * Prints a string directly to the specified position, using the given color.
+     * @param s The char to print.
+     * @param x Starting X position of the caret.
+     * @param y Starting Y position of the caret.
+     * @param color The color to display the text in. Only affects foreground color.
+     */
+    public static void directPrintString(String s, int x, int y, byte color) {
+        Console console = new Console();
+        console.setColor(color, (byte)0, false, false);
+        console.setCursor(x, y);
+        console.print(s);
     }
 
 

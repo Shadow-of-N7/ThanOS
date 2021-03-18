@@ -16,7 +16,8 @@ if [ $? -ne 0 ]
     exit
 fi
 
-rm -R build/*
+rm -R build
+mkdir build
 mv BOOT_FLP.IMG build/BOOT_FLP.IMG
 mv syminfo.txt build/syminfo.txt
 
