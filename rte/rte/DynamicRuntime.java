@@ -11,7 +11,7 @@ public class DynamicRuntime
 
 	public static void initializeFreeAddresses() {
 		if(_nextFreeAddress == 0) {
-			_nextFreeAddress = (MAGIC.imageBase+MAGIC.rMem32(MAGIC.imageBase+4)+0xFFF)&~0xFFF;
+			_nextFreeAddress = (MAGIC.imageBase + MAGIC.rMem32(MAGIC.imageBase + 4)) + 4;
 		}
 	}
 
@@ -53,8 +53,6 @@ public class DynamicRuntime
 			MAGIC.assign(lastObject._r_next, object);
 		}
 		_previousObjectAddress = objectAddress;
-
-
 		return object;
 	}
 

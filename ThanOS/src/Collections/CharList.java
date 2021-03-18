@@ -8,7 +8,7 @@ public class CharList {
 
     /**
      * Insert a new element into the list.
-     * @param data
+     * @param data The element to add.
      */
     public void add(char data) {
         CharListElement element = new CharListElement(data);

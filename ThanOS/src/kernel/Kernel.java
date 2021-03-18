@@ -1,7 +1,6 @@
 package kernel;
 
 import Collections.CharStack;
-import Collections.IntList;
 import IO.Console;
 import IO.Console.ConsoleColor;
 import rte.DynamicRuntime;
