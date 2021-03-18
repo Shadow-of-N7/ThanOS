@@ -35,8 +35,10 @@ public class DynamicRuntime
 		}
 		// Set the object - If IntelliJ shows a type error here, ignore it
 		object = MAGIC.cast2Obj(startAddress + relocs);
-		object._r_relocEntries = relocEntries;
-		object._r_scalarSize = scalarSize;
+		MAGIC.assign(object._r_relocEntries, relocEntries);
+		// object._r_relocEntries = relocEntries;
+		MAGIC.assign(object._r_scalarSize, scalarSize);
+		//object._r_scalarSize = scalarSize;
 		object._r_type = type;
 
 		return object;
