@@ -12,12 +12,29 @@ public class CharStack {
     }
 
 
+    /**
+     * Inserts an element into the stack.
+     * @param object The element to place on the stack.
+     */
     public void push(char object) {
         _topElement = new StackElement(object);
         ++_elementCount;
     }
 
 
+    /**
+     * Returns the top element of the stack without removing it from there.
+     * @return Top element of the stack.
+     */
+    public char peek() {
+        return _topElement.data;
+    }
+
+
+    /**
+     * Takes the top element of the stack and returns it.
+     * @return Top element of the stack.
+     */
     public char pop() {
         if(_elementCount > 0) {
             char temp = _topElement.data;
@@ -33,6 +50,10 @@ public class CharStack {
     }
 
 
+    /**
+     * The current amount of elements on the stack.
+     * @return Amount of stack elements.
+     */
     public int getSize() {
         return _elementCount;
     }

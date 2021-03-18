@@ -1,18 +1,23 @@
 package IO;
 
+import Collections.CharList;
 import Collections.CharStack;
 
 public class Console {
     // Set some fix values
     private static final int VIDEO_MEMORY_BASE = 0xB8000;
-    private static final int CHARACTER_AMOUNT = 2000;
     private static final int SCREEN_WIDTH = 80;
     private static final int SCREEN_HEIGHT = 25;
+    private static final int CHARACTER_AMOUNT = SCREEN_HEIGHT * SCREEN_WIDTH;
+    private static final int VIDEO_MEMORY_END = VIDEO_MEMORY_BASE + (CHARACTER_AMOUNT << 1);
 
     private static int _videoMemoryPosition = 0xB8000;
     private static int _caretX = 0;
     private static int _caretY = 0;
     private static byte _currentColor = ConsoleColor.Gray;
+    private static final char[] hexChars = {
+        '0', '1', '2', '3', '4', '5', '6', '7', '8' ,'9', 'A', 'B', 'C', 'D', 'E', 'F'
+    };
 
 
     public void println(String text) {
@@ -131,6 +136,9 @@ public class Console {
                 returnCarriage();
                 return;
         }
+        if(_videoMemoryPosition >= VIDEO_MEMORY_END) {
+            _videoMemoryPosition = VIDEO_MEMORY_BASE;
+        }
         MAGIC.wMem8(_videoMemoryPosition++, (byte)c);
         MAGIC.wMem8(_videoMemoryPosition++, _currentColor);
     }
@@ -154,9 +162,59 @@ public class Console {
     }
 
 
-    public void printHex(long number) {
-
+    /**
+     * Prints a given number in hexadecimal notation.
+     * @param number The number to print.
+     */
+    public void printHex(short number) {
+        printHex((long)number);
     }
+
+
+    /**
+     * Prints a given number in hexadecimal notation.
+     * @param number The number to print.
+     */
+    public void printHex(byte number) {
+        printHex((long)number);
+    }
+
+
+    /**
+     * Prints a given number in hexadecimal notation.
+     * @param number The number to print.
+     */
+    public void printHex(int number) {
+        printHex((long)number);
+    }
+
+
+    /**
+     * Prints a given number in hexadecimal notation.
+     * @param number The number to print.
+     */
+    public void printHex(long number)
+    {
+        CharStack chars = new CharStack();
+
+        if (number == 0) {
+            print('0');
+            return;
+        }
+
+        int i = 0;
+        while (number > 0) {
+            chars.push(hexChars[(int)number % 16]);
+            number /= 16;
+            i++;
+        }
+
+        int charSize = chars.getSize();
+        for(int j = 0; j < charSize; j++) {
+            print(chars.pop());
+        }
+    }
+
 
 
     /**
@@ -165,7 +223,7 @@ public class Console {
     public void clear()
     {
         resetCaret();
-        for (int i = 0; i < CHARACTER_AMOUNT; i++)
+        for (int i = 0; i < CHARACTER_AMOUNT << 1; i++)
         {
             MAGIC.wMem8(_videoMemoryPosition++, (byte)0);
         }
@@ -193,8 +251,8 @@ public class Console {
      * Sets the current text color. Use it with the ConsoleColor class to get the values.
      * @param foregroundColor The foreground color.
      * @param backgroundColor The background color.
-     * @param bright Whether the color shall be of a bright tone.
-     * @param blink Whether the cursor shall blink.
+     * @param bright Whether the foreground color shall be of a bright tone.
+     * @param blink Whether the background color shall be of a bright tone.
      */
     public void setColor(byte foregroundColor, byte backgroundColor, boolean bright, boolean blink)
     {
@@ -259,7 +317,7 @@ public class Console {
      * Defines color codes for console output
      */
     public static class ConsoleColor {
-        // No enums, so a class of consts. Not great and a bit whacky, but it works for now ¯\_(ツ)_/¯
+        // No enums, so a class of constants. Not great and a bit wacky, but it works for now ¯\_(ツ)_/¯
         public static final byte Black = 0x00;
         public static final byte Blue = 0x01;
         public static final byte Green = 0x02;
