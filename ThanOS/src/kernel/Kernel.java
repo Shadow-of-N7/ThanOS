@@ -1,8 +1,8 @@
 package kernel;
 
-import Collections.CharStack;
-import IO.Console;
-import IO.Console.ConsoleColor;
+import collections.CharStack;
+import io.Console;
+import io.Console.ConsoleColor;
 import rte.DynamicRuntime;
 
 public class Kernel {
@@ -11,8 +11,7 @@ public class Kernel {
     public static void main() {
 
         // Initialization
-        MAGIC.doStaticInit();
-        DynamicRuntime.initializeFreeAddresses();
+        Initialize();
 
         Console console = new Console();
 
@@ -49,19 +48,15 @@ public class Kernel {
         console.print(pi, 8);
 
         console.setCursor(0, 10);
-        testIncrementPrint(console);
         while(true);
     }
 
 
-    public static void testIncrementPrint(Console console) {
-        // This stops at 709746. Educated guess: Printing an int initializes an object which isn't being
-        // cleaned up, as there is currently no GC present.
-        // UPDATE: Tests without objects run indefinitely, which seems to confirm my guess.
-        int inc = 0;
-        while(true) {
-            console.print('\r');
-            console.print(inc++);
-        }
+    /**
+     * Initializes all required system parameters.
+     */
+    private static void Initialize() {
+        MAGIC.doStaticInit();
+        DynamicRuntime.initializeFreeAddresses();
     }
 }

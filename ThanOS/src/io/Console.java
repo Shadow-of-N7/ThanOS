@@ -1,7 +1,7 @@
-package IO;
+package io;
 
-import Collections.CharList;
-import Collections.CharStack;
+import collections.CharList;
+import collections.CharStack;
 
 public class Console {
     // Set some fix values
@@ -173,8 +173,11 @@ public class Console {
                 returnCarriage();
                 return;
         }
+        proceedCaret();
         if(_videoMemoryPosition >= VIDEO_MEMORY_END) {
             _videoMemoryPosition = VIDEO_MEMORY_BASE;
+            _caretX = 0;
+            _caretY = 0;
         }
         MAGIC.wMem8(_videoMemoryPosition++, (byte)c);
         MAGIC.wMem8(_videoMemoryPosition++, _currentColor);
@@ -397,12 +400,27 @@ public class Console {
     }
 
 
+    /**
+     * Clears the entire line and reset the caret to the first position in the same line.
+     */
     public void clearLine() {
         _caretX = 0;
         _videoMemoryPosition = getMemoryAddressFromCaretPosition();
         int lineEndAddress = _videoMemoryPosition + (SCREEN_WIDTH << 1);
         for(int i = _videoMemoryPosition; i < lineEndAddress; i ++) {
             MAGIC.wMem8(_videoMemoryPosition++, (byte)0);
+        }
+    }
+
+
+    /**
+     * Causes the caret to move by one position.
+     * Causes a line break if at the last position within a line.
+     */
+    private void proceedCaret() {
+        if(++_caretX == SCREEN_WIDTH) {
+            _caretX = 0;
+            ++_caretY;
         }
     }
 

@@ -1,7 +1,5 @@
 package rte;
 
-import IO.Console;
-
 import java.lang.Object;
 
 public class DynamicRuntime

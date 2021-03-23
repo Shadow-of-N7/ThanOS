@@ -1,4 +1,4 @@
-package Collections;
+package collections;
 
 public class CharList {
     private CharListElement _firstElement = null;
