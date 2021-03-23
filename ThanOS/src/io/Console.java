@@ -24,7 +24,7 @@ public class Console {
      * Prints a given string and terminates with a newline.
      * @param text The string to print.
      */
-    public void println(String text) {
+    public static void println(String text) {
         for (int i=0; i<text.length(); i++) {
             print(text.charAt(i));
         }
@@ -35,7 +35,7 @@ public class Console {
     /**
      * Prints a new line.
      */
-    public void println() {
+    public static void println() {
         print('\n');
     }
 
@@ -44,7 +44,7 @@ public class Console {
      * Prints a string, beginning at the current caret position.
      * @param text The string to print.
      */
-    public void print(String text) {
+    public static void print(String text) {
         for (int i = 0; i < text.length(); i++) {
             print(text.charAt(i));
         }
@@ -55,7 +55,7 @@ public class Console {
      * Prints a char array, beginning at the current caret position.
      * @param text The char array to print.
      */
-    public void print(char[] text) {
+    public static void print(char[] text) {
         for (char c : text) {
             print(c);
         }
@@ -66,7 +66,7 @@ public class Console {
      * Prints an integer.
      * @param number The integer to print.
      */
-    public void print(int number) {
+    public static void print(int number) {
         print((long)number);
     }
 
@@ -75,7 +75,7 @@ public class Console {
      * Prints a long.
      * @param number The long value to print.
      */
-    public void print(long number) {
+    public static void print(long number) {
         boolean isNegative = false;
         if(number < 0) {
             isNegative = true;
@@ -103,7 +103,7 @@ public class Console {
      * @param number The float to print.
      * @param precision The amount of digits after the separator to be displayed.
      */
-    public void print(float number, int precision) {
+    public static void print(float number, int precision) {
         print((double)number, precision);
     }
 
@@ -114,7 +114,7 @@ public class Console {
      * @param number The double to print.
      * @param precision The amount of digits after the separator to be displayed.
      */
-    public void print(double number, int precision) {
+    public static void print(double number, int precision) {
         // First print all pre-separator digits
         CharStack stack = new CharStack();
         while (number > 0) {
@@ -164,7 +164,7 @@ public class Console {
      * Prints a single character to the current caret position.
      * @param c The character to print.
      */
-    public void print(char c) {
+    public static void print(char c) {
         switch (c) {
             case '\n':
                 breakLine();
@@ -188,7 +188,7 @@ public class Console {
      * Prints a single character to the current caret position.
      * @param b The character to print.
      */
-    public void print(byte b) {
+    public static void print(byte b) {
         switch (b) {
             case '\n':
                 breakLine();
@@ -206,7 +206,7 @@ public class Console {
      * Prints a given number in hexadecimal notation.
      * @param number The number to print.
      */
-    public void printHex(short number) {
+    public static void printHex(short number) {
         printHex((long)number);
     }
 
@@ -215,7 +215,7 @@ public class Console {
      * Prints a given number in hexadecimal notation.
      * @param number The number to print.
      */
-    public void printHex(byte number) {
+    public static void printHex(byte number) {
         printHex((long)number);
     }
 
@@ -224,7 +224,7 @@ public class Console {
      * Prints a given number in hexadecimal notation.
      * @param number The number to print.
      */
-    public void printHex(int number) {
+    public static void printHex(int number) {
         printHex((long)number);
     }
 
@@ -233,7 +233,7 @@ public class Console {
      * Prints a given number in hexadecimal notation.
      * @param number The number to print.
      */
-    public void printHex(long number)
+    public static void printHex(long number)
     {
         CharStack chars = new CharStack();
 
@@ -258,7 +258,7 @@ public class Console {
     /**
      * Clears the entire screen and resets the caret to 0,0 position.
      */
-    public void clear()
+    public static void clear()
     {
         resetCaret();
         for (int i = 0; i < CHARACTER_AMOUNT << 1; i++)
@@ -274,7 +274,7 @@ public class Console {
      * @param x X Position of the cursor.
      * @param y Y Position of the cursor.
      */
-    public void setCursor(int x, int y)
+    public static void setCursor(int x, int y)
     {
         if(x >= 0 && x < SCREEN_WIDTH && y >= 0 && y < SCREEN_HEIGHT)
         {
@@ -292,7 +292,7 @@ public class Console {
      * @param bright Whether the foreground color shall be of a bright tone.
      * @param blink Whether the background color shall be of a bright tone.
      */
-    public void setColor(byte foregroundColor, byte backgroundColor, boolean bright, boolean blink)
+    public static void setColor(byte foregroundColor, byte backgroundColor, boolean bright, boolean blink)
     {
         // Set foregroundColors first; bits 0-2
         byte color = foregroundColor;
@@ -320,12 +320,11 @@ public class Console {
      */
     public static void directPrintInt(int value, int base, int x, int y, byte color) {
         CharStack chars = new CharStack();
-        Console console = new Console();
-        console.setCursor(x, y);
-        console.setColor(color, (byte)0, false, false);
+        setCursor(x, y);
+        setColor(color, (byte)0, false, false);
 
         if (value == 0) {
-            console.print('0');
+            print('0');
             return;
         }
 
@@ -336,7 +335,7 @@ public class Console {
 
         int charSize = chars.getSize();
         for(int j = 0; j < charSize; j++) {
-            console.print(chars.pop());
+            print(chars.pop());
         }
     }
 
@@ -349,10 +348,9 @@ public class Console {
      * @param color The color to display the text in. Only affects foreground color.
      */
     public static void directPrintChar(char c, int x, int y, byte color) {
-        Console console = new Console();
-        console.setColor(color, (byte)0, false, false);
-        console.setCursor(x, y);
-        console.print(c);
+        setColor(color, (byte)0, false, false);
+        setCursor(x, y);
+        print(c);
     }
 
 
@@ -364,17 +362,16 @@ public class Console {
      * @param color The color to display the text in. Only affects foreground color.
      */
     public static void directPrintString(String s, int x, int y, byte color) {
-        Console console = new Console();
-        console.setColor(color, (byte)0, false, false);
-        console.setCursor(x, y);
-        console.print(s);
+        setColor(color, (byte)0, false, false);
+        setCursor(x, y);
+        print(s);
     }
 
 
     /**
      * Resets the caret to 0,0 position.
      */
-    private void resetCaret() {
+    private static void resetCaret() {
         _videoMemoryPosition = VIDEO_MEMORY_BASE;
         _caretX = 0;
         _caretY = 0;
@@ -384,7 +381,7 @@ public class Console {
     /**
      * Places a line break.
      */
-    private void breakLine() {
+    private static void breakLine() {
         _caretX = 0;
         ++_caretY;
         _videoMemoryPosition = getMemoryAddressFromCaretPosition();
@@ -394,7 +391,7 @@ public class Console {
     /**
      * Returns the caret to the first position of the same line.
      */
-    private void returnCarriage() {
+    private static void returnCarriage() {
         _caretX = 0;
         _videoMemoryPosition = getMemoryAddressFromCaretPosition();
     }
@@ -403,7 +400,7 @@ public class Console {
     /**
      * Clears the entire line and reset the caret to the first position in the same line.
      */
-    public void clearLine() {
+    public static void clearLine() {
         _caretX = 0;
         _videoMemoryPosition = getMemoryAddressFromCaretPosition();
         int lineEndAddress = _videoMemoryPosition + (SCREEN_WIDTH << 1);
@@ -417,7 +414,7 @@ public class Console {
      * Causes the caret to move by one position.
      * Causes a line break if at the last position within a line.
      */
-    private void proceedCaret() {
+    private static void proceedCaret() {
         if(++_caretX == SCREEN_WIDTH) {
             _caretX = 0;
             ++_caretY;
@@ -429,7 +426,7 @@ public class Console {
      * Get the memory address of the current caret position.
      * @return Memory address.
      */
-    private int getMemoryAddressFromCaretPosition()
+    private static int getMemoryAddressFromCaretPosition()
     {
         // Bit shifting required here as every second memory address marks a color code instead if a position.
         // Not shifting would offset by one byte length, resulting in strange behavior.
