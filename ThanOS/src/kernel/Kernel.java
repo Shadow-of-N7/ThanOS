@@ -15,7 +15,12 @@ public class Kernel {
         // Greeting
         Console.clear();
         Console.setColor(ConsoleColor.Purple, ConsoleColor.Black, false, false);
+
         Console.println("Welcome to ThanOS - The only OS going down south 50% of the time!");
+        Interrupt.buildIDT();
+
+        // Uncomment to fire an interrupt for debug purposes
+        // MAGIC.inline(0xCC);
 
         while(true) {
         }
