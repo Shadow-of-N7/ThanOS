@@ -33,4 +33,21 @@ public class Interrupt {
             MAGIC.inline(0xFA);
         }
     }
+
+
+    public static void buildIDT() {
+
+    }
+
+
+    public void buildIDTEntry() {
+
+        // Init with 0
+        int entry = 0;
+
+        // Set segment descriptor to 1000b Segment | Table Indicator (0: GDT/1: LDT), Priv. Level 0-3
+        entry ^= 0x8;
+
+
+    }
 }
