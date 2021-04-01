@@ -6,8 +6,6 @@ import rte.DynamicRuntime;
 import rte.Interrupt;
 
 public class Kernel {
-
-
     public static void main() {
 
         // Initialization
@@ -17,6 +15,7 @@ public class Kernel {
         Console.setColor(ConsoleColor.Purple, ConsoleColor.Black, false, false);
 
         Console.println("Welcome to ThanOS - The only OS going down south 50% of the time!");
+
         Interrupt.buildIDT();
 
         // Uncomment to fire an interrupt for debug purposes

@@ -42,12 +42,24 @@ public class Interrupt {
 
     public static void buildIDT() {
         int lastIDTEntry = IDT_BASE_ADDRESS;
+        // Counts used space in bytes
+        int memCounter = 0;
 
         // 48 interrupt handlers required - therefore 48 descriptors are required as well
         for(int i = 0; i < 48; i++) {
             buildIDTEntry(lastIDTEntry);
+            Console.print("Wrote IDT entry ");
+            Console.print(i);
+            Console.print(" to 0x");
+            Console.printHex(lastIDTEntry);
+            Console.println();
             lastIDTEntry += 8;
+            memCounter += 8;
         }
+
+        Console.print("Used ");
+        Console.print(memCounter);
+        Console.println(" bytes of stack memory for IDT.");
 
         int tableLimit = lastIDTEntry;
 
