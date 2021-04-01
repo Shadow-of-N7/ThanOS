@@ -1,7 +1,9 @@
 package kernel;
 
+import collections.CharStack;
 import io.Console;
 import io.Console.ConsoleColor;
+import rte.BIOS;
 import rte.DynamicRuntime;
 
 public class Kernel {
@@ -21,7 +23,14 @@ public class Kernel {
         // Console.directPrintChar('f', 10, 10, (byte)0x04);
 
         // Uncomment to fire an interrupt for debug purposes
-        MAGIC.inline(0xCC);
+        //MAGIC.inline(0xCC);
+
+        //BIOS.regs.EAX=0x0013;
+        //BIOS.rint(0x10);
+        Console.print("foo");
+        CharStack foo = new CharStack();
+        foo.push('A');
+        Console.print(foo.pop());
 
         while(true) {
         }
@@ -34,7 +43,7 @@ public class Kernel {
     private static void Initialize() {
         MAGIC.doStaticInit();
         DynamicRuntime.initializeFreeAddresses();
-        Interrupt.initialize();
-        Interrupt.useInterrupts(true);
+        //Interrupt.initialize();
+        Interrupt.useInterrupts(false);
     }
 }

@@ -178,9 +178,7 @@ public class Interrupt {
                 break;
         }
 
-        return MAGIC.rMem32(classRef
-                + methodOffset)
-                + MAGIC.getCodeOff();
+        return MAGIC.rMem32(classRef + methodOffset) + MAGIC.getCodeOff();
     }
 
     // HANDLERS //
