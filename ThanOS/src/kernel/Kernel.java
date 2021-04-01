@@ -18,7 +18,7 @@ public class Kernel {
         Interrupt.buildIDT();
 
         // Uncomment to fire an interrupt for debug purposes
-         MAGIC.inline(0xCC);
+        MAGIC.inline(0xCC);
 
         while(true) {
         }

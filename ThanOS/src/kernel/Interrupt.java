@@ -47,7 +47,7 @@ public class Interrupt {
 
         // 48 interrupt handlers required - therefore 48 descriptors are required as well
         for(int i = 0; i < 48; i++) {
-            buildIDTEntry(lastIDTEntry);
+            buildIDTEntry(lastIDTEntry, i);
             lastIDTEntry += 8;
             memCounter += 8;
         }
@@ -61,10 +61,14 @@ public class Interrupt {
     }
 
 
-    private static void buildIDTEntry(int targetAddress) {
+    private static void buildIDTEntry(int targetAddress, int entryIndex) {
+        /*
         int handlerCodeStart = MAGIC.rMem32(MAGIC.cast2Ref(MAGIC.clssDesc("Interrupt"))
                 + MAGIC.mthdOff("Interrupt", "noHandle"))
                 + MAGIC.getCodeOff();
+
+         */
+        int handlerCodeStart = getInterruptHandlerAddress(entryIndex);
 
         int lowerOffset = handlerCodeStart & 0xFFFF;
         long upperOffset = (long)(handlerCodeStart & 0xFFFF0000) << 32;
@@ -83,7 +87,170 @@ public class Interrupt {
     }
 
 
+    private static int getInterruptHandlerAddress(int entryIndex) {
+        // Unfortunately, all following strings need to be constant, making the following code ugly as hell.
+
+        int classRef = MAGIC.cast2Ref(MAGIC.clssDesc("Interrupt"));
+        int methodOffset = 0;
+
+        switch (entryIndex) {
+            case 0:
+                methodOffset = MAGIC.mthdOff("Interrupt", "handleDivisionException");
+                break;
+            case 1:
+                methodOffset = MAGIC.mthdOff("Interrupt", "handleDebugException");
+                break;
+            case 2:
+                methodOffset = MAGIC.mthdOff("Interrupt", "handleNMI");
+                break;
+            case 3:
+                methodOffset = MAGIC.mthdOff("Interrupt", "handleBreakpoint");
+                break;
+            case 4:
+                methodOffset = MAGIC.mthdOff("Interrupt", "handleIntOverflow");
+                break;
+            case 5:
+                methodOffset = MAGIC.mthdOff("Interrupt", "handleIndexOutOfRange");
+                break;
+            case 6:
+                methodOffset = MAGIC.mthdOff("Interrupt", "handleInvalidOpcode");
+                break;
+            case 7:
+                // Reserved
+                break;
+            case 8:
+                methodOffset = MAGIC.mthdOff("Interrupt", "handleDoubleFault");
+                break;
+            case 9:
+            case 10:
+            case 11:
+            case 12:
+                // Reserved
+                break;
+            case 13:
+                methodOffset = MAGIC.mthdOff("Interrupt", "handleGeneralProtectionError");
+                break;
+            case 14:
+                methodOffset = MAGIC.mthdOff("Interrupt", "handlePageFault");
+                break;
+            case 15:
+            case 16:
+            case 17:
+            case 18:
+            case 19:
+            case 20:
+            case 21:
+            case 22:
+            case 23:
+            case 24:
+            case 25:
+            case 26:
+            case 27:
+            case 28:
+            case 29:
+            case 30:
+            case 31:
+                // Reserved
+                break;
+            case 32:
+                methodOffset = MAGIC.mthdOff("Interrupt", "handleTimer");
+                break;
+            case 33:
+                methodOffset = MAGIC.mthdOff("Interrupt", "handleKeyboard");
+                break;
+            case 34:
+            case 35:
+            case 36:
+            case 37:
+            case 38:
+            case 39:
+            case 40:
+            case 41:
+            case 42:
+            case 43:
+            case 44:
+            case 45:
+            case 46:
+            case 47:
+                methodOffset = MAGIC.mthdOff("Interrupt", "handleOtherDevices");
+                break;
+        }
+
+        return MAGIC.rMem32(classRef
+                + methodOffset)
+                + MAGIC.getCodeOff();
+    }
+
+
     // HANDLERS //
+
+    @SJC.Interrupt
+    public static void handleDivisionException() {
+        Console.println("Division exception.");
+    }
+
+    @SJC.Interrupt
+    public static void handleDebugException() {
+        Console.println("Debug exception.");
+    }
+
+    @SJC.Interrupt
+    public static void handleNMI() {
+        Console.println("NMI interrupt.");
+    }
+
+    @SJC.Interrupt
+    public static void handleBreakpoint() {
+        Console.println("Breakpoint reached.");
+    }
+
+    @SJC.Interrupt
+    public static void handleIntOverflow() {
+        Console.println("Integer overflow.");
+    }
+
+    @SJC.Interrupt
+    public static void handleIndexOutOfRange() {
+        Console.println("Index out of range.");
+    }
+
+    @SJC.Interrupt
+    public static void handleInvalidOpcode() {
+        Console.println("Invalid opcode.");
+    }
+
+    @SJC.Interrupt
+    public static void handleDoubleFault() {
+        Console.println("Double fault.");
+    }
+
+    @SJC.Interrupt
+    public static void handleGeneralProtectionError() {
+        Console.println("General protection error.");
+    }
+
+    @SJC.Interrupt
+    public static void handlePageFault() {
+        Console.println("Page fault.");
+    }
+
+    @SJC.Interrupt
+    public static void handleTimer() {
+        Console.println("Timer event.");
+    }
+    @SJC.Interrupt
+    public static void handleKeyboard() {
+        Console.println("Invalid opcode.");
+    }
+    @SJC.Interrupt
+    public static void handleOtherDevices() {
+        Console.println("Other device interrupt.");
+    }
+
+
+
+
+    // Debug handlers
 
     @SJC.Interrupt
     public static void noHandle() {
