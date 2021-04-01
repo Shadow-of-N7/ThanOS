@@ -181,6 +181,8 @@ public class Interrupt {
         return MAGIC.rMem32(classRef + methodOffset) + MAGIC.getCodeOff();
     }
 
+    private static byte colorByte = 0;
+
     // HANDLERS //
 
     @SJC.Interrupt
@@ -238,6 +240,13 @@ public class Interrupt {
         // Confirm first to unlock the port
         MAGIC.wIOs8(MASTER, (byte)0x20);
         // Console.println("Timer event.");
+        Console.directPrintChar('T', Console.SCREEN_WIDTH - 1, Console.SCREEN_HEIGHT - 1, colorByte);
+        if(colorByte < 0xF) {
+            ++colorByte;
+        }
+        else {
+            colorByte = 0;
+        }
     }
     @SJC.Interrupt
     public static void handleKeyboard() {

@@ -319,6 +319,9 @@ public class Console {
      * @param color The color to display the text in. Only affects foreground color.
      */
     public static void directPrintInt(int value, int base, int x, int y, byte color) {
+        byte originalColor = _currentColor;
+        int originalX = _caretX;
+        int originalY = _caretY;
         CharStack chars = new CharStack();
         setCursor(x, y);
         setColor(color, (byte)0, false, false);
@@ -338,6 +341,8 @@ public class Console {
         for(int j = 0; j < charSize; j++) {
             print(chars.pop());
         }
+        setCursor(originalX, originalY);
+        _currentColor = originalColor;
     }
 
 
@@ -349,9 +354,14 @@ public class Console {
      * @param color The color to display the text in. Only affects foreground color.
      */
     public static void directPrintChar(char c, int x, int y, byte color) {
+        byte originalColor = _currentColor;
+        int originalX = _caretX;
+        int originalY = _caretY;
         setColor(color, (byte)0, false, false);
         setCursor(x, y);
         print(c);
+        setCursor(originalX, originalY);
+        _currentColor = originalColor;
     }
 
 
@@ -363,9 +373,14 @@ public class Console {
      * @param color The color to display the text in. Only affects foreground color.
      */
     public static void directPrintString(String s, int x, int y, byte color) {
+        byte originalColor = _currentColor;
+        int originalX = _caretX;
+        int originalY = _caretY;
         setColor(color, (byte)0, false, false);
         setCursor(x, y);
         print(s);
+        setCursor(originalX, originalY);
+        _currentColor = originalColor;
     }
 
 
