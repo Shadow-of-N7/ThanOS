@@ -163,7 +163,7 @@ public class BIOS {
         MAGIC.wMem8(BIOS_MEMORY + 61, (byte) inter); //set interrupt number
         MAGIC.inline(0x9C); //pushf
         MAGIC.inline(0xFA); //cli
-        //TODO lidtRM(); //load idt with real mode interrupt table
+        // TODO lidtRM(); //load idt with real mode interrupt table
         //call 16 bit code
         MAGIC.inline(0x56); //push e/rsi
         MAGIC.inline(0x57); //push e/rdi
@@ -189,8 +189,19 @@ public class BIOS {
     }
 
   public static void lidt() {
+    long amd0=0L, dummy;
+
+    MAGIC.ignore(amd0);
+    dummy=(((long)0x7E00)<<16)|((long)(48*2*MAGIC.ptrSize-1));
+    MAGIC.ignore(dummy);
+    MAGIC.inline(0x0F, 0x01, 0x5D, 0xF0); // lidt [e/rbp-0x10]
   }
 
   public static void lidtRM() {
+    long amd0=0L, dummy=1023L;
+
+    MAGIC.ignore(amd0);
+    MAGIC.ignore(dummy);
+    MAGIC.inline(0x0F, 0x01, 0x5D, 0xF0); // lidt [e/rbp-0x10]
   }
 }

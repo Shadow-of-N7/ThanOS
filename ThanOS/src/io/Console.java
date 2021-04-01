@@ -165,22 +165,7 @@ public class Console {
      * @param c The character to print.
      */
     public static void print(char c) {
-        switch (c) {
-            case '\n':
-                breakLine();
-                return;
-            case '\r':
-                returnCarriage();
-                return;
-        }
-        proceedCaret();
-        if(_videoMemoryPosition >= VIDEO_MEMORY_END) {
-            _videoMemoryPosition = VIDEO_MEMORY_BASE;
-            _caretX = 0;
-            _caretY = 0;
-        }
-        MAGIC.wMem8(_videoMemoryPosition++, (byte)c);
-        MAGIC.wMem8(_videoMemoryPosition++, _currentColor);
+        print((byte)c);
     }
 
 
@@ -192,10 +177,17 @@ public class Console {
         switch (b) {
             case '\n':
                 breakLine();
+                clearLine();
                 return;
             case '\r':
                 returnCarriage();
                 return;
+        }
+        proceedCaret();
+        if(_videoMemoryPosition >= VIDEO_MEMORY_END) {
+            _videoMemoryPosition = VIDEO_MEMORY_BASE;
+            _caretX = 0;
+            _caretY = 0;
         }
         MAGIC.wMem8(_videoMemoryPosition++, b);
         MAGIC.wMem8(_videoMemoryPosition++, _currentColor);
@@ -414,15 +406,15 @@ public class Console {
 
 
     /**
-     * Clears the entire line and reset the caret to the first position in the same line.
+     * Clears the entire line and resets the caret to the first position in the same line.
      */
-    public static void clearLine() {
+    private static void clearLine() {
+        _caretX = 0;
+        for ( int i = 0; i < SCREEN_WIDTH - 1; i++) {
+            print((byte)0);
+        }
         _caretX = 0;
         _videoMemoryPosition = getMemoryAddressFromCaretPosition();
-        int lineEndAddress = _videoMemoryPosition + (SCREEN_WIDTH << 1);
-        for(int i = _videoMemoryPosition; i < lineEndAddress; i ++) {
-            MAGIC.wMem8(_videoMemoryPosition++, (byte)0);
-        }
     }
 
 

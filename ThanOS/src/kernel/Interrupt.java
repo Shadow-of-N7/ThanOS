@@ -240,6 +240,7 @@ public class Interrupt {
         // Confirm first to unlock the port
         MAGIC.wIOs8(MASTER, (byte)0x20);
         // Console.println("Timer event.");
+        /*
         Console.directPrintChar('T', Console.SCREEN_WIDTH - 1, Console.SCREEN_HEIGHT - 1, colorByte);
         if(colorByte < 0xF) {
             ++colorByte;
@@ -247,7 +248,9 @@ public class Interrupt {
         else {
             colorByte = 0;
         }
+        */
     }
+
     @SJC.Interrupt
     public static void handleKeyboard() {
         MAGIC.wIOs8(MASTER, (byte)0x20);

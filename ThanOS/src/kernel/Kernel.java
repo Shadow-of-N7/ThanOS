@@ -3,12 +3,14 @@ package kernel;
 import collections.CharStack;
 import io.Console;
 import io.Console.ConsoleColor;
+import rte.BIOS;
 import rte.DynamicRuntime;
 
 public class Kernel {
     public static void main() {
 
         // Initialization
+        Console.clear();
         Initialize();
         // Greeting
         Console.clear();
@@ -16,15 +18,8 @@ public class Kernel {
 
         Console.println("Welcome to ThanOS - The only OS going down south 50% of the time!");
 
-        // Uncomment to fire an interrupt for debug purposes
-        //MAGIC.inline(0xCC);
-
         //BIOS.regs.EAX=0x0013;
         //BIOS.rint(0x10);
-        Console.print("foo");
-        CharStack foo = new CharStack();
-        foo.push('A');
-        Console.print(foo.pop());
 
 
         while(true) {
