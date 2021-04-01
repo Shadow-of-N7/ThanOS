@@ -15,7 +15,10 @@ public class Kernel {
 
         Console.println("Welcome to ThanOS - The only OS going down south 50% of the time!");
 
-        Interrupt.buildIDT();
+        // This somehow prevents the machine from booting, even when the entire method body is commented out...
+        // Same goes for all directPrint methods.
+        // Like seriously, WTF??? Need to investigate at some point. TODO
+        // Console.directPrintChar('f', 10, 10, (byte)0x04);
 
         // Uncomment to fire an interrupt for debug purposes
         MAGIC.inline(0xCC);
@@ -31,6 +34,7 @@ public class Kernel {
     private static void Initialize() {
         MAGIC.doStaticInit();
         DynamicRuntime.initializeFreeAddresses();
-        Interrupt.useInterrupts(false);
+        Interrupt.initialize();
+        Interrupt.useInterrupts(true);
     }
 }

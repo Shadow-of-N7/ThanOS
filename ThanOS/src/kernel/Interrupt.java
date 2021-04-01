@@ -9,20 +9,8 @@ public class Interrupt {
     private final static int IDT_BASE_ADDRESS = 0x7E00;
 
 
-    /**
-     * Initialize PICs.
-     */
-    public static void initPic() {
-        programChip(MASTER, 0x20, 0x04); //init offset and slave config of master
-        programChip(SLAVE, 0x28, 0x02); //init offset and slave config of slave
-    }
-
-
-    private static void programChip(int port, int offset, int icw3) {
-        MAGIC.wIOs8(port++, (byte)0x11); // ICW1
-        MAGIC.wIOs8(port, (byte)offset); // ICW2
-        MAGIC.wIOs8(port, (byte)icw3); // ICW3
-        MAGIC.wIOs8(port, (byte)0x01); // ICW4
+    public static void initialize() {
+        buildIDT();
     }
 
 
@@ -32,15 +20,42 @@ public class Interrupt {
      */
     public static void useInterrupts(boolean start) {
         if(start) {
+            initPic();
+            // Unlock interrupts
             MAGIC.inline(0xFB);
         }
         else {
+
+            // Lock interrupts
             MAGIC.inline(0xFA);
         }
     }
 
 
-    public static void buildIDT() {
+    /**
+     * Initialize PICs.
+     */
+    private static void initPic() {
+        programChip(MASTER, 0x20, 0x04); //init offset and slave config of master
+        programChip(SLAVE, 0x28, 0x02); //init offset and slave config of slave
+    }
+
+
+    /**
+     * IRQ initialization.
+     * @param port
+     * @param offset
+     * @param icw3
+     */
+    private static void programChip(int port, int offset, int icw3) {
+        MAGIC.wIOs8(port++, (byte)0x11); // ICW1
+        MAGIC.wIOs8(port, (byte)offset); // ICW2
+        MAGIC.wIOs8(port, (byte)icw3); // ICW3
+        MAGIC.wIOs8(port, (byte)0x01); // ICW4
+    }
+
+
+    private static void buildIDT() {
         int lastIDTEntry = IDT_BASE_ADDRESS;
         // Counts used space in bytes
         int memCounter = 0;
@@ -62,12 +77,6 @@ public class Interrupt {
 
 
     private static void buildIDTEntry(int targetAddress, int entryIndex) {
-        /*
-        int handlerCodeStart = MAGIC.rMem32(MAGIC.cast2Ref(MAGIC.clssDesc("Interrupt"))
-                + MAGIC.mthdOff("Interrupt", "noHandle"))
-                + MAGIC.getCodeOff();
-
-         */
         int handlerCodeStart = getInterruptHandlerAddress(entryIndex);
 
         int lowerOffset = handlerCodeStart & 0xFFFF;
@@ -181,7 +190,6 @@ public class Interrupt {
                 + MAGIC.getCodeOff();
     }
 
-
     // HANDLERS //
 
     @SJC.Interrupt
@@ -220,35 +228,38 @@ public class Interrupt {
     }
 
     @SJC.Interrupt
-    public static void handleDoubleFault() {
+    public static void handleDoubleFault(int param) {
         Console.println("Double fault.");
     }
 
     @SJC.Interrupt
-    public static void handleGeneralProtectionError() {
+    public static void handleGeneralProtectionError(int param) {
         Console.println("General protection error.");
     }
 
     @SJC.Interrupt
-    public static void handlePageFault() {
+    public static void handlePageFault(int param) {
         Console.println("Page fault.");
     }
 
     @SJC.Interrupt
     public static void handleTimer() {
-        Console.println("Timer event.");
+        // Confirm first to unlock the port
+        MAGIC.wIOs8(MASTER, (byte)0x20);
+        // Console.println("Timer event.");
     }
     @SJC.Interrupt
     public static void handleKeyboard() {
-        Console.println("Invalid opcode.");
+        MAGIC.wIOs8(MASTER, (byte)0x20);
+        //Console.println("Keyboard interrupt.");
+        int keyCode = MAGIC.rIOs8(0x60);
+        Console.print(keyCode);
+        Console.println();
     }
     @SJC.Interrupt
     public static void handleOtherDevices() {
         Console.println("Other device interrupt.");
     }
-
-
-
 
     // Debug handlers
 
@@ -257,7 +268,6 @@ public class Interrupt {
         Console.println("Handled interrupt!");
         while (true);
     }
-
 
     @SJC.Interrupt
     public static void noHandleParam(int code) {

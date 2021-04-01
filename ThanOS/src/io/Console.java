@@ -6,8 +6,8 @@ import collections.CharStack;
 public class Console {
     // Set some fix values
     private static final int VIDEO_MEMORY_BASE = 0xB8000;
-    private static final int SCREEN_WIDTH = 80;
-    private static final int SCREEN_HEIGHT = 25;
+    public static final int SCREEN_WIDTH = 80;
+    public static final int SCREEN_HEIGHT = 25;
     private static final int CHARACTER_AMOUNT = SCREEN_HEIGHT * SCREEN_WIDTH;
     private static final int VIDEO_MEMORY_END = VIDEO_MEMORY_BASE + (CHARACTER_AMOUNT << 1);
 
@@ -327,6 +327,7 @@ public class Console {
             print('0');
             return;
         }
+
 
         while (value > 0) {
             chars.push(hexChars[value % base]);
