@@ -3,7 +3,6 @@ package kernel;
 import io.Console;
 import io.Console.ConsoleColor;
 import rte.DynamicRuntime;
-import rte.Interrupt;
 
 public class Kernel {
     public static void main() {
@@ -19,7 +18,7 @@ public class Kernel {
         Interrupt.buildIDT();
 
         // Uncomment to fire an interrupt for debug purposes
-        // MAGIC.inline(0xCC);
+         MAGIC.inline(0xCC);
 
         while(true) {
         }
