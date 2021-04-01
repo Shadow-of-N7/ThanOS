@@ -43,9 +43,6 @@ public class Interrupt {
 
     /**
      * IRQ initialization.
-     * @param port
-     * @param offset
-     * @param icw3
      */
     private static void programChip(int port, int offset, int icw3) {
         MAGIC.wIOs8(port++, (byte)0x11); // ICW1
@@ -57,19 +54,15 @@ public class Interrupt {
 
     private static void buildIDT() {
         int lastIDTEntry = IDT_BASE_ADDRESS;
-        // Counts used space in bytes
-        int memCounter = 0;
 
         // 48 interrupt handlers required - therefore 48 descriptors are required as well
         for(int i = 0; i < 48; i++) {
             buildIDTEntry(lastIDTEntry, i);
             lastIDTEntry += 8;
-            memCounter += 8;
         }
 
-        int tableLimit = lastIDTEntry;
-
         // Set Interrupt Descriptor Table Register (IDTR)
+        int tableLimit = lastIDTEntry;
         long tmp=(((long)IDT_BASE_ADDRESS) << 16) | (long)tableLimit;
         MAGIC.inline(0x0F, 0x01, 0x5D);
         MAGIC.inlineOffset(1, tmp); // lidt [ebp-0x08/tmp]
@@ -259,21 +252,5 @@ public class Interrupt {
     @SJC.Interrupt
     public static void handleOtherDevices() {
         Console.println("Other device interrupt.");
-    }
-
-    // Debug handlers
-
-    @SJC.Interrupt
-    public static void noHandle() {
-        Console.println("Handled interrupt!");
-        while (true);
-    }
-
-    @SJC.Interrupt
-    public static void noHandleParam(int code) {
-        Console.print("Handled interrupt with code ");
-        Console.print(code);
-        Console.println("!");
-        while (true);
     }
 }
