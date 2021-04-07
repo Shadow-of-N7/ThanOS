@@ -32,6 +32,12 @@ public class Console {
     }
 
 
+    public static void println(int number) {
+        print(number);
+        println();
+    }
+
+
     /**
      * Prints a new line.
      */

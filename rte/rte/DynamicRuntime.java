@@ -1,21 +1,27 @@
 package rte;
 
+import io.Console;
+
 import java.lang.Object;
 
 public class DynamicRuntime
 {
+	// Was 0
 	private static int _nextFreeAddress = 0;
-	public static int _previousObjectAddress = -1;
+	private static int _previousObjectAddress = -1;
 
 	public static void initializeFreeAddresses() {
 		if(_nextFreeAddress == 0) {
-			_nextFreeAddress = (MAGIC.imageBase + MAGIC.rMem32(MAGIC.imageBase + 4)) + 4;
+			_nextFreeAddress = (MAGIC.imageBase + MAGIC.rMem32(MAGIC.imageBase + 4));
+			Console.printHex(_nextFreeAddress);
+			Console.println();
 		}
 	}
 
+
+
 	public static Object newInstance(int scalarSize, int relocEntries, SClassDesc type)
 	{
-		Object object;
 		int startAddress, relocs;
 
 		// 4 bytes per reloc required
@@ -37,7 +43,7 @@ public class DynamicRuntime
 
 		int objectAddress = startAddress + relocs;
 		// Set the object - If IntelliJ shows a type error here, ignore it
-		object = MAGIC.cast2Obj(objectAddress);
+		Object object = MAGIC.cast2Obj(objectAddress);
 		MAGIC.assign(object._r_scalarSize, scalarSize);
 		MAGIC.assign(object._r_relocEntries, relocEntries);
 

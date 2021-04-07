@@ -1,6 +1,5 @@
 package kernel;
 
-import collections.CharStack;
 import io.Console;
 import io.Console.ConsoleColor;
 import rte.BIOS;
@@ -10,7 +9,6 @@ public class Kernel {
     public static void main() {
 
         // Initialization
-        Console.clear();
         Initialize();
         // Greeting
         Console.clear();
@@ -21,7 +19,6 @@ public class Kernel {
         //BIOS.regs.EAX=0x0013;
         //BIOS.rint(0x10);
 
-
         while(true) {
         }
     }
@@ -31,8 +28,8 @@ public class Kernel {
      * Initializes all required system parameters.
      */
     private static void Initialize() {
-        MAGIC.doStaticInit();
         DynamicRuntime.initializeFreeAddresses();
+        MAGIC.doStaticInit();
         Interrupt.initialize();
         Interrupt.useInterrupts(true);
     }

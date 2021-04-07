@@ -1,7 +1,7 @@
 package java.util;
 
 // This somehow seems to jeopardize booting? Strange.
-@SJC.IgnoreUnit
+//@SJC.IgnoreUnit
 public class Random {
     private long seed;
     private static final long serialVersionUID = 3905348978240129619L;

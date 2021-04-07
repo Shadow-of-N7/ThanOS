@@ -254,10 +254,9 @@ public class Interrupt {
     @SJC.Interrupt
     public static void handleKeyboard() {
         MAGIC.wIOs8(MASTER, (byte)0x20);
-        //Console.println("Keyboard interrupt.");
         int keyCode = MAGIC.rIOs8(0x60);
-        Console.print(keyCode);
-        Console.println();
+        Console.printHex(keyCode);
+        Console.print(' ');
     }
     @SJC.Interrupt
     public static void handleOtherDevices() {
