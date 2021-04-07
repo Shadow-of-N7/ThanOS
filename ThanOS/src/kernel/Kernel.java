@@ -12,15 +12,37 @@ public class Kernel {
         Initialize();
         // Greeting
         Console.clear();
+
+        testGraphicsMode();
+
         Console.setColor(ConsoleColor.Purple, ConsoleColor.Black, false, false);
 
         Console.println("Welcome to ThanOS - The only OS going down south 50% of the time!");
-
-        //BIOS.regs.EAX=0x0013;
-        //BIOS.rint(0x10);
-
         while(true) {
         }
+    }
+
+    /**
+     * Draws a funny pattern for a few seconds, then returns to text mode.
+     */
+    public static void testGraphicsMode() {
+        BIOS.regs.EAX=0x0013;
+        BIOS.rint(0x10);
+        int screenPixels = 320 * 200;
+        byte color = 0;
+
+        int currentAddress = 0xA0000;
+
+        for(int i = 0; i < screenPixels; i++) {
+            MAGIC.wMem8(currentAddress++, color++);
+        }
+
+        Timer.waitReal(64);
+        Console.clear();
+        BIOS.regs.EAX=0x0003;
+        BIOS.rint(0x10);
+        Console.clear();
+        Console.setCursor(0, 0);
     }
 
 

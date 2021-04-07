@@ -7,10 +7,13 @@ public class Interrupt {
 
     // Put the IDT directly after the GDT and some parts of the bootloader
     private final static int IDT_BASE_ADDRESS = 0x7E00;
+    private final static int IDT_ENTRY_COUNT = 48;
+    private static boolean _isInitialized = false;
 
 
     public static void initialize() {
         buildIDT();
+        _isInitialized = true;
     }
 
 
@@ -30,6 +33,27 @@ public class Interrupt {
             MAGIC.inline(0xFA);
         }
     }
+
+
+    public static void loadInterruptDescriptorTable()
+    {
+        if (!_isInitialized)
+        {
+            buildIDT();
+            useInterrupts(true);
+        }
+        int tableLimit = IDT_ENTRY_COUNT * 8 - 1; // Byte count in table
+        long tmp=(((long)IDT_BASE_ADDRESS) << 16) | (long)tableLimit;
+        MAGIC.inline(0x0F, 0x01, 0x5D); MAGIC.inlineOffset(1, tmp); // lidt [ebp-0x08/tmp]
+    }
+
+    public static void loadInterruptDescriptorTableRealMode()
+    {
+        int tableLimit = 1024; // Byte count in table
+        long tmp=(long)0 | (long)tableLimit; // 0 is the table base address
+        MAGIC.inline(0x0F, 0x01, 0x5D); MAGIC.inlineOffset(1, tmp); // lidt [ebp-0x08/tmp]
+    }
+
 
 
     /**
@@ -56,7 +80,7 @@ public class Interrupt {
         int lastIDTEntry = IDT_BASE_ADDRESS;
 
         // 48 interrupt handlers required - therefore 48 descriptors are required as well
-        for(int i = 0; i < 48; i++) {
+        for(int i = 0; i < IDT_ENTRY_COUNT; i++) {
             buildIDTEntry(lastIDTEntry, i);
             lastIDTEntry += 8;
         }
@@ -239,16 +263,7 @@ public class Interrupt {
     public static void handleTimer() {
         // Confirm first to unlock the port
         MAGIC.wIOs8(MASTER, (byte)0x20);
-        // Console.println("Timer event.");
-        /*
-        Console.directPrintChar('T', Console.SCREEN_WIDTH - 1, Console.SCREEN_HEIGHT - 1, colorByte);
-        if(colorByte < 0xF) {
-            ++colorByte;
-        }
-        else {
-            colorByte = 0;
-        }
-        */
+        Timer.updateTimer();
     }
 
     @SJC.Interrupt
