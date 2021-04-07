@@ -1,7 +1,9 @@
 package kernel;
 
+import collections.Ringbuffer;
 import io.Console;
 import io.Console.ConsoleColor;
+import io.Keyboard;
 import rte.BIOS;
 import rte.DynamicRuntime;
 
@@ -13,12 +15,14 @@ public class Kernel {
         // Greeting
         Console.clear();
 
-        testGraphicsMode();
+        //testGraphicsMode();
 
         Console.setColor(ConsoleColor.Purple, ConsoleColor.Black, false, false);
 
         Console.println("Welcome to ThanOS - The only OS going down south 50% of the time!");
+
         while(true) {
+            Keyboard.handleKeyBuffer();
         }
     }
 
@@ -54,5 +58,6 @@ public class Kernel {
         MAGIC.doStaticInit();
         Interrupt.initialize();
         Interrupt.useInterrupts(true);
+        Keyboard.initialize();
     }
 }

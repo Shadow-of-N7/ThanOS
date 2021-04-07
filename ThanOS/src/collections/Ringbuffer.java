@@ -1,18 +1,25 @@
 package collections;
 
+import io.Console;
+
 public class Ringbuffer {
-    private final byte[] _buffer;
+    // Serves as empty marking, as null is not permitted
+    private final static int INT_MIN = -2147483648;
+    private final int[] _buffer;
     private int _readerIndex;
     private int _writerIndex;
 
     public Ringbuffer(int size) {
-        _buffer = new byte[size];
+        _buffer = new int[size];
+        for(int i = 0; i < size; i++) {
+            _buffer[i] = INT_MIN;
+        }
         _readerIndex = 0;
         _writerIndex = 0;
     }
 
 
-    public void insert(byte data) {
+    public void insert(int data) {
         _buffer[_writerIndex] = data;
         moveWriteReference(1);
     }
@@ -22,10 +29,32 @@ public class Ringbuffer {
      * Returns the current element and moves the read reference forward.
      * @return Current data element.
      */
-    public byte next() {
-        byte data =  _buffer[_readerIndex];
+    public int next() {
+        int data = _buffer[_readerIndex];
         moveReadReference(1);
         return data;
+    }
+
+
+    /**
+     * Returns the current element, removes it from the buffer and moves the read reference forward.
+     * @return Current data element.
+     */
+    public int nextAndClear() {
+        int data =  _buffer[_readerIndex];
+        _buffer[_readerIndex] = INT_MIN;
+        moveReadReference(1);
+        return data;
+    }
+
+
+    /**
+     * Returns the element at the given buffer position.
+     * @param index The position of the desired element.
+     * @return The desired element.
+     */
+    public int elementAt(int index) {
+        return _buffer[index];
     }
 
 
@@ -33,8 +62,22 @@ public class Ringbuffer {
      * Returns the current element without moving the reader reference.
      * @return Current data element.
      */
-    public byte peek() {
+    public int peek() {
         return _buffer[_readerIndex];
+    }
+
+
+    /**
+     * Returns the next element without moving the reader reference.
+     * @return Current data element.
+     */
+    public int peekNext() {
+        return _buffer[nextIndex()];
+    }
+
+
+    public boolean nextElementEmpty() {
+        return _buffer[nextIndex()] == INT_MIN;
     }
 
 
@@ -47,7 +90,7 @@ public class Ringbuffer {
             _readerIndex = _readerIndex + steps - _buffer.length;
             return;
         }
-        if(_readerIndex - steps < 0) {
+        if(_readerIndex + steps < 0) {
             _readerIndex = _buffer.length - (steps - _readerIndex);
             return;
         }
@@ -64,10 +107,31 @@ public class Ringbuffer {
             _writerIndex = _writerIndex + steps - _buffer.length;
             return;
         }
-        if(_writerIndex - steps < 0) {
+        if(_writerIndex + steps < 0) {
             _writerIndex = _buffer.length - (steps - _writerIndex);
             return;
         }
         _writerIndex += steps;
+    }
+
+
+    private int nextIndex() {
+        int targetIndex;
+        if(_readerIndex + 1 > _buffer.length - 1) {
+            targetIndex = _readerIndex + 1 - _buffer.length;
+        }
+        else
+        {
+            targetIndex = _readerIndex + 1;
+        }
+        return targetIndex;
+    }
+
+
+    // TODO REMOVE
+    public void printContent() {
+        for(int i = 0; i < _buffer.length; i++) {
+            Console.println(_buffer[i]);
+        }
     }
 }

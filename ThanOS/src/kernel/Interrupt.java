@@ -1,6 +1,7 @@
 package kernel;
 
 import io.Console;
+import io.Keyboard;
 
 public class Interrupt {
     private final static int MASTER = 0x20, SLAVE = 0xA0;
@@ -269,9 +270,8 @@ public class Interrupt {
     @SJC.Interrupt
     public static void handleKeyboard() {
         MAGIC.wIOs8(MASTER, (byte)0x20);
-        int keyCode = MAGIC.rIOs8(0x60);
-        Console.printHex(keyCode);
-        Console.print(' ');
+        Keyboard.handleScancode((MAGIC.rIOs8(0x60) & 0xFF));
+
     }
     @SJC.Interrupt
     public static void handleOtherDevices() {
