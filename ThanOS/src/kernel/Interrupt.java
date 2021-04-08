@@ -270,7 +270,8 @@ public class Interrupt {
     @SJC.Interrupt
     public static void handleKeyboard() {
         MAGIC.wIOs8(MASTER, (byte)0x20);
-        Keyboard.handleScancode((MAGIC.rIOs8(0x60) & 0xFF));
+        int scancode = (MAGIC.rIOs8(0x60) & 0xFF);
+        Keyboard.handleScancode(scancode);
 
     }
     @SJC.Interrupt

@@ -38,9 +38,9 @@ public class Keyboard {
 
 
     public static void handleKeyBuffer() {
-        if(!_buffer.nextElementEmpty()) {
+        if(!_buffer.currentElementEmpty()) {
             // works so far
-            Console.printHex(_buffer.nextAndClear());
+            Console.printHex(_buffer.currentAndClear());
             Console.print(' ');
         }
     }

@@ -40,8 +40,8 @@ public class Ringbuffer {
      * Returns the current element, removes it from the buffer and moves the read reference forward.
      * @return Current data element.
      */
-    public int nextAndClear() {
-        int data =  _buffer[_readerIndex];
+    public int currentAndClear() {
+        int data = _buffer[_readerIndex];
         _buffer[_readerIndex] = INT_MIN;
         moveReadReference(1);
         return data;
@@ -72,12 +72,17 @@ public class Ringbuffer {
      * @return Current data element.
      */
     public int peekNext() {
-        return _buffer[nextIndex()];
+        return _buffer[nextReaderIndex()];
     }
 
 
     public boolean nextElementEmpty() {
-        return _buffer[nextIndex()] == INT_MIN;
+        return _buffer[nextReaderIndex()] == INT_MIN;
+    }
+
+
+    public boolean currentElementEmpty() {
+        return _buffer[_readerIndex] == INT_MIN;
     }
 
 
@@ -115,7 +120,7 @@ public class Ringbuffer {
     }
 
 
-    private int nextIndex() {
+    private int nextReaderIndex() {
         int targetIndex;
         if(_readerIndex + 1 > _buffer.length - 1) {
             targetIndex = _readerIndex + 1 - _buffer.length;

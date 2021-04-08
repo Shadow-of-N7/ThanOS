@@ -20,6 +20,7 @@ public class Kernel {
         Console.setColor(ConsoleColor.Purple, ConsoleColor.Black, false, false);
 
         Console.println("Welcome to ThanOS - The only OS going down south 50% of the time!");
+        Console.setColor(ConsoleColor.Gray, ConsoleColor.Black, false, false);
 
         while(true) {
             Keyboard.handleKeyBuffer();
@@ -30,6 +31,7 @@ public class Kernel {
      * Draws a funny pattern for a few seconds, then returns to text mode.
      */
     public static void testGraphicsMode() {
+        assert BIOS.regs != null;
         BIOS.regs.EAX=0x0013;
         BIOS.rint(0x10);
         int screenPixels = 320 * 200;
