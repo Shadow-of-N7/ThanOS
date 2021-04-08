@@ -7,7 +7,6 @@ public class Keyboard {
     // These are not publicly exposed, as they are of no interest to other parts of the OS.
     private static boolean _isExtension0Active = false;
     private static boolean _isExtension1Active = false;
-    private static char _lastChar = 0x0;
 
     public static KeyboardState State;
 
@@ -54,8 +53,8 @@ public class Keyboard {
         if(!_buffer.currentElementEmpty()) {
 
             int scanCode = _buffer.currentAndClear();
-            Console.printHex(scanCode);
-            Console.print(' ');
+            //Console.printHex(scanCode);
+            //Console.print(' ');
             int keyCode;
 
             // Handle make codes
@@ -64,11 +63,17 @@ public class Keyboard {
                 setStatus(keyCode, true);
                 _isExtension0Active = false;
                 _isExtension1Active = false;
+                if(isPrintable(keyCode)) {
+                    Console.print(getChar(keyCode));
+                }
             }
             // Handle break codes
             if(scanCode >= 0x81 && scanCode <= 0xDD) {
                 keyCode = getKeyCode(scanCode);
-                setStatus(keyCode, false);
+
+                // In order to toggle the correct states, we need to fake the correct make
+                // codes by just subtracting 128
+                setStatus(getKeyCode(scanCode - 128), false);
                 _isExtension0Active = false;
                 _isExtension1Active = false;
             }
@@ -79,10 +84,15 @@ public class Keyboard {
             }
 
             // Handle extension 1 codes
-            if(scanCode == 0xE0) {
-                _isExtension1Active = true;
+            if(scanCode == 0xE1) {
+                _isExtension1Active =! _isExtension1Active;
             }
         }
+    }
+
+
+    public static boolean isPrintable(int keyCode) {
+        return keyCode > 31 && keyCode < 160;
     }
 
 
@@ -91,8 +101,116 @@ public class Keyboard {
      * That means keys like CTRL, ALT etc. cannot be fetched.
      * @return The last character received from the keyboard (if printable)
      */
-    public static char getChar() {
-        return _lastChar;
+    public static char getChar(int keyCode) {
+        char character = (char)219;
+        switch (keyCode)
+        {
+            case KeyCode.Space: character = ' '; break;
+            case KeyCode.A: character = 'A'; break;
+            case KeyCode.B: character = 'B'; break;
+            case KeyCode.C: character = 'C'; break;
+            case KeyCode.D: character = 'D'; break;
+            case KeyCode.E: character = 'E'; break;
+            case KeyCode.F: character = 'F'; break;
+            case KeyCode.G: character = 'G'; break;
+            case KeyCode.H: character = 'H'; break;
+            case KeyCode.I: character = 'I'; break;
+            case KeyCode.J: character = 'J'; break;
+            case KeyCode.K: character = 'K'; break;
+            case KeyCode.L: character = 'L'; break;
+            case KeyCode.M: character = 'M'; break;
+            case KeyCode.N: character = 'N'; break;
+            case KeyCode.O: character = 'O'; break;
+            case KeyCode.P: character = 'P'; break;
+            case KeyCode.Q: character = 'Q'; break;
+            case KeyCode.R: character = 'R'; break;
+            case KeyCode.S: character = 'S'; break;
+            case KeyCode.T: character = 'T'; break;
+            case KeyCode.U: character = 'U'; break;
+            case KeyCode.V: character = 'V'; break;
+            case KeyCode.W: character = 'W'; break;
+            case KeyCode.X: character = 'X'; break;
+            case KeyCode.Y: character = 'Y'; break;
+            case KeyCode.Z: character = 'Z'; break;
+            case KeyCode.A + 32: character = 'a'; break;
+            case KeyCode.B + 32: character = 'b'; break;
+            case KeyCode.C + 32: character = 'c'; break;
+            case KeyCode.D + 32: character = 'd'; break;
+            case KeyCode.E + 32: character = 'e'; break;
+            case KeyCode.F + 32: character = 'f'; break;
+            case KeyCode.G + 32: character = 'g'; break;
+            case KeyCode.H + 32: character = 'h'; break;
+            case KeyCode.I + 32: character = 'i'; break;
+            case KeyCode.J + 32: character = 'j'; break;
+            case KeyCode.K + 32: character = 'k'; break;
+            case KeyCode.L + 32: character = 'l'; break;
+            case KeyCode.M + 32: character = 'm'; break;
+            case KeyCode.N + 32: character = 'n'; break;
+            case KeyCode.O + 32: character = 'o'; break;
+            case KeyCode.P + 32: character = 'p'; break;
+            case KeyCode.Q + 32: character = 'q'; break;
+            case KeyCode.R + 32: character = 'r'; break;
+            case KeyCode.S + 32: character = 's'; break;
+            case KeyCode.T + 32: character = 't'; break;
+            case KeyCode.U + 32: character = 'u'; break;
+            case KeyCode.V + 32: character = 'v'; break;
+            case KeyCode.W + 32: character = 'w'; break;
+            case KeyCode.X + 32: character = 'x'; break;
+            case KeyCode.Y + 32: character = 'y'; break;
+            case KeyCode.Z + 32: character = 'z'; break;
+            case KeyCode.d1: case KeyCode.NUM_1: character = '1'; break;
+            case KeyCode.d2: case KeyCode.NUM_2: character = '2'; break;
+            case KeyCode.d3: case KeyCode.NUM_3: character = '3'; break;
+            case KeyCode.d4: case KeyCode.NUM_4: character = '4'; break;
+            case KeyCode.d5: case KeyCode.NUM_5: character = '5'; break;
+            case KeyCode.d6: case KeyCode.NUM_6: character = '6'; break;
+            case KeyCode.d7: case KeyCode.NUM_7: character = '7'; break;
+            case KeyCode.d8: case KeyCode.NUM_8: character = '8'; break;
+            case KeyCode.d9: case KeyCode.NUM_9: character = '9'; break;
+            case KeyCode.d0: case KeyCode.NUM_0: character = '0'; break;
+            case KeyCode.Tilde: character = '~'; break; // Symbols
+            case KeyCode.GraveAccent: character = '`'; break;
+            case KeyCode.ExclamationMark: character = '!'; break;
+            case KeyCode.At: character = '@'; break;
+            case KeyCode.NumberSign: character = '#'; break;
+            case KeyCode.Dollar: character = '$'; break;
+            case KeyCode.Percent: character = '%'; break;
+            case KeyCode.Degree: character = (char)248; break;
+            case KeyCode.Caret: character = '^'; break;
+            case KeyCode.And: character = '&'; break;
+            case KeyCode.Asterisk: case KeyCode.NUM_Asterisk: character = '*'; break;
+            case KeyCode.LeftBracket: character = '('; break;
+            case KeyCode.RightBracket: character = ')'; break;
+            case KeyCode.Hyphen: case KeyCode.NUM_Minus: character = '-'; break;
+            case KeyCode.Underscore: character = '_'; break;
+            case KeyCode.Plus: case KeyCode.NUM_Plus: character = '+'; break;
+            case KeyCode.Equal: character = '='; break;
+            case KeyCode.LeftCurlyBracket: character = '{'; break;
+            case KeyCode.RightCurlyBracket: character = '}'; break;
+            case KeyCode.LeftSquareBracket: character = '['; break;
+            case KeyCode.RightSquareBracket: character = ']'; break;
+            case KeyCode.VerticalBar: character = '|'; break;
+            case KeyCode.Backslash: character = '\\'; break;
+            case KeyCode.Slash: case KeyCode.NUM_Slash: character = '/'; break;
+            case KeyCode.Colon: character = ':'; break;
+            case KeyCode.Semicolon: character = ';'; break;
+            case KeyCode.QuotationMark: character = '"'; break;
+            case KeyCode.Apostrophe: character = '\''; break;
+            case KeyCode.LessThan: character = '<'; break;
+            case KeyCode.GreaterThan: character = '>'; break;
+            case KeyCode.Comma: case KeyCode.NUM_Comma: character = ','; break;
+            case KeyCode.Period: character = '.'; break;
+            case KeyCode.QuestionMark: character = '?'; break;
+            case KeyCode.Ae: character = 'A'; break;
+            case KeyCode.Oe: character = 'O'; break;
+            case KeyCode.Ue: character = 'U'; break;
+            case KeyCode.ae: character = 'a'; break;
+            case KeyCode.oe: character = 'o'; break;
+            case KeyCode.ue: character = 'u'; break;
+            case KeyCode.Enter: character = '\n'; break;
+        }
+        return character;
+
     }
 
 
@@ -134,6 +252,11 @@ public class Keyboard {
     }
 
 
+    /**
+     * Converts a given scan code into a key code.
+     * @param scanCode The scan code received taken from an interrupt.
+     * @return The key code.
+     */
     private static int getKeyCode(int scanCode) {
         int keyCode = 0;
         boolean isUppercase = State.IsShift ^ State.IsCapsLock;
@@ -331,6 +454,161 @@ public class Keyboard {
             case 54:
                 keyCode = KeyCode.RShift;
                 break;
+            case 55:
+                if (isNumLock) keyCode = -1; // No idea what kind of black magic happens here...
+                else keyCode = KeyCode.NUM_Asterisk;
+                break;
+            case 56:
+                keyCode = KeyCode.Alt;
+                if (_isExtension0Active) keyCode = KeyCode.AltGr;
+                break;
+            case 57:
+                keyCode = KeyCode.Space;
+                break;
+            case 58:
+                keyCode = KeyCode.CapsLock;
+                break;
+            case 59:
+                keyCode = KeyCode.F1;
+                break;
+            case 60:
+                keyCode = KeyCode.F2;
+                break;
+            case 61:
+                keyCode = KeyCode.F3;
+                break;
+            case 62:
+                keyCode = KeyCode.F4;
+                break;
+            case 63:
+                keyCode = KeyCode.F5;
+                break;
+            case 64:
+                keyCode = KeyCode.F6;
+                break;
+            case 65:
+                keyCode = KeyCode.F7;
+                break;
+            case 66:
+                keyCode = KeyCode.F8;
+                break;
+            case 67:
+                keyCode = KeyCode.F9;
+                break;
+            case 68:
+                keyCode = KeyCode.F10;
+                break;
+            case 69:
+                keyCode = KeyCode.NumLock;
+                if (_isExtension1Active) keyCode = KeyCode.Pause;
+                break;
+            case 70:
+                keyCode = KeyCode.Roll;
+                break;
+            case 71:
+                if (_isExtension0Active)
+                    keyCode = KeyCode.Pos1;
+                else // Numlock input
+                {
+                    if (isNumLock) keyCode = -1;
+                    else keyCode = KeyCode.NUM_7;
+                }
+                break;
+            case 72:
+                if (_isExtension0Active) keyCode = KeyCode.ArrowUp;
+                else // Numpad input
+                {
+                    if (isNumLock) keyCode = -1;
+                    else keyCode = KeyCode.NUM_8;
+                }
+                break;
+            case 73:
+                if (_isExtension0Active) keyCode = KeyCode.PageUp;
+                else // Numpad input
+                {
+                    if (isNumLock) keyCode = -1;
+                    else keyCode = KeyCode.NUM_9;
+                }
+                break;
+            case 74:
+                if (isNumLock) keyCode = -1;
+                else keyCode = KeyCode.NUM_Minus;
+                break;
+            case 75:
+                if (_isExtension0Active) keyCode = KeyCode.ArrowLeft;
+                else // Numpad input
+                {
+                    if (isNumLock) keyCode = -1;
+                    else keyCode = KeyCode.NUM_4;
+                }
+                break;
+            case 76:
+                if (isNumLock) keyCode = -1;
+                else keyCode = KeyCode.NUM_5;
+                break;
+            case 77:
+                if (_isExtension0Active) keyCode = KeyCode.ArrowRight;
+                else // Numpad input
+                {
+                    if (isNumLock) keyCode = -1;
+                    else keyCode = KeyCode.NUM_6;
+                }
+                break;
+            case 78:
+                if (isNumLock) keyCode = -1;
+                else keyCode = KeyCode.NUM_Plus;
+                break;
+            case 79:
+                if (_isExtension0Active) keyCode = KeyCode.End;
+                else // Numpad input
+                {
+                    if (isNumLock) keyCode = -1;
+                    else keyCode = KeyCode.NUM_1;
+                }
+                break;
+            case 80:
+                if (_isExtension0Active) keyCode = KeyCode.ArrowDown;
+                else // Numpad input
+                {
+                    if (isNumLock) keyCode = -1;
+                    else keyCode = KeyCode.NUM_2;
+                }
+                break;
+            case 81:
+                if (_isExtension0Active) keyCode = KeyCode.PageDown;
+                else // Numpad input
+                {
+                    if (isNumLock) keyCode = -1;
+                    else keyCode = KeyCode.NUM_3;
+                }
+                break;
+            case 82:
+                if (_isExtension0Active) keyCode = KeyCode.Insert;
+                else // Numpad input
+                {
+                    if (isNumLock) keyCode = -1;
+                    else keyCode = KeyCode.NUM_0;
+                }
+                break;
+            case 83:
+                if (_isExtension0Active) keyCode = KeyCode.Delete;
+                else // Numpad input
+                {
+                    if (isNumLock) keyCode = -1;
+                    else keyCode = KeyCode.NUM_Comma;
+                }
+                break;
+            case 86:
+                keyCode = KeyCode.LessThan;
+                if (isUppercase) keyCode = KeyCode.GreaterThan;
+                if (isAltGr) keyCode = KeyCode.VerticalBar;
+                break;
+            case 87:
+                keyCode = KeyCode.F11;
+                break;
+            case 88:
+                keyCode = KeyCode.F12;
+                break;
 
         }
 
@@ -340,7 +618,7 @@ public class Keyboard {
         if(!isUppercase) {
             // General letters
             if(keyCode >= 65 && keyCode <= 90) {
-                keyCode += 33;
+                keyCode += 32;
             }
             // German umlauts
             switch (keyCode) {

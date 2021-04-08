@@ -6,7 +6,7 @@ public class KeyCode {
     public static final int Escape = 0;
     public static final int Command = 1;
     public static final int Backspace = 2;
-    public static final int Enter = 3;
+    public static final int Break = 3;
     public static final int Tab = 4;
     public static final int Shift = 5;
     public static final int RShift = 6;
@@ -101,7 +101,7 @@ public class KeyCode {
     public static final int RightSquareBracket = 93; // ]
     public static final int Caret = 94; // ^
     public static final int Underscore = 95; // _
-    public static final int GraveAccent = 42; // `
+    public static final int GraveAccent = 96; // `
     /**
      * Small letters are purposely left out, these can easily be calculated
      * by applying an offset of +33 to the capital ones.
@@ -118,29 +118,30 @@ public class KeyCode {
     public static final int Euro = 129; // €
     public static final int Section = 130; // §
     public static final int Degree = 131; // °
-    public static final int ae = 131;
-    public static final int oe = 132;
-    public static final int ue = 133;
-    public static final int Ae = 134;
-    public static final int Oe = 135;
-    public static final int Ue = 136;
-    public static final int NUM_Slash = 137;
-    public static final int NUM_Asterisk = 138;
-    public static final int NUM_Minus = 139;
-    public static final int NUM_Plus = 140;
-    public static final int NUM_Enter = 141;
-    public static final int NUM_Comma = 142;
-    public static final int NUM_0 = 143;
-    public static final int NUM_1 = 144;
-    public static final int NUM_2 = 145;
-    public static final int NUM_3 = 146;
-    public static final int NUM_4 = 147;
-    public static final int NUM_5 = 148;
-    public static final int NUM_6 = 149;
-    public static final int NUM_7 = 150;
-    public static final int NUM_8 = 151;
-    public static final int NUM_9 = 152;
-    public static final int SharpS = 153;
+    public static final int ae = 132;
+    public static final int oe = 133;
+    public static final int ue = 134;
+    public static final int Ae = 135;
+    public static final int Oe = 136;
+    public static final int Ue = 137;
+    public static final int NUM_Slash = 138;
+    public static final int NUM_Asterisk = 139;
+    public static final int NUM_Minus = 140;
+    public static final int NUM_Plus = 141;
+    public static final int NUM_Enter = 142;
+    public static final int NUM_Comma = 143;
+    public static final int NUM_0 = 144;
+    public static final int NUM_1 = 145;
+    public static final int NUM_2 = 146;
+    public static final int NUM_3 = 147;
+    public static final int NUM_4 = 148;
+    public static final int NUM_5 = 149;
+    public static final int NUM_6 = 150;
+    public static final int NUM_7 = 151;
+    public static final int NUM_8 = 152;
+    public static final int NUM_9 = 153;
+    public static final int SharpS = 154;
+    public static final int Enter = 155;
 
     // More special characters - Not printable
 
@@ -150,5 +151,4 @@ public class KeyCode {
     public static final int Print = 163;
     public static final int Roll = 164;
     public static final int Pause = 165;
-    public static final int Break = 166;
 }

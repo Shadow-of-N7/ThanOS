@@ -200,6 +200,16 @@ public class Console {
     }
 
 
+    public static void print(boolean b) {
+        if (b) {
+            print("true");
+        }
+        else {
+            print("false");
+        }
+    }
+
+
     /**
      * Prints a given number in hexadecimal notation.
      * @param number The number to print.
