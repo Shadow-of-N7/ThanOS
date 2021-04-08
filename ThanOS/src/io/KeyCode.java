@@ -1,7 +1,7 @@
 package io;
 
 public class KeyCode {
-    
+
     // Special characters - Not printable
     public static final int Escape = 0;
     public static final int Command = 1;
@@ -104,7 +104,7 @@ public class KeyCode {
     public static final int GraveAccent = 42; // `
     /**
      * Small letters are purposely left out, these can easily be calculated
-     * by applying an offset of +33 to the big ones.
+     * by applying an offset of +33 to the capital ones.
      * NEVER DO THIS IN ANY OTHER WAY, YOU WILL WANT TO HURT YOURSELF.
      */
     public static final int LeftCurlyBracket = 123; // {
@@ -116,7 +116,7 @@ public class KeyCode {
 
     public static final int AcuteAccent = 128; // ´
     public static final int Euro = 129; // €
-    public static final int Paragraph = 130; // §
+    public static final int Section = 130; // §
     public static final int Degree = 131; // °
     public static final int ae = 131;
     public static final int oe = 132;
@@ -140,14 +140,15 @@ public class KeyCode {
     public static final int NUM_7 = 150;
     public static final int NUM_8 = 151;
     public static final int NUM_9 = 152;
+    public static final int SharpS = 153;
 
     // More special characters - Not printable
 
-    public static final int PageUp = 19;
-    public static final int PageDown = 20;
-    public static final int CapsLock = 21;
-    public static final int Print = 24;
-    public static final int Roll = 25;
-    public static final int Pause = 26;
-    public static final int Break = 27;
+    public static final int PageUp = 160;
+    public static final int PageDown = 161;
+    public static final int CapsLock = 162;
+    public static final int Print = 163;
+    public static final int Roll = 164;
+    public static final int Pause = 165;
+    public static final int Break = 166;
 }
