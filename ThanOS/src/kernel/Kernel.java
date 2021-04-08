@@ -15,6 +15,10 @@ public class Kernel {
         // Greeting
         Console.clear();
 
+        // Deactivate caret
+        //MAGIC.wIOs8(0x3D4, (byte)0x0A);
+        //MAGIC.wIOs8(0x3D5, (byte)0x20);
+
         //testGraphicsMode();
 
         Console.setColor(ConsoleColor.Purple, ConsoleColor.Black, false, false);

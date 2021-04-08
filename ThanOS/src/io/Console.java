@@ -280,6 +280,7 @@ public class Console {
             _caretY = y;
             _videoMemoryPosition = getMemoryAddressFromCaretPosition();
         }
+        updateCursor();
     }
 
 
@@ -389,6 +390,7 @@ public class Console {
         _videoMemoryPosition = VIDEO_MEMORY_BASE;
         _caretX = 0;
         _caretY = 0;
+        updateCursor();
     }
 
 
@@ -399,6 +401,7 @@ public class Console {
         _caretX = 0;
         ++_caretY;
         _videoMemoryPosition = getMemoryAddressFromCaretPosition();
+        updateCursor();
     }
 
 
@@ -408,6 +411,7 @@ public class Console {
     private static void returnCarriage() {
         _caretX = 0;
         _videoMemoryPosition = getMemoryAddressFromCaretPosition();
+        updateCursor();
     }
 
 
@@ -421,6 +425,7 @@ public class Console {
         }
         _caretX = 0;
         _videoMemoryPosition = getMemoryAddressFromCaretPosition();
+        updateCursor();
     }
 
 
@@ -433,6 +438,7 @@ public class Console {
             _caretX = 0;
             ++_caretY;
         }
+        updateCursor();
     }
 
 
@@ -445,6 +451,21 @@ public class Console {
         // Bit shifting required here as every second memory address marks a color code instead if a position.
         // Not shifting would offset by one byte length, resulting in strange behavior.
         return VIDEO_MEMORY_BASE + (_caretY * (SCREEN_WIDTH << 1)) + (_caretX << 1);
+    }
+
+
+    /**
+     * Updates the blinking caret.
+     */
+    private static void updateCursor()
+    {
+        // See https://wiki.osdev.org/Text_Mode_Cursor
+        int pos = _caretY * SCREEN_WIDTH + _caretX;
+
+        MAGIC.wIOs8(0x3D4, (byte)0x0F);
+        MAGIC.wIOs8(0x3D5, (byte) (pos & 0xFF));
+        MAGIC.wIOs8(0x3D4, (byte)0x0E);
+        MAGIC.wIOs8(0x3D5, (byte) ((pos >> 8) & 0xFF));
     }
 
 
