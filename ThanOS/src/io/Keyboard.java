@@ -7,6 +7,8 @@ public class Keyboard {
     // These are not publicly exposed, as they are of no interest to other parts of the OS.
     private static boolean _isExtension0Active = false;
     private static boolean _isExtension1Active = false;
+    private static int _lastKeyCode = 0;
+    private static boolean _newKeyAvailable = false;
 
     public static KeyboardState State;
 
@@ -20,7 +22,7 @@ public class Keyboard {
     /**
      * Called when a new scan code arrives from an interrupt.
      * Handles caps lock, num lock and scroll lock.
-     * @param scanCode
+     * @param scanCode The scan code to interpret.
      */
     public static void handleScancode(int scanCode) {
         byte configValue = 0;
@@ -47,14 +49,12 @@ public class Keyboard {
 
 
     /**
-     * Periodically called.
+     * Periodically called. Handles conversion of scancodes to keycodes and status management.
      */
     public static void handleKeyBuffer() {
         if(!_buffer.currentElementEmpty()) {
 
             int scanCode = _buffer.currentAndClear();
-            //Console.printHex(scanCode);
-            //Console.print(' ');
             int keyCode;
 
             // Handle make codes
@@ -63,16 +63,13 @@ public class Keyboard {
                 setStatus(keyCode, true);
                 _isExtension0Active = false;
                 _isExtension1Active = false;
-                if(isPrintable(keyCode)) {
-                    Console.print(getChar(keyCode));
-                }
+                _lastKeyCode = keyCode;
+                _newKeyAvailable = true;
             }
             // Handle break codes
             if(scanCode >= 0x81 && scanCode <= 0xDD) {
-                keyCode = getKeyCode(scanCode);
-
                 // In order to toggle the correct states, we need to fake the correct make
-                // codes by just subtracting 128
+                // codes by just subtracting 128.
                 setStatus(getKeyCode(scanCode - 128), false);
                 _isExtension0Active = false;
                 _isExtension1Active = false;
@@ -88,6 +85,20 @@ public class Keyboard {
                 _isExtension1Active =! _isExtension1Active;
             }
         }
+    }
+
+
+    public static boolean isNewKeyAvailable() {
+        return _newKeyAvailable;
+    }
+
+
+    public static int getKeyCode() {
+        if(_newKeyAvailable) {
+            _newKeyAvailable = false;
+            return _lastKeyCode;
+        }
+        return 0;
     }
 
 
@@ -207,7 +218,7 @@ public class Keyboard {
             case KeyCode.ae: character = 'a'; break;
             case KeyCode.oe: character = 'o'; break;
             case KeyCode.ue: character = 'u'; break;
-            case KeyCode.Enter: character = '\n'; break;
+            case KeyCode.Enter: case KeyCode.NUM_Enter: character = '\n'; break;
         }
         return character;
 
@@ -508,24 +519,21 @@ public class Keyboard {
             case 71:
                 if (_isExtension0Active)
                     keyCode = KeyCode.Pos1;
-                else // Numlock input
-                {
+                else {
                     if (isNumLock) keyCode = -1;
                     else keyCode = KeyCode.NUM_7;
                 }
                 break;
             case 72:
                 if (_isExtension0Active) keyCode = KeyCode.ArrowUp;
-                else // Numpad input
-                {
+                else {
                     if (isNumLock) keyCode = -1;
                     else keyCode = KeyCode.NUM_8;
                 }
                 break;
             case 73:
                 if (_isExtension0Active) keyCode = KeyCode.PageUp;
-                else // Numpad input
-                {
+                else {
                     if (isNumLock) keyCode = -1;
                     else keyCode = KeyCode.NUM_9;
                 }
@@ -536,8 +544,7 @@ public class Keyboard {
                 break;
             case 75:
                 if (_isExtension0Active) keyCode = KeyCode.ArrowLeft;
-                else // Numpad input
-                {
+                else {
                     if (isNumLock) keyCode = -1;
                     else keyCode = KeyCode.NUM_4;
                 }
@@ -548,8 +555,7 @@ public class Keyboard {
                 break;
             case 77:
                 if (_isExtension0Active) keyCode = KeyCode.ArrowRight;
-                else // Numpad input
-                {
+                else {
                     if (isNumLock) keyCode = -1;
                     else keyCode = KeyCode.NUM_6;
                 }
@@ -560,40 +566,35 @@ public class Keyboard {
                 break;
             case 79:
                 if (_isExtension0Active) keyCode = KeyCode.End;
-                else // Numpad input
-                {
+                else {
                     if (isNumLock) keyCode = -1;
                     else keyCode = KeyCode.NUM_1;
                 }
                 break;
             case 80:
                 if (_isExtension0Active) keyCode = KeyCode.ArrowDown;
-                else // Numpad input
-                {
+                else {
                     if (isNumLock) keyCode = -1;
                     else keyCode = KeyCode.NUM_2;
                 }
                 break;
             case 81:
                 if (_isExtension0Active) keyCode = KeyCode.PageDown;
-                else // Numpad input
-                {
+                else {
                     if (isNumLock) keyCode = -1;
                     else keyCode = KeyCode.NUM_3;
                 }
                 break;
             case 82:
                 if (_isExtension0Active) keyCode = KeyCode.Insert;
-                else // Numpad input
-                {
+                else {
                     if (isNumLock) keyCode = -1;
                     else keyCode = KeyCode.NUM_0;
                 }
                 break;
             case 83:
                 if (_isExtension0Active) keyCode = KeyCode.Delete;
-                else // Numpad input
-                {
+                else {
                     if (isNumLock) keyCode = -1;
                     else keyCode = KeyCode.NUM_Comma;
                 }

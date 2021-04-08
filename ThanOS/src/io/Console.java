@@ -278,11 +278,20 @@ public class Console {
 
 
     /**
+     * Removes the character at the current caret position.
+     * The caret will not move.
+     */
+    public static void deleteChar() {
+        MAGIC.wMem8(getMemoryAddressFromCaretPosition(), (byte)0);
+    }
+
+
+    /**
      * Set the caret to a new position on the screen.
      * @param x X Position of the cursor.
      * @param y Y Position of the cursor.
      */
-    public static void setCursor(int x, int y)
+    public static void setCaret(int x, int y)
     {
         if(x >= 0 && x < SCREEN_WIDTH && y >= 0 && y < SCREEN_HEIGHT)
         {
@@ -291,6 +300,24 @@ public class Console {
             _videoMemoryPosition = getMemoryAddressFromCaretPosition();
         }
         updateCursor();
+    }
+
+
+    /**
+     * Returns the carets X position.
+     * @return Caret X position.
+     */
+    public static int getCaretX() {
+        return _caretX;
+    }
+
+
+    /**
+     * Returns the carets Y position.
+     * @return Caret Y position.
+     */
+    public static int getCaretY() {
+        return _caretY;
     }
 
 
@@ -332,7 +359,7 @@ public class Console {
         int originalX = _caretX;
         int originalY = _caretY;
         CharStack chars = new CharStack();
-        setCursor(x, y);
+        setCaret(x, y);
         setColor(color, (byte)0, false, false);
 
         if (value == 0) {
@@ -350,7 +377,7 @@ public class Console {
         for(int j = 0; j < charSize; j++) {
             print(chars.pop());
         }
-        setCursor(originalX, originalY);
+        setCaret(originalX, originalY);
         _currentColor = originalColor;
     }
 
@@ -367,9 +394,9 @@ public class Console {
         int originalX = _caretX;
         int originalY = _caretY;
         setColor(color, (byte)0, false, false);
-        setCursor(x, y);
+        setCaret(x, y);
         print(c);
-        setCursor(originalX, originalY);
+        setCaret(originalX, originalY);
         _currentColor = originalColor;
     }
 
@@ -386,9 +413,9 @@ public class Console {
         int originalX = _caretX;
         int originalY = _caretY;
         setColor(color, (byte)0, false, false);
-        setCursor(x, y);
+        setCaret(x, y);
         print(s);
-        setCursor(originalX, originalY);
+        setCaret(originalX, originalY);
         _currentColor = originalColor;
     }
 

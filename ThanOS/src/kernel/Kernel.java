@@ -1,8 +1,8 @@
 package kernel;
 
-import collections.Ringbuffer;
 import io.Console;
 import io.Console.ConsoleColor;
+import io.KeyCode;
 import io.Keyboard;
 import rte.BIOS;
 import rte.DynamicRuntime;
@@ -27,9 +27,45 @@ public class Kernel {
         Console.setColor(ConsoleColor.Gray, ConsoleColor.Black, false, false);
 
         while(true) {
+            // Updates keyboard buffers; keyboards won't work without this.
             Keyboard.handleKeyBuffer();
+
+            handleInput();
         }
     }
+
+
+    public static void handleInput() {
+        if(Keyboard.isNewKeyAvailable()) {
+            int keyCode = Keyboard.getKeyCode();
+
+            // Print char if printable
+            if(Keyboard.isPrintable(keyCode)) {
+                Console.print(Keyboard.getChar(keyCode));
+            }
+
+            // Function keys
+            switch (keyCode) {
+                case KeyCode.Backspace:
+                    if(Console.getCaretX() > 0) {
+                        Console.setCaret(Console.getCaretX() - 1, Console.getCaretY());
+                        Console.deleteChar();
+                    }
+                    break;
+                case KeyCode.ArrowLeft:
+                    if(Console.getCaretX() > 0) {
+                        Console.setCaret(Console.getCaretX() - 1, Console.getCaretY());
+                    }
+                    break;
+                case KeyCode.ArrowRight:
+                    if(Console.getCaretX() < Console.SCREEN_WIDTH) {
+                        Console.setCaret(Console.getCaretX() + 1, Console.getCaretY());
+                    }
+                    break;
+            }
+        }
+    }
+
 
     /**
      * Draws a funny pattern for a few seconds, then returns to text mode.
@@ -52,7 +88,7 @@ public class Kernel {
         BIOS.regs.EAX=0x0003;
         BIOS.rint(0x10);
         Console.clear();
-        Console.setCursor(0, 0);
+        Console.setCaret(0, 0);
     }
 
 
