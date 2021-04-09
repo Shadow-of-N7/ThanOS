@@ -44,14 +44,14 @@ public class Interrupt {
             useInterrupts(true);
         }
         int tableLimit = IDT_ENTRY_COUNT * 8 - 1; // Byte count in table
-        long tmp=(((long)IDT_BASE_ADDRESS) << 16) | (long)tableLimit;
+        long tmp = (((long)IDT_BASE_ADDRESS) << 16) | (long)tableLimit;
         MAGIC.inline(0x0F, 0x01, 0x5D); MAGIC.inlineOffset(1, tmp); // lidt [ebp-0x08/tmp]
     }
 
     public static void loadInterruptDescriptorTableRealMode()
     {
-        int tableLimit = 1024; // Byte count in table
-        long tmp=(long)0 | (long)tableLimit; // 0 is the table base address
+        int tableLimit = 1023; // Byte count in table
+        long tmp = (long)0 | (long)tableLimit; // 0 is the table base address
         MAGIC.inline(0x0F, 0x01, 0x5D); MAGIC.inlineOffset(1, tmp); // lidt [ebp-0x08/tmp]
     }
 

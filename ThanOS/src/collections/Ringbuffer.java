@@ -131,12 +131,4 @@ public class Ringbuffer {
         }
         return targetIndex;
     }
-
-
-    // TODO REMOVE
-    public void printContent() {
-        for(int i = 0; i < _buffer.length; i++) {
-            Console.println(_buffer[i]);
-        }
-    }
 }

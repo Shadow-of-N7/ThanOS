@@ -32,7 +32,21 @@ public class Console {
     }
 
 
+    /**
+     * Prints an integer, terminating with a newline.
+     * @param number The number to print.
+     */
     public static void println(int number) {
+        print(number);
+        println();
+    }
+
+
+    /**
+     * Prints an integer, terminating with a newline.
+     * @param number The number to print.
+     */
+    public static void println(long number) {
         print(number);
         println();
     }

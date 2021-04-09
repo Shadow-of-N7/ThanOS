@@ -23,6 +23,9 @@ public class Kernel {
 
         Console.println("Welcome to ThanOS - The only OS going down south 50% of the time!");
         Console.setColor(ConsoleColor.Gray, ConsoleColor.Black, false, false);
+
+        Memory.getMemoryMap();
+
         Console.print('>');
 
         while(true) {
@@ -93,7 +96,7 @@ public class Kernel {
         }
 
         Timer.waitReal(64);
-        Console.clear();
+        //Console.clear();
         BIOS.regs.EAX=0x0003;
         BIOS.rint(0x10);
         Console.clear();
