@@ -7,7 +7,6 @@ public class Interrupt {
     private final static int MASTER = 0x20, SLAVE = 0xA0;
 
     // Put the IDT directly after the GDT and some parts of the bootloader
-    // This starts at
     private final static int IDT_BASE_ADDRESS = 0x7E00;
     private final static int IDT_ENTRY_COUNT = 48;
     private static boolean _isInitialized = false;
