@@ -1,5 +1,6 @@
 package java.util;
 
+@SJC.IgnoreUnit
 public class Random {
     private long seed;
     private static final long serialVersionUID = 3905348978240129619L;

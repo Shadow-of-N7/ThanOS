@@ -112,6 +112,7 @@ public class Kernel {
         MAGIC.doStaticInit();
         Interrupt.initialize();
         Interrupt.useInterrupts(true);
+
         Keyboard.initialize();
         Thash.intialize();
     }

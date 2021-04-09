@@ -53,6 +53,7 @@ public class Ringbuffer {
      * @param index The position of the desired element.
      * @return The desired element.
      */
+    @SJC.Inline
     public int elementAt(int index) {
         return _buffer[index];
     }
@@ -62,6 +63,7 @@ public class Ringbuffer {
      * Returns the current element without moving the reader reference.
      * @return Current data element.
      */
+    @SJC.Inline
     public int peek() {
         return _buffer[_readerIndex];
     }

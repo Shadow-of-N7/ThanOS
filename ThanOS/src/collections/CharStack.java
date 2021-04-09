@@ -6,12 +6,6 @@ public class CharStack {
     private int _elementCount = 0;
 
 
-    public CharStack()
-    {
-
-    }
-
-
     /**
      * Inserts an element into the stack.
      * @param object The element to place on the stack.
@@ -26,6 +20,7 @@ public class CharStack {
      * Returns the top element of the stack without removing it from there.
      * @return Top element of the stack.
      */
+    @SJC.Inline
     public char peek() {
         return _topElement.data;
     }
@@ -54,6 +49,7 @@ public class CharStack {
      * The current amount of elements on the stack.
      * @return Amount of stack elements.
      */
+    @SJC.Inline
     public int getSize() {
         return _elementCount;
     }

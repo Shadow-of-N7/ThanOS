@@ -85,6 +85,7 @@ public class CharList {
      * Returns the amount of elements currently stored within the list.
      * @return List length.
      */
+    @SJC.Inline
     public int getLength() {
         return _elementCount;
     }

@@ -321,6 +321,7 @@ public class Console {
      * Returns the carets X position.
      * @return Caret X position.
      */
+    @SJC.Inline
     public static int getCaretX() {
         return _caretX;
     }
@@ -330,6 +331,7 @@ public class Console {
      * Returns the carets Y position.
      * @return Caret Y position.
      */
+    @SJC.Inline
     public static int getCaretY() {
         return _caretY;
     }

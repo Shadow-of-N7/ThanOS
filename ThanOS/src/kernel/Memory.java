@@ -4,7 +4,11 @@ import io.Console;
 import rte.BIOS;
 
 public class Memory {
+
     public static void getMemoryMap() {
+
+        Console.println("Displaying memory map:");
+        // New base address: 0x7F80
 
         // http://www.uruk.org/orig-grub/mem64mb.html
         // https://wiki.osdev.org/Detecting_Memory_(x86)#Getting_an_E820_Memory_Map
@@ -23,18 +27,27 @@ public class Memory {
             // DI is the lowest 16 bits of EDI
             // Offset
             BIOS.regs.EDI &= 0xFFFF0000; // Delete the lowest 16 bits
-            BIOS.regs.EDI |= 11; // Set the lowest 16 bits
+            BIOS.regs.EDI |= 0xB; // Set the lowest 16 bits
 
             // Segment
-            BIOS.regs.ES = 0;
-            BIOS.regs.ES |= 0x9FFE;
+            BIOS.regs.ES = 0x0;
+            //BIOS.regs.ES |= 0x9FFE;
+            // BIOS.regs.ES = (short)0x9FFE;
+            //BIOS.regs.ES = (short) 0x9FFE; // WAAAH FUCK THIS DAMN SHIT
+            MAGIC.assign(BIOS.regs.ES, (short)0x9FFE);
+
+            Console.print("Address: ");
+            Console.printHex(BIOS.regs.ES);
+            Console.println();
 
             BIOS.rint(0x15); // Execute extended BIOS functions
 
             int adr = (16 * BIOS.regs.ES) + ((BIOS.regs.EDI << 16) >> 16);
+
             Console.printHex(MAGIC.rMem64(adr));
-            Console.print("Buffer size: ");
-            Console.println(BIOS.regs.ECX);
+            Console.println();
+            //Console.print("Buffer size: ");
+            //Console.println(BIOS.regs.ECX);
             if((BIOS.regs.FLAGS & 1) == 1) {
                 Console.println("ERROR!");
             }
