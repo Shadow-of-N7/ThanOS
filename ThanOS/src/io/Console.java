@@ -420,6 +420,21 @@ public class Console {
     }
 
 
+    public static void DisableCursor() {
+        MAGIC.wIOs8(0x3D4, (byte)0x0A);
+        MAGIC.wIOs8(0x3D5, (byte)0x20);
+    }
+
+
+    public static void EnableCursor() {
+        MAGIC.wIOs8(0x3D4, (byte)0x0A);
+        MAGIC.wIOs8(0x3D5, ((byte) (MAGIC.rIOs8(0x3D5) & 0xC0)));
+
+        MAGIC.wIOs8(0x3D4, (byte)0x0B);
+        MAGIC.wIOs8(0x3D5, (byte) ((MAGIC.rIOs8(0x3D5) & 0xE0) | SCREEN_HEIGHT));
+    }
+
+
     /**
      * Resets the caret to 0,0 position.
      */

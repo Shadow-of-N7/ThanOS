@@ -16,6 +16,19 @@ public class String
 		value = chars;
 	}
 
+
+	public boolean equals(String s) {
+		if(count != s.count) {
+			return false;
+		}
+		for(int i = 0; i < count; i++) {
+			if(value[i] != s.charAt(i)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	@SJC.Inline
 	public int length()
 	{

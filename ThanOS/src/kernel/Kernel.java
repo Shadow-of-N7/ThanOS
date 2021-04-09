@@ -6,8 +6,10 @@ import io.KeyCode;
 import io.Keyboard;
 import rte.BIOS;
 import rte.DynamicRuntime;
+import shell.Thash;
 
 public class Kernel {
+
     public static void main() {
 
         // Initialization
@@ -15,16 +17,13 @@ public class Kernel {
         // Greeting
         Console.clear();
 
-        // Deactivate caret
-        //MAGIC.wIOs8(0x3D4, (byte)0x0A);
-        //MAGIC.wIOs8(0x3D5, (byte)0x20);
-
         //testGraphicsMode();
 
         Console.setColor(ConsoleColor.Purple, ConsoleColor.Black, false, false);
 
         Console.println("Welcome to ThanOS - The only OS going down south 50% of the time!");
         Console.setColor(ConsoleColor.Gray, ConsoleColor.Black, false, false);
+        Console.print('>');
 
         while(true) {
             // Updates keyboard buffers; keyboards won't work without this.
@@ -41,7 +40,11 @@ public class Kernel {
 
             // Print char if printable
             if(Keyboard.isPrintable(keyCode)) {
-                Console.print(Keyboard.getChar(keyCode));
+                char c = Keyboard.getChar(keyCode);
+                Console.print(c);
+                if(keyCode != KeyCode.Enter) {
+                    Thash.takeChar(c);
+                }
             }
 
             // Function keys
@@ -50,17 +53,24 @@ public class Kernel {
                     if(Console.getCaretX() > 0) {
                         Console.setCaret(Console.getCaretX() - 1, Console.getCaretY());
                         Console.deleteChar();
+                        Thash.removeChar();
                     }
                     break;
                 case KeyCode.ArrowLeft:
                     if(Console.getCaretX() > 0) {
                         Console.setCaret(Console.getCaretX() - 1, Console.getCaretY());
+                        Thash.moveLeft();
                     }
                     break;
                 case KeyCode.ArrowRight:
                     if(Console.getCaretX() < Console.SCREEN_WIDTH) {
                         Console.setCaret(Console.getCaretX() + 1, Console.getCaretY());
+                        Thash.moveRight();
                     }
+                    break;
+                case KeyCode.Enter:
+                case KeyCode.NUM_Enter:
+                    Thash.executeCommand();
                     break;
             }
         }
@@ -71,7 +81,6 @@ public class Kernel {
      * Draws a funny pattern for a few seconds, then returns to text mode.
      */
     public static void testGraphicsMode() {
-        assert BIOS.regs != null;
         BIOS.regs.EAX=0x0013;
         BIOS.rint(0x10);
         int screenPixels = 320 * 200;
@@ -101,5 +110,6 @@ public class Kernel {
         Interrupt.initialize();
         Interrupt.useInterrupts(true);
         Keyboard.initialize();
+        Thash.intialize();
     }
 }
