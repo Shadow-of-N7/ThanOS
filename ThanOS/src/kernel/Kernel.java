@@ -25,9 +25,6 @@ public class Kernel {
         Console.println("Welcome to ThanOS - The only OS going down south 50% of the time!");
         Console.setColor(ConsoleColor.Gray, ConsoleColor.Black, false, false);
 
-        //Memory.printMemoryMap();
-        PCI.printScan();
-
         Console.print('>');
 
         while(true) {
