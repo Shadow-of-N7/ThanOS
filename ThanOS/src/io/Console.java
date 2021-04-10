@@ -100,6 +100,10 @@ public class Console {
         if(number < 0) {
             isNegative = true;
         }
+        if(number == 0) {
+            print('0');
+            return;
+        }
         CharStack stack = new CharStack();
         while (number > 0) {
             int digit = (int)(number % 10);

@@ -1,7 +1,7 @@
 package kernel;
 
 import io.Console;
-import io.Keyboard;
+import devices.Keyboard;
 
 public class Interrupt {
     private final static int MASTER = 0x20, SLAVE = 0xA0;

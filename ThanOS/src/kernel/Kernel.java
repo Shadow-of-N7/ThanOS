@@ -1,9 +1,10 @@
 package kernel;
 
+import devices.PCI;
 import io.Console;
 import io.Console.ConsoleColor;
-import io.KeyCode;
-import io.Keyboard;
+import devices.KeyCode;
+import devices.Keyboard;
 import rte.BIOS;
 import rte.DynamicRuntime;
 import shell.Thash;
@@ -25,6 +26,7 @@ public class Kernel {
         Console.setColor(ConsoleColor.Gray, ConsoleColor.Black, false, false);
 
         //Memory.printMemoryMap();
+        PCI.printScan();
 
         Console.print('>');
 

@@ -1,4 +1,4 @@
-package io;
+package devices;
 
 public class KeyCode {
 

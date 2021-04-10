@@ -1,5 +1,6 @@
 package shell;
 
+import devices.PCI;
 import io.Console;
 import kernel.Kernel;
 import kernel.Memory;
@@ -10,6 +11,7 @@ public class CommandProcessor {
     private static final String cls = "cls";
     private static final String clear = "clear";
     private static final String memMap = "memmap";
+    private static final String pciscan = "pciscan";
 
     public String processCommand(String input) {
         boolean recognized = false;
@@ -28,6 +30,11 @@ public class CommandProcessor {
         if(input.equals(memMap))
         {
             Memory.printMemoryMap();
+            recognized = true;
+        }
+        if(input.equals(pciscan))
+        {
+            PCI.printScan();
             recognized = true;
         }
         if(input.equals("help")) {
