@@ -38,7 +38,7 @@ public class CommandProcessor {
             recognized = true;
         }
         if(input.equals("help")) {
-            String helpString = "memmap: print a memory map.\ntestgm: Executes a short graphics mode test.\nclear/cls: Clears the screen.";
+            String helpString = "memmap: print a memory map.\ntestgm: Executes a short graphics mode test.\nclear/cls: Clears the screen.\npciscan: Scans the PCI bus for devices.";
             return helpString;
         }
 
