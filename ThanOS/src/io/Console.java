@@ -490,8 +490,9 @@ public class Console {
     /**
      * Clears the entire line and resets the caret to the first position in the same line.
      */
-    private static void clearLine() {
+    public static void clearLine() {
         _caretX = 0;
+        _videoMemoryPosition = getMemoryAddressFromCaretPosition();
         for ( int i = 0; i < SCREEN_WIDTH - 1; i++) {
             print((byte)0);
         }

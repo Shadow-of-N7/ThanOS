@@ -39,42 +39,7 @@ public class Kernel {
     public static void handleInput() {
         if(Keyboard.isNewKeyAvailable()) {
             int keyCode = Keyboard.getKeyCode();
-
-            // Print char if printable
-            if(Keyboard.isPrintable(keyCode)) {
-                char c = Keyboard.getChar(keyCode);
-                Console.print(c);
-                if(keyCode != KeyCode.Enter) {
-                    Thash.takeChar(c);
-                }
-            }
-
-            // Function keys
-            switch (keyCode) {
-                case KeyCode.Backspace:
-                    if(Console.getCaretX() > 0) {
-                        Console.setCaret(Console.getCaretX() - 1, Console.getCaretY());
-                        Console.deleteChar();
-                        Thash.removeChar();
-                    }
-                    break;
-                case KeyCode.ArrowLeft:
-                    if(Console.getCaretX() > 0) {
-                        Console.setCaret(Console.getCaretX() - 1, Console.getCaretY());
-                        Thash.moveLeft();
-                    }
-                    break;
-                case KeyCode.ArrowRight:
-                    if(Console.getCaretX() < Console.SCREEN_WIDTH) {
-                        Console.setCaret(Console.getCaretX() + 1, Console.getCaretY());
-                        Thash.moveRight();
-                    }
-                    break;
-                case KeyCode.Enter:
-                case KeyCode.NUM_Enter:
-                    Thash.executeCommand();
-                    break;
-            }
+            Thash.takeKeyCode(keyCode);
         }
     }
 

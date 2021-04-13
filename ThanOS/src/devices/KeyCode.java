@@ -104,7 +104,7 @@ public class KeyCode {
     public static final int GraveAccent = 96; // `
     /**
      * Small letters are purposely left out, these can easily be calculated
-     * by applying an offset of +33 to the capital ones.
+     * by applying an offset of +32 to the capital ones.
      * NEVER DO THIS IN ANY OTHER WAY, YOU WILL WANT TO HURT YOURSELF.
      */
     public static final int LeftCurlyBracket = 123; // {
