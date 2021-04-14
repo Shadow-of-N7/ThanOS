@@ -89,25 +89,33 @@ public class Thash {
     }
 
 
+    @SJC.Inline
     public static void takeChar(char c) {
         _commandBuffer[_bufferIndex++] = c;
     }
 
 
+    @SJC.Inline
     public static void removeChar() {
         _commandBuffer[_bufferIndex--] = 0;
     }
 
 
+    @SJC.Inline
     public static void moveLeft() {
         --_bufferIndex;
     }
 
 
+    @SJC.Inline
     public static void moveRight() {
         ++_bufferIndex;
     }
 
+
+    /**
+     * Moves back in the command history.
+     */
     public static void moveUp() {
         if(_commandHistory[_currentRepeatedCommand + 1] != null) {
             _currentRepeatedCommand++;
@@ -125,16 +133,12 @@ public class Thash {
             _isRepeatingMode = true;
             _bufferIndex = _commandHistory[_currentRepeatedCommand].length();
         }
-        /*
-        Console.directPrintInt(_currentRepeatedCommand,
-                10,
-                Console.SCREEN_WIDTH - 20,
-                Console.SCREEN_HEIGHT -1,
-                Console.ConsoleColor.Red);
-         */
     }
 
 
+    /**
+     * Moves forward in the command history.
+     */
     public static void moveDown() {
         if(_currentRepeatedCommand > 0) {
             _currentRepeatedCommand--;

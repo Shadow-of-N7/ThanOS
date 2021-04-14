@@ -41,6 +41,10 @@ public class CommandProcessor {
             String helpString = "memmap: print a memory map.\ntestgm: Executes a short graphics mode test.\nclear/cls: Clears the screen.\npciscan: Scans the PCI bus for devices.";
             return helpString;
         }
+        if(input.equals("shutdown")) {
+            Kernel.shutdownQEmu();
+            return "";
+        }
 
         if(recognized){
             return "";

@@ -80,4 +80,42 @@ public class Kernel {
         Keyboard.initialize();
         Thash.intialize();
     }
+
+
+    /**
+     * Only woks outside QEmu.
+     */
+    public static void shutdown() {
+        int biosMemory = 0x60000;
+        int addr = biosMemory + 8;
+        MAGIC.wMem8(addr++, (byte) 0x66);
+        MAGIC.wMem8(addr++, (byte) 0xb8);
+        MAGIC.wMem8(addr++, (byte) 0x00);
+        MAGIC.wMem8(addr++, (byte) 0x10);// mov ax,0x1000
+        MAGIC.wMem8(addr++, (byte) 0x66);
+        MAGIC.wMem8(addr++, (byte) 0x8c);
+        MAGIC.wMem8(addr++, (byte) 0xd0); // mov ax,ss
+        MAGIC.wMem8(addr++, (byte) 0x66);
+        MAGIC.wMem8(addr++, (byte) 0xbc);
+        MAGIC.wMem8(addr++, (byte) 0x00);
+        MAGIC.wMem8(addr++, (byte) 0xf0); // mov sp,0xf000
+        MAGIC.wMem8(addr++, (byte) 0x66);
+        MAGIC.wMem8(addr++, (byte) 0xb8);
+        MAGIC.wMem8(addr++, (byte) 0x07);
+        MAGIC.wMem8(addr++, (byte) 0x53); // mov    ax,0x5307
+        MAGIC.wMem8(addr++, (byte) 0x66);
+        MAGIC.wMem8(addr++, (byte) 0xbb);
+        MAGIC.wMem8(addr++, (byte) 0x01);
+        MAGIC.wMem8(addr++, (byte) 0x00); // mov    bx,0x1
+        MAGIC.wMem8(addr++, (byte) 0x66);
+        MAGIC.wMem8(addr++, (byte) 0xb9);
+        MAGIC.wMem8(addr++, (byte) 0x03);
+        MAGIC.wMem8(addr++, (byte) 0x00); // mov    cx,0x3
+        BIOS.rint(0x15);;
+    }
+
+
+    public static void shutdownQEmu() {
+        MAGIC.wIOs32(0x604, 0x2000);
+    }
 }
