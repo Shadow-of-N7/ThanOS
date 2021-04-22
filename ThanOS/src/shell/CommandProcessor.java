@@ -3,7 +3,7 @@ package shell;
 import devices.PCI;
 import io.Console;
 import kernel.Kernel;
-import kernel.Memory;
+import kernel.memory.Memory;
 
 public class CommandProcessor {
     private static final String testGraphics = "testgm";

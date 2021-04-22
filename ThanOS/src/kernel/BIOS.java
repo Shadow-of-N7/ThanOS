@@ -1,4 +1,4 @@
-package rte;
+package kernel;
 
 import kernel.Interrupt;
 

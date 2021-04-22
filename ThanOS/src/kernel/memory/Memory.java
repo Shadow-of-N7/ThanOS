@@ -1,20 +1,19 @@
-package kernel;
+package kernel.memory;
 
 import io.Console;
-import rte.BIOS;
+import kernel.BIOS;
 
 public class Memory {
 
-    public static void printMemoryMap() {
-
+    public static MemoryMap getMemoryMap() {
         Console.println("Displaying memory map:");
         // New base address: 0x7F80
 
         // http://www.uruk.org/orig-grub/mem64mb.html
         // https://wiki.osdev.org/Detecting_Memory_(x86)#Getting_an_E820_Memory_Map
 
-        int bufferBaseAddress = 0x7F80; // Highest free stack memory area - 20 bytes
-        int counter = 0;
+        //int bufferBaseAddress = 0x7F80; // Highest free stack memory area - 20 bytes
+        MemoryMap map = new MemoryMap();
 
         BIOS.regs.EBX = 0x0; // Continuation value (Start 0)
 
@@ -41,10 +40,22 @@ public class Memory {
             long blockLength = MAGIC.rMem64(baseAddress + 8);
             // Whether the block is reserved or free
             int blockType = MAGIC.rMem32(baseAddress + 16);
+            map.memoryBlocks.add(new MemoryBlock(blockBaseAddress, blockLength, blockType));
+        }
+        while (BIOS.regs.EBX != 0);
+        return map;
+    }
+
+    public static void printMemoryMap() {
+        MemoryMap map = getMemoryMap();
+        for(int i = 0; i < map.memoryBlocks.getLength(); i++) {
+            long blockBaseAddress = map.memoryBlocks.elementAt(i).baseAddress;
+            long blockLength = map.memoryBlocks.elementAt(i).blockLength;
+            int blockType = map.memoryBlocks.elementAt(i).blockType;
 
             Console.println();
             Console.print("Block ");
-            Console.print(counter);
+            Console.print(i);
             Console.println(":");
 
             Console.printHex(blockBaseAddress);
@@ -73,8 +84,6 @@ public class Memory {
             Console.setColor(Console.ConsoleColor.Gray, Console.ConsoleColor.Black, false, false);
 
             Console.println();
-            ++counter;
         }
-        while (BIOS.regs.EBX != 0);
     }
 }

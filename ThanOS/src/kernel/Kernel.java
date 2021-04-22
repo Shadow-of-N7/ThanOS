@@ -1,11 +1,8 @@
 package kernel;
 
-import devices.PCI;
 import io.Console;
 import io.Console.ConsoleColor;
-import devices.KeyCode;
 import devices.Keyboard;
-import rte.BIOS;
 import rte.DynamicRuntime;
 import shell.Thash;
 

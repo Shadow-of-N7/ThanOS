@@ -5,9 +5,9 @@ import collections.CharStack;
 
 public class Console {
     // Set some fix values
-    private static final int VIDEO_MEMORY_BASE = 0xB8000;
     public static final int SCREEN_WIDTH = 80;
     public static final int SCREEN_HEIGHT = 25;
+    private static final int VIDEO_MEMORY_BASE = 0xB8000;
     private static final int CHARACTER_AMOUNT = SCREEN_HEIGHT * SCREEN_WIDTH;
     private static final int VIDEO_MEMORY_END = VIDEO_MEMORY_BASE + (CHARACTER_AMOUNT << 1);
 
@@ -18,6 +18,13 @@ public class Console {
     private static final char[] hexChars = {
         '0', '1', '2', '3', '4', '5', '6', '7', '8' ,'9', 'A', 'B', 'C', 'D', 'E', 'F'
     };
+
+    // Buffer for storing everything on the screen as well as the console history (for scrolling)
+    private byte[] _consoleBuffer = new byte[(SCREEN_WIDTH << 1) * (SCREEN_HEIGHT * 5)];
+    private int _bufferPosition = 0;
+    // When the window is at the end, where to start
+    private int _defaultBufferStart = _consoleBuffer.length - ((SCREEN_WIDTH << 1) * SCREEN_HEIGHT);
+    private int _bufferStart = _defaultBufferStart;
 
 
     /**
@@ -259,8 +266,7 @@ public class Console {
      * Prints a given number in hexadecimal notation.
      * @param number The number to print.
      */
-    public static void printHex(long number)
-    {
+    public static void printHex(long number) {
         CharStack chars = new CharStack();
 
         if (number == 0) {
@@ -284,8 +290,7 @@ public class Console {
     /**
      * Clears the entire screen and resets the caret to 0,0 position.
      */
-    public static void clear()
-    {
+    public static void clear() {
         resetCaret();
         for (int i = 0; i < CHARACTER_AMOUNT << 1; i++)
         {
@@ -309,8 +314,7 @@ public class Console {
      * @param x X Position of the cursor.
      * @param y Y Position of the cursor.
      */
-    public static void setCaret(int x, int y)
-    {
+    public static void setCaret(int x, int y) {
         if(x >= 0 && x < SCREEN_WIDTH && y >= 0 && y < SCREEN_HEIGHT)
         {
             _caretX = x;
@@ -348,8 +352,7 @@ public class Console {
      * @param bright Whether the foreground color shall be of a bright tone.
      * @param blink Whether the background color shall be of a bright tone.
      */
-    public static void setColor(byte foregroundColor, byte backgroundColor, boolean bright, boolean blink)
-    {
+    public static void setColor(byte foregroundColor, byte backgroundColor, boolean bright, boolean blink) {
         // Set foregroundColors first; bits 0-2
         byte color = foregroundColor;
         // Bitshift the background color bits to the correct position; bits 4-6
@@ -519,8 +522,7 @@ public class Console {
      * Get the memory address of the current caret position.
      * @return Memory address.
      */
-    private static int getMemoryAddressFromCaretPosition()
-    {
+    private static int getMemoryAddressFromCaretPosition() {
         // Bit shifting required here as every second memory address marks a color code instead if a position.
         // Not shifting would offset by one byte length, resulting in strange behavior.
         return VIDEO_MEMORY_BASE + (_caretY * (SCREEN_WIDTH << 1)) + (_caretX << 1);
@@ -530,8 +532,7 @@ public class Console {
     /**
      * Updates the blinking caret.
      */
-    private static void updateCursor()
-    {
+    private static void updateCursor() {
         // See https://wiki.osdev.org/Text_Mode_Cursor
         int pos = _caretY * SCREEN_WIDTH + _caretX;
 

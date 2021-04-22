@@ -9,7 +9,7 @@ while getopts ":s" option; do
 done
 echo $start
 
-./compile rte/rte/*.java rte/java/**/*.java ThanOS/src/**/*.java -n -o boot
+./compile rte/rte/*.java rte/java/**/*.java ThanOS/src/**/*.java ThanOS/src/kernel/memory/*.java -n -o boot
 
 if [ $? -ne 0 ]
   then
