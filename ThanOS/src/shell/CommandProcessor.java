@@ -3,7 +3,7 @@ package shell;
 import devices.PCI;
 import io.Console;
 import kernel.Kernel;
-import kernel.memory.Memory;
+import kernel.memory.MemoryMap;
 
 public class CommandProcessor {
     private static final String testGraphics = "testgm";
@@ -29,7 +29,7 @@ public class CommandProcessor {
         }
         if(input.equals(memMap))
         {
-            Memory.printMemoryMap();
+            MemoryMap.printMemoryMap();
             recognized = true;
         }
         if(input.equals(pciscan))

@@ -1,6 +1,10 @@
 package rte;
 
 import io.Console;
+import rte.SArray;
+import rte.SClassDesc;
+import rte.SIntfDesc;
+import rte.SIntfMap;
 
 import java.lang.Object;
 
