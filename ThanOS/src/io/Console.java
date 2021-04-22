@@ -213,6 +213,16 @@ public class Console {
             case '\r':
                 returnCarriage();
                 return;
+            case '\t':
+                int xpos = getCaretX();
+                while(xpos % 4 != 0) {
+                    xpos++;
+                }
+                if(xpos > SCREEN_WIDTH) {
+                    setCaret(xpos - SCREEN_WIDTH, _caretY + 1);
+                }
+                setCaret(xpos, _caretY);
+                return;
         }
         proceedCaret();
         if(_videoMemoryPosition >= VIDEO_MEMORY_END) {
