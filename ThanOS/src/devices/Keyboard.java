@@ -641,7 +641,7 @@ public class Keyboard {
     /**
      * Exposes publicly relevant keyboard states.
      */
-    private static class KeyboardState {
+    public static class KeyboardState {
         public boolean IsCapsLock = false;
         public boolean IsNumLock = true;
         public boolean IsScrollLock = false;

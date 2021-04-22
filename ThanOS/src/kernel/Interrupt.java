@@ -225,7 +225,7 @@ public class Interrupt {
 
     @SJC.Interrupt
     public static void handleBreakpoint() {
-        Console.println("Breakpoint reached.");
+        BlueScreen.raise("breakpoint");
     }
 
     @SJC.Interrupt

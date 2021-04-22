@@ -1,5 +1,6 @@
 package kernel;
 
+import devices.KeyCode;
 import io.Console;
 import io.Console.ConsoleColor;
 import devices.Keyboard;
@@ -36,7 +37,17 @@ public class Kernel {
     public static void handleInput() {
         if(Keyboard.isNewKeyAvailable()) {
             int keyCode = Keyboard.getKeyCode();
-            Thash.takeKeyCode(keyCode);
+            switch (keyCode) {
+                case KeyCode.Escape:
+                    if(Keyboard.State.IsCtrl && Keyboard.State.IsShift) {
+                        MAGIC.inline(0xCC);
+                    }
+
+                default:
+                    Thash.takeKeyCode(keyCode);
+                    break;
+            }
+
         }
     }
 

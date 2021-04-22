@@ -301,6 +301,26 @@ public class Console {
 
 
     /**
+     * Clears the entire screen and resets the caret to 0,0 position.
+     * Also sets the current text color. Use it with the ConsoleColor class to get the values.
+     * @param foregroundColor The foreground color.
+     * @param backgroundColor The background color.
+     * @param bright Whether the foreground color shall be of a bright tone.
+     * @param blink Whether the background color shall be of a bright tone.
+     */
+    public static void clear(byte foregroundColor, byte backgroundColor, boolean bright, boolean blink) {
+        resetCaret();
+        setColor(foregroundColor, backgroundColor, bright, blink);
+        for (int i = 0; i < CHARACTER_AMOUNT; i++)
+        {
+            MAGIC.wMem8(_videoMemoryPosition++, (byte)0);
+            MAGIC.wMem8(_videoMemoryPosition++, _currentColor);
+        }
+        resetCaret();
+    }
+
+
+    /**
      * Removes the character at the current caret position.
      * The caret will not move.
      */
