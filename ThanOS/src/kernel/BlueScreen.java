@@ -26,6 +26,9 @@ public class BlueScreen {
         Console.print("Caught ");
         Console.print(source);
         Console.println(" exception.");
+        for(int i = 0; i < Console.SCREEN_WIDTH; i++) {
+            Console.print((byte)205);
+        }
         Console.println("Call stack:");
 
         // Gather register data
@@ -51,66 +54,51 @@ public class BlueScreen {
         int centerX = Console.SCREEN_WIDTH >> 1;
 
         Console.setCaret(centerX, baseline);
-        Console.print("| EAX:\t ");
-        Console.printHex(EAX);
-        Console.setCaret(centerX, baseline + 1);
-        Console.print("| EBX:\t ");
-        Console.printHex(EBX);
-        Console.setCaret(centerX, baseline + 2);
-        Console.print("| ECX:\t ");
-        Console.printHex(ECX);
-        Console.setCaret(centerX, baseline + 3);
-        Console.print("| EDX:\t ");
-        Console.printHex(EDX);
-        Console.setCaret(centerX, baseline + 4);
-        Console.print("| ESI:\t ");
-        Console.printHex(ESI);
-        Console.setCaret(centerX, baseline + 5);
-        Console.print("| EDI:\t ");
-        Console.printHex(EDI);
-        Console.setCaret(centerX, baseline + 6);
-        Console.print("| EBP:\t ");
-        Console.printHex(EBP);
-        Console.setCaret(centerX, baseline + 7);
-        Console.print("| ESP:\t ");
-        Console.printHex(ESP);
-        Console.setCaret(centerX, baseline + 8);
-        Console.print("| DS:\t ");
-        Console.printHex(DS);
-        Console.setCaret(centerX, baseline + 9);
-        Console.print("| ES:\t ");
-        Console.printHex(ES);
-        Console.setCaret(centerX, baseline + 10);
-        Console.print("| FS:\t ");
-        Console.printHex(FS);
-        Console.setCaret(centerX, baseline + 11);
-        Console.print("| FLAGS: ");
-        Console.printHex(FLAGS);
+        Console.print("  Register contents:");
+
+        printRegisterEntry("\tEAX:\t", EAX, centerX, baseline + 1);
+        printRegisterEntry("\tEBX:\t", EBX, centerX, baseline + 2);
+        printRegisterEntry("\tECX:\t", ECX, centerX, baseline + 3);
+        printRegisterEntry("\tEDX:\t", EDX, centerX, baseline + 4);
+        printRegisterEntry("\tESI:\t", ESI, centerX, baseline + 5);
+        printRegisterEntry("\tEDI:\t", EDI, centerX, baseline + 6);
+        printRegisterEntry("\tEBP:\t", EBP, centerX, baseline + 7);
+        printRegisterEntry("\tESP:\t", ESP, centerX, baseline + 8);
+        printRegisterEntry("\tDS:\t\t", DS, centerX, baseline + 9);
+        printRegisterEntry("\tES:\t\t", ES, centerX, baseline + 10);
+        printRegisterEntry("\tFS:\t\t", FS, centerX, baseline + 11);
+        printRegisterEntry("\tFLAGS:\t", FLAGS, centerX, baseline + 12);
 
         // Print some lines for more visual beauty
         int verticalLine = baseline;
         Console.setCaret(centerX, baseline);
         while (Console.getCaretY() < Console.SCREEN_HEIGHT - 1) {
             Console.setCaret(centerX, verticalLine++);
-            Console.print('|');
+            Console.print((byte)186);
         }
         int horizontalLine = centerX;
-        Console.setCaret(horizontalLine, baseline - 1);
+        Console.setCaret(horizontalLine++, baseline - 1);
+        Console.print((byte)203);
         while (Console.getCaretX() < Console.SCREEN_WIDTH - 1) {
             Console.setCaret(horizontalLine++, baseline - 1);
-            Console.print('-');
+            Console.print((byte)205);
         }
-        Console.print('-');
+        Console.print((byte)205);
         Console.DisableCursor();
 
         while (true) {}
     }
 
-    private static void printCallstackEntry(int EIP)
+    private static void printCallstackEntry(int eip)
     {
-        Console.print("| EIP: ");
-        Console.printHex(EIP);
+        Console.print("\tEIP: ");
+        Console.printHex(eip);
         Console.println();
     }
 
+    private static void printRegisterEntry(String regName, int content, int x, int y) {
+        Console.setCaret(x, y);
+        Console.print(regName);
+        Console.printHex(content);
+    }
 }

@@ -215,9 +215,9 @@ public class Console {
                 return;
             case '\t':
                 int xpos = getCaretX();
-                while(xpos % 4 != 0) {
+                do {
                     xpos++;
-                }
+                } while(xpos % 4 != 0);
                 if(xpos > SCREEN_WIDTH) {
                     setCaret(xpos - SCREEN_WIDTH, _caretY + 1);
                 }
