@@ -35,7 +35,7 @@ public class DynamicRuntime
 
 		// Align the scalars
 		scalarSize = (scalarSize + 3) &~ 3;
-		
+
 		// Starting address of the new object
 		startAddress = Memory.getFreeAddress(relocSize + scalarSize);
 

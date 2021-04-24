@@ -5,7 +5,6 @@ import io.Console;
 import io.Console.ConsoleColor;
 import devices.Keyboard;
 import kernel.memory.Memory;
-import rte.DynamicRuntime;
 import shell.Thash;
 
 public class Kernel {
@@ -84,7 +83,7 @@ public class Kernel {
         MAGIC.doStaticInit();
         Console.clear();
         Memory.initialize();
-        Memory.setEmptyObjects();
+        Memory.initializeEmptyObjects();
         Interrupt.initialize();
         Interrupt.useInterrupts(true);
 

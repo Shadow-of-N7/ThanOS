@@ -9,6 +9,8 @@ public class Memory {
     private static ObjectList _imageObjects;
     private static ObjectList _emptyObjects;
     private static ObjectList _heapObjects;
+
+    // Stores the last object address for next chaining
     private static int _lastObjectAddress = -1;
 
     public static void initialize() {
@@ -19,7 +21,10 @@ public class Memory {
     }
 
 
-    public static void setEmptyObjects() {
+    /**
+     * Creates initial EmptyObjects in free memory areas above the base image.
+     */
+    public static void initializeEmptyObjects() {
         MemoryBlockList map = MemoryMap.getMemoryMap();
         int imageSize = MAGIC.rMem32(MAGIC.imageBase + 4);
 
@@ -67,15 +72,28 @@ public class Memory {
     }
 
 
+    /**
+     * Updates the last object address.
+     * @param address
+     */
     public static void updateLastObjectAddress(int address) {
         _lastObjectAddress = address;
     }
 
+    /**
+     * Returns the object of the last created object.
+     * @return Object address of the last created object.
+     */
     public static int getLastObjectAddress() {
         return _lastObjectAddress;
     }
 
 
+    /**
+     * Adds a new EmptyObject to the list.
+     * @param startAddress Start address of the new EmptyObect.
+     * @param size Size of the new EmptyObject.
+     */
     private static void addEmptyObject(int startAddress, int size) {
         Object foo = DynamicRuntime.newEmptyObject(startAddress, size);
         _emptyObjects.add(foo);
