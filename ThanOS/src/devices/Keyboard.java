@@ -1,6 +1,7 @@
 package devices;
 
 import collections.Ringbuffer;
+import io.Console;
 
 public class Keyboard {
     private static Ringbuffer _buffer;

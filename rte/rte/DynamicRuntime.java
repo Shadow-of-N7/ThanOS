@@ -12,10 +12,17 @@ import java.lang.Object;
 
 public class DynamicRuntime
 {
-	/*
 	// Was 0
 	private static int _nextFreeAddress = 0;
-	private static int _previousAddress = 1;
+	private static int _previousObjectAddress = 1;
+
+	/**
+	 * Returns the next free address for basic mode.
+	 * @return
+	 */
+	public int getBasicNextAddress() {
+		return _nextFreeAddress;
+	}
 
 	public static void initializeFreeAddresses() {
 		if(_nextFreeAddress == 0) {
@@ -24,44 +31,81 @@ public class DynamicRuntime
 			Console.println();
 		}
 	}
-	 */
 
 	public static Object newInstance(int scalarSize, int relocEntries, SClassDesc type)
 	{
-		int startAddress, relocSize;
+		if(Memory.isAdvancedMode) {
 
-		// 4 bytes per reloc required
-		relocSize = relocEntries << 2;
+			int startAddress, relocSize;
 
-		// Align the scalars
-		scalarSize = (scalarSize + 3) &~ 3;
+			// 4 bytes per reloc required
+			relocSize = relocEntries << 2;
 
-		// Starting address of the new object
-		startAddress = Memory.getFreeAddress(relocSize + scalarSize);
+			// Align the scalars
+			scalarSize = (scalarSize + 3) & ~3;
 
-		// Place the new object behind the previous one
-		int totalSize = relocSize + scalarSize;
+			// Starting address of the new object
+			startAddress = Memory.getFreeAddress(relocSize + scalarSize);
 
-		// Zero-initialize the allocated memory
-		for (int i = startAddress; i < totalSize; i += 4) {
-			MAGIC.wMem32(i, 0);
+			// Place the new object behind the previous one
+			int totalSize = relocSize + scalarSize;
+
+			// Zero-initialize the allocated memory
+			for (int i = startAddress; i < totalSize; i += 4) {
+				MAGIC.wMem32(i, 0);
+			}
+
+			int objectAddress = startAddress + relocSize;
+
+			Object object = MAGIC.cast2Obj(objectAddress);
+			MAGIC.assign(object._r_scalarSize, scalarSize);
+			MAGIC.assign(object._r_relocEntries, relocEntries);
+			MAGIC.assign(object._r_type, type);
+
+			// Update the previous object
+			if (Memory.getLastObjectAddress() != -1) {
+				Object lastObject = MAGIC.cast2Obj(Memory.getLastObjectAddress());
+				MAGIC.assign(lastObject._r_next, object);
+			}
+			Memory.updateLastObjectAddress(objectAddress);
+			return object;
 		}
+		else {
+			int startAddress, relocs;
 
-		int objectAddress = startAddress + relocSize;
+			// 4 bytes per reloc required
+			relocs = relocEntries << 2;
 
-		Object object = MAGIC.cast2Obj(objectAddress);
-		MAGIC.assign(object._r_scalarSize, scalarSize);
-		MAGIC.assign(object._r_relocEntries, relocEntries);
-		MAGIC.assign(object._r_type, type);
+			// Align the scalars
+			scalarSize = (scalarSize + 3) &~ 3;
 
-		// Update the previous object
-		if (Memory.getLastObjectAddress() != -1)
-		{
-			Object lastObject = MAGIC.cast2Obj(Memory.getLastObjectAddress());
-			MAGIC.assign(lastObject._r_next, object);
+			// Starting address of the new object
+			startAddress = _nextFreeAddress;
+
+			// Place the new object behind the previous one
+			_nextFreeAddress += relocs + scalarSize;
+
+			// Zero-initialize the allocated memory
+			for (int i = startAddress; i < _nextFreeAddress; i += 4) {
+				MAGIC.wMem32(i, 0);
+			}
+
+			int objectAddress = startAddress + relocs;
+
+			Object object = MAGIC.cast2Obj(objectAddress);
+			MAGIC.assign(object._r_scalarSize, scalarSize);
+			MAGIC.assign(object._r_relocEntries, relocEntries);
+			MAGIC.assign(object._r_type, type);
+
+			// Update the previous object
+			if (_previousObjectAddress != -1)
+			{
+				Object lastObject = MAGIC.cast2Obj(_previousObjectAddress);
+				MAGIC.assign(lastObject._r_next, object);
+			}
+			_previousObjectAddress = objectAddress;
+			return object;
 		}
-		Memory.updateLastObjectAddress(objectAddress);
-		return object;
 	}
 
 	/*

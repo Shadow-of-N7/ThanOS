@@ -83,7 +83,6 @@ public class Kernel {
         MAGIC.doStaticInit();
         Console.clear();
         Memory.initialize();
-        Memory.initializeEmptyObjects();
         Interrupt.initialize();
         Interrupt.useInterrupts(true);
 

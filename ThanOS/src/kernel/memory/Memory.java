@@ -9,15 +9,23 @@ public class Memory {
     private static ObjectList _imageObjects;
     private static ObjectList _emptyObjects;
     private static ObjectList _heapObjects;
+    private static MemoryBlockList map;
 
     // Stores the last object address for next chaining
     private static int _lastObjectAddress = -1;
 
+    public static boolean isAdvancedMode = false;
+
     public static void initialize() {
         // Create Object List
+        DynamicRuntime.initializeFreeAddresses();
         _imageObjects = new ObjectList();
         _emptyObjects = new ObjectList();
         _heapObjects = new ObjectList();
+        map = MemoryMap.getMemoryMap();
+
+        initializeEmptyObjects();
+        isAdvancedMode = true;
     }
 
 
@@ -25,17 +33,19 @@ public class Memory {
      * Creates initial EmptyObjects in free memory areas above the base image.
      */
     public static void initializeEmptyObjects() {
-        MemoryBlockList map = MemoryMap.getMemoryMap();
+
         int imageSize = MAGIC.rMem32(MAGIC.imageBase + 4);
 
         for(int i = 0; i < map.getLength(); i++) {
             MemoryBlock block = map.elementAt(i);
             if(block.blockType == MemoryBlock.BlockType.Free
                     && block.baseAddress + imageSize >= (MAGIC.imageBase + imageSize)) {
+
                 addEmptyObject((int)block.baseAddress, (int)block.blockLength);
                 Console.println();
                 Console.print("Created empty object with size: ");
-                Console.println(_emptyObjects.elementAt(0)._r_relocEntries + _emptyObjects.elementAt(0)._r_scalarSize);
+                Console.println((_emptyObjects.elementAt(0)._r_relocEntries << 2) + _emptyObjects.elementAt(0)._r_scalarSize);
+                return;
             }
         }
     }
@@ -48,9 +58,9 @@ public class Memory {
      */
     public static int getFreeAddress(int size) {
         // Loop through the empty objects and find one big enough for the requested size.
-        for(int i = _emptyObjects.getLength(); i > 0; i--) {
-            Object emptyObject = _emptyObjects.elementAt(i);
-            int emptyObjectSize = emptyObject._r_scalarSize +_emptyObjects._r_scalarSize;
+        for(int i = _emptyObjects.getLength() - 1; i > 0; i--) {
+            Object emptyObject = _emptyObjects.elementAt(i); // THIS IS IT
+            int emptyObjectSize = emptyObject._r_scalarSize + (emptyObject._r_relocEntries << 2);
             if(emptyObjectSize >= size) {
                 shrinkEmptyObject(emptyObject, size);
                 return _emptyObjects.elementAt(i)._r_scalarSize - size;
