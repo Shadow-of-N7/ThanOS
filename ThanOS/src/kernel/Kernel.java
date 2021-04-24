@@ -4,6 +4,7 @@ import devices.KeyCode;
 import io.Console;
 import io.Console.ConsoleColor;
 import devices.Keyboard;
+import kernel.memory.Memory;
 import rte.DynamicRuntime;
 import shell.Thash;
 
@@ -14,7 +15,7 @@ public class Kernel {
         // Initialization
         Initialize();
         // Greeting
-        Console.clear();
+        //Console.clear();
 
         //testGraphicsMode();
 
@@ -80,8 +81,10 @@ public class Kernel {
      * Initializes all required system parameters.
      */
     private static void Initialize() {
-        DynamicRuntime.initializeFreeAddresses();
         MAGIC.doStaticInit();
+        Console.clear();
+        Memory.initialize();
+        Memory.setEmptyObjects();
         Interrupt.initialize();
         Interrupt.useInterrupts(true);
 

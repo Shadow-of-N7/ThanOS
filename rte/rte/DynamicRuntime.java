@@ -1,18 +1,21 @@
 package rte;
 
 import io.Console;
+import kernel.memory.Memory;
 import rte.SArray;
 import rte.SClassDesc;
 import rte.SIntfDesc;
 import rte.SIntfMap;
+import kernel.memory.EmptyObject;
 
 import java.lang.Object;
 
 public class DynamicRuntime
 {
+	/*
 	// Was 0
 	private static int _nextFreeAddress = 0;
-	private static int _previousObjectAddress = -1;
+	private static int _previousAddress = 1;
 
 	public static void initializeFreeAddresses() {
 		if(_nextFreeAddress == 0) {
@@ -21,9 +24,47 @@ public class DynamicRuntime
 			Console.println();
 		}
 	}
+	 */
 
+	public static Object newInstance(int scalarSize, int relocEntries, SClassDesc type)
+	{
+		int startAddress, relocSize;
 
+		// 4 bytes per reloc required
+		relocSize = relocEntries << 2;
 
+		// Align the scalars
+		scalarSize = (scalarSize + 3) &~ 3;
+		
+		// Starting address of the new object
+		startAddress = Memory.getFreeAddress(relocSize + scalarSize);
+
+		// Place the new object behind the previous one
+		int totalSize = relocSize + scalarSize;
+
+		// Zero-initialize the allocated memory
+		for (int i = startAddress; i < totalSize; i += 4) {
+			MAGIC.wMem32(i, 0);
+		}
+
+		int objectAddress = startAddress + relocSize;
+
+		Object object = MAGIC.cast2Obj(objectAddress);
+		MAGIC.assign(object._r_scalarSize, scalarSize);
+		MAGIC.assign(object._r_relocEntries, relocEntries);
+		MAGIC.assign(object._r_type, type);
+
+		// Update the previous object
+		if (Memory.getLastObjectAddress() != -1)
+		{
+			Object lastObject = MAGIC.cast2Obj(Memory.getLastObjectAddress());
+			MAGIC.assign(lastObject._r_next, object);
+		}
+		Memory.updateLastObjectAddress(objectAddress);
+		return object;
+	}
+
+	/*
 	public static Object newInstance(int scalarSize, int relocEntries, SClassDesc type)
 	{
 		int startAddress, relocs;
@@ -46,13 +87,11 @@ public class DynamicRuntime
 		}
 
 		int objectAddress = startAddress + relocs;
-		// Set the object - If IntelliJ shows a type error here, ignore it
+
 		Object object = MAGIC.cast2Obj(objectAddress);
 		MAGIC.assign(object._r_scalarSize, scalarSize);
 		MAGIC.assign(object._r_relocEntries, relocEntries);
-
-		//object._r_scalarSize = scalarSize;
-		object._r_type = type;
+		MAGIC.assign(object._r_type, type);
 
 		// Update the previous object
 		if (_previousObjectAddress != -1)
@@ -61,6 +100,29 @@ public class DynamicRuntime
 			MAGIC.assign(lastObject._r_next, object);
 		}
 		_previousObjectAddress = objectAddress;
+		return object;
+	}
+	 */
+
+	public static Object newEmptyObject(int startAddress, int size) {
+		SClassDesc type = (SClassDesc) MAGIC.clssDesc("EmptyObject");
+		// Get the base size so we don't overwrite at the end
+		int scalarSize = MAGIC.getInstScalarSize("EmptyObject");
+		int relocEntries = MAGIC.getInstRelocEntries("EmptyObject");
+		int relocSize = relocEntries << 2;
+		int totalSize = relocSize + scalarSize;
+
+		scalarSize = size - relocSize; // TODO: IS THIS CORRECT?
+		scalarSize = (scalarSize + 3) &~ 3;
+		Console.println(size);
+		Console.println(scalarSize + relocSize);
+
+		int objectAddress = startAddress + relocSize;
+
+		Object object = MAGIC.cast2Obj(objectAddress);
+		MAGIC.assign(object._r_scalarSize, scalarSize);
+		MAGIC.assign(object._r_relocEntries, relocEntries);
+		MAGIC.assign(object._r_type, type);
 		return object;
 	}
 

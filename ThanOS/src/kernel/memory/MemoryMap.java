@@ -62,7 +62,7 @@ public class MemoryMap {
             switch (blockType) {
                 case 1:
                     Console.setColor(Console.ConsoleColor.Green, Console.ConsoleColor.Black, false, false);
-                    Console.print(": Free");
+                    Console.print(": Free (Available to OS)");
                     break;
                 case 2:
                     Console.setColor(Console.ConsoleColor.Red, Console.ConsoleColor.Black, false, false);
