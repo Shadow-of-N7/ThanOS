@@ -1,7 +1,6 @@
 package kernel.memory;
 
 import collections.MemoryBlockList;
-import collections.ObjectList;
 import io.Console;
 import rte.DynamicRuntime;
 
@@ -11,7 +10,6 @@ public class Memory {
     private static Object _lastHeapObject = null;
     private static MemoryBlockList map;
 
-    // Stores the last object address for next chaining
     public static boolean isAdvancedMode = false;
 
     public static void initialize() {
@@ -20,6 +18,7 @@ public class Memory {
         map = MemoryMap.getMemoryMap();
 
         initializeEmptyObjects();
+        // Set this to false to stay in basic mode - works too.
         isAdvancedMode = true;
     }
 

@@ -1,5 +1,7 @@
 package kernel;
 
+import io.Console;
+
 public class Timer {
     private static long _timerBaseCount = 0; // Counts timer interrupts
     private static long _elapsedTime = 0;

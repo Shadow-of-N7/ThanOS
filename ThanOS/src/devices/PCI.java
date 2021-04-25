@@ -10,13 +10,11 @@ public class PCI {
     private final static int MAX_REGISTER_NUM = 63;
 
     public static PCIScanList scan() {
-        int counter = 0;
         PCIScanList entries = new PCIScanList();
 
         for(int busNum = 0; busNum <= MAX_BUS_NUMBER; busNum++) {
             for(int deviceNum = 0; deviceNum <= MAX_DEVICE_NUM; deviceNum++) {
                 for(int functionNum = 0; functionNum <= MAX_FUNCTION_NUM; functionNum++) {
-                    counter++;
                     // Set highest bit as necessary
                     int address = 0x80000000;
                     address |= ((byte) busNum) << 16;
@@ -47,6 +45,7 @@ public class PCI {
                     }
                 }
             }
+            if(busNum > 32) break; // TODO: REMOVE THIS
         }
         return entries;
     }
