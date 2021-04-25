@@ -63,11 +63,11 @@ public class DynamicRuntime
 			MAGIC.assign(object._r_type, type);
 
 			// Update the previous object
-			if (Memory.getLastObjectAddress() != -1) {
-				Object lastObject = MAGIC.cast2Obj(Memory.getLastObjectAddress());
+			if (Memory.getLastObject() != null) {
+				Object lastObject = Memory.getLastObject();
 				MAGIC.assign(lastObject._r_next, object);
 			}
-			Memory.updateLastObjectAddress(MAGIC.cast2Ref(object));
+			Memory.updateLastObject(object);
 			return object;
 		}
 		else {

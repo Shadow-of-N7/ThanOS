@@ -12,8 +12,6 @@ public class Memory {
     private static MemoryBlockList map;
 
     // Stores the last object address for next chaining
-    private static int _lastObjectAddress = -1;
-
     public static boolean isAdvancedMode = false;
 
     public static void initialize() {
@@ -58,15 +56,16 @@ public class Memory {
         Object currentEmptyObject = _firstEmptyObject;
         Object highestFreeObject = null;
         // Find the highest free object
-        while (currentEmptyObject._r_next != null) {
-            int emptyObjectsize = currentEmptyObject._r_scalarSize + (currentEmptyObject._r_relocEntries << 2);
-            if(emptyObjectsize >= size) {
-                highestFreeObject = currentEmptyObject;
-            }
-        }
+         do {
+             int emptyObjectSize = currentEmptyObject._r_scalarSize + (currentEmptyObject._r_relocEntries << 2);
+             if(emptyObjectSize > size) {
+                 highestFreeObject = currentEmptyObject;
+             }
+             currentEmptyObject = currentEmptyObject._r_next;
+        } while (currentEmptyObject._r_next != null);
         // Shrink the highest free empty object
         shrinkEmptyObject(highestFreeObject, size);
-        return MAGIC.cast2Ref(highestFreeObject) + highestFreeObject._r_scalarSize - size;
+        return MAGIC.cast2Ref(highestFreeObject) + highestFreeObject._r_scalarSize;
     }
 
 
@@ -78,26 +77,24 @@ public class Memory {
     public static void shrinkEmptyObject(Object emptyObject, int amount) {
         if(emptyObject._r_scalarSize > amount) {
             MAGIC.assign(emptyObject._r_scalarSize, emptyObject._r_scalarSize - amount);
-            Console.print("Resized EmptyObject to ");
-            Console.println(emptyObject._r_scalarSize + (emptyObject._r_relocEntries << 2));
         }
     }
 
 
     /**
      * Updates the last object address.
-     * @param address
+     * @param object
      */
-    public static void updateLastObjectAddress(int address) {
-        _lastObjectAddress = address;
+    public static void updateLastObject(Object object) {
+        _lastHeapObject = object;
     }
 
     /**
      * Returns the object of the last created object.
      * @return Object address of the last created object.
      */
-    public static int getLastObjectAddress() {
-        return _lastObjectAddress;
+    public static Object getLastObject() {
+        return _lastHeapObject;
     }
 
 
@@ -109,7 +106,7 @@ public class Memory {
     private static void addEmptyObject(int startAddress, int size) {
         Object emptyObject = DynamicRuntime.newEmptyObject(startAddress, size);
 
-        if(_firstEmptyObject != null) {
+        if(_firstEmptyObject == null) {
             _firstEmptyObject = emptyObject;
         }
         if(_lastEmptyObject != null) {
