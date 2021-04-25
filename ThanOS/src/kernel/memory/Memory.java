@@ -6,9 +6,9 @@ import io.Console;
 import rte.DynamicRuntime;
 
 public class Memory {
-    private static ObjectList _imageObjects;
-    private static ObjectList _emptyObjects;
-    private static ObjectList _heapObjects;
+    private static Object _lastEmptyObject = null;
+    private static Object _firstEmptyObject = null;
+    private static Object _lastHeapObject = null;
     private static MemoryBlockList map;
 
     // Stores the last object address for next chaining
@@ -19,9 +19,6 @@ public class Memory {
     public static void initialize() {
         // Create Object List
         DynamicRuntime.initializeFreeAddresses();
-        _imageObjects = new ObjectList();
-        _emptyObjects = new ObjectList();
-        _heapObjects = new ObjectList();
         map = MemoryMap.getMemoryMap();
 
         initializeEmptyObjects();
@@ -44,7 +41,7 @@ public class Memory {
                 addEmptyObject((int)block.baseAddress, (int)block.blockLength);
                 Console.println();
                 Console.print("Created empty object with size: ");
-                Console.println((_emptyObjects.elementAt(0)._r_relocEntries << 2) + _emptyObjects.elementAt(0)._r_scalarSize);
+                Console.println((_lastEmptyObject._r_relocEntries << 2) + _lastEmptyObject._r_scalarSize);
                 return;
             }
         }
@@ -58,15 +55,18 @@ public class Memory {
      */
     public static int getFreeAddress(int size) {
         // Loop through the empty objects and find one big enough for the requested size.
-        for(int i = _emptyObjects.getLength() - 1; i > 0; i--) {
-            Object emptyObject = _emptyObjects.elementAt(i); // THIS IS IT
-            int emptyObjectSize = emptyObject._r_scalarSize + (emptyObject._r_relocEntries << 2);
-            if(emptyObjectSize >= size) {
-                shrinkEmptyObject(emptyObject, size);
-                return _emptyObjects.elementAt(i)._r_scalarSize - size;
+        Object currentEmptyObject = _firstEmptyObject;
+        Object highestFreeObject = null;
+        // Find the highest free object
+        while (currentEmptyObject._r_next != null) {
+            int emptyObjectsize = currentEmptyObject._r_scalarSize + (currentEmptyObject._r_relocEntries << 2);
+            if(emptyObjectsize >= size) {
+                highestFreeObject = currentEmptyObject;
             }
         }
-        return 0;
+        // Shrink the highest free empty object
+        shrinkEmptyObject(highestFreeObject, size);
+        return MAGIC.cast2Ref(highestFreeObject) + highestFreeObject._r_scalarSize - size;
     }
 
 
@@ -78,6 +78,8 @@ public class Memory {
     public static void shrinkEmptyObject(Object emptyObject, int amount) {
         if(emptyObject._r_scalarSize > amount) {
             MAGIC.assign(emptyObject._r_scalarSize, emptyObject._r_scalarSize - amount);
+            Console.print("Resized EmptyObject to ");
+            Console.println(emptyObject._r_scalarSize + (emptyObject._r_relocEntries << 2));
         }
     }
 
@@ -105,7 +107,14 @@ public class Memory {
      * @param size Size of the new EmptyObject.
      */
     private static void addEmptyObject(int startAddress, int size) {
-        Object foo = DynamicRuntime.newEmptyObject(startAddress, size);
-        _emptyObjects.add(foo);
+        Object emptyObject = DynamicRuntime.newEmptyObject(startAddress, size);
+
+        if(_firstEmptyObject != null) {
+            _firstEmptyObject = emptyObject;
+        }
+        if(_lastEmptyObject != null) {
+            MAGIC.assign(_lastEmptyObject._r_next, emptyObject);
+        }
+        _lastEmptyObject = emptyObject;
     }
 }
