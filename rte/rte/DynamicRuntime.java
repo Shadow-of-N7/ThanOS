@@ -20,7 +20,7 @@ public class DynamicRuntime
 	 * Returns the next free address for basic mode.
 	 * @return
 	 */
-	public int getBasicNextAddress() {
+	public static int getBasicNextAddress() {
 		return _nextFreeAddress;
 	}
 

@@ -2,6 +2,7 @@ package kernel.memory;
 
 import collections.MemoryBlockList;
 import io.Console;
+import kernel.BlueScreen;
 import rte.DynamicRuntime;
 
 public class Memory {
@@ -28,14 +29,18 @@ public class Memory {
      */
     public static void initializeEmptyObjects() {
 
-        int imageSize = MAGIC.rMem32(MAGIC.imageBase + 4);
+        int basicSize = DynamicRuntime.getBasicNextAddress();
 
         for(int i = 0; i < map.getLength(); i++) {
             MemoryBlock block = map.elementAt(i);
             if(block.blockType == MemoryBlock.BlockType.Free
-                    && block.baseAddress + imageSize >= (MAGIC.imageBase + imageSize)) {
-
-                addEmptyObject((int)block.baseAddress, (int)block.blockLength);
+                    && block.baseAddress + basicSize >= (MAGIC.imageBase + basicSize)) {
+                if(block.baseAddress < basicSize) {
+                    addEmptyObject(basicSize, (int)(block.baseAddress + block.blockLength) - basicSize);
+                }
+                else {
+                    addEmptyObject((int) block.baseAddress, (int) block.blockLength);
+                }
                 Console.println();
                 Console.print("Created empty object with size: ");
                 Console.println((_lastEmptyObject._r_relocEntries << 2) + _lastEmptyObject._r_scalarSize);
@@ -46,7 +51,7 @@ public class Memory {
 
 
     /**
-     * Returns a free address for the given size.
+     * Returns a free address for a memory block of the given size.
      * @param size
      * @return
      */
@@ -61,8 +66,12 @@ public class Memory {
                  highestFreeObject = currentEmptyObject;
              }
              currentEmptyObject = currentEmptyObject._r_next;
-        } while (currentEmptyObject._r_next != null);
+        } while ((currentEmptyObject != null ? currentEmptyObject._r_next : null) != null);
         // Shrink the highest free empty object
+        // No memory left
+        if(highestFreeObject == null) {
+            BlueScreen.raise("out of heap memory");
+        }
         shrinkEmptyObject(highestFreeObject, size);
         return MAGIC.cast2Ref(highestFreeObject) + highestFreeObject._r_scalarSize;
     }
