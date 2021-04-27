@@ -51,32 +51,32 @@ public class BlueScreen {
 
         // Print register content
         int baseline = 2;
-        int centerX = Console.SCREEN_WIDTH >> 1;
+        int spacerX = Console.SCREEN_WIDTH - 26;
 
-        Console.setCaret(centerX, baseline);
-        Console.print("  Register contents:");
+        Console.setCaret(spacerX, baseline);
+        Console.print("  Register contents (hex):");
 
-        printRegisterEntry("\tEAX:\t", EAX, centerX, baseline + 1);
-        printRegisterEntry("\tEBX:\t", EBX, centerX, baseline + 2);
-        printRegisterEntry("\tECX:\t", ECX, centerX, baseline + 3);
-        printRegisterEntry("\tEDX:\t", EDX, centerX, baseline + 4);
-        printRegisterEntry("\tESI:\t", ESI, centerX, baseline + 5);
-        printRegisterEntry("\tEDI:\t", EDI, centerX, baseline + 6);
-        printRegisterEntry("\tEBP:\t", EBP, centerX, baseline + 7);
-        printRegisterEntry("\tESP:\t", ESP, centerX, baseline + 8);
-        printRegisterEntry("\tDS:\t\t", DS, centerX, baseline + 9);
-        printRegisterEntry("\tES:\t\t", ES, centerX, baseline + 10);
-        printRegisterEntry("\tFS:\t\t", FS, centerX, baseline + 11);
-        printRegisterEntry("\tFLAGS:\t", FLAGS, centerX, baseline + 12);
+        printRegisterEntry("\tEAX:\t", EAX, spacerX, baseline + 1);
+        printRegisterEntry("\tEBX:\t", EBX, spacerX, baseline + 2);
+        printRegisterEntry("\tECX:\t", ECX, spacerX, baseline + 3);
+        printRegisterEntry("\tEDX:\t", EDX, spacerX, baseline + 4);
+        printRegisterEntry("\tESI:\t", ESI, spacerX, baseline + 5);
+        printRegisterEntry("\tEDI:\t", EDI, spacerX, baseline + 6);
+        printRegisterEntry("\tEBP:\t", EBP, spacerX, baseline + 7);
+        printRegisterEntry("\tESP:\t", ESP, spacerX, baseline + 8);
+        printRegisterEntry("\tDS:\t\t", DS, spacerX, baseline + 9);
+        printRegisterEntry("\tES:\t\t", ES, spacerX, baseline + 10);
+        printRegisterEntry("\tFS:\t\t", FS, spacerX, baseline + 11);
+        printRegisterEntry("\tFLAGS:\t", FLAGS, spacerX, baseline + 12);
 
         // Print some lines for more visual beauty
         int verticalLine = baseline;
-        Console.setCaret(centerX, baseline);
+        Console.setCaret(spacerX, baseline);
         while (Console.getCaretY() < Console.SCREEN_HEIGHT - 1) {
-            Console.setCaret(centerX, verticalLine++);
+            Console.setCaret(spacerX, verticalLine++);
             Console.print((byte)186);
         }
-        int horizontalLine = centerX;
+        int horizontalLine = spacerX;
         Console.setCaret(horizontalLine++, baseline - 1);
         Console.print((byte)203);
         while (Console.getCaretX() < Console.SCREEN_WIDTH - 1) {

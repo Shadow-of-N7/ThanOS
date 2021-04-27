@@ -2,6 +2,7 @@ package kernel.memory;
 
 import collections.MemoryBlockList;
 import io.Console;
+import io.Table;
 import kernel.BIOS;
 
 public class MemoryMap {
@@ -47,22 +48,23 @@ public class MemoryMap {
     public static void printMemoryMap() {
         MemoryBlockList map = getMemoryMap();
         Console.println("Displaying memory map:");
+        Console.println();
+        Console.println("Block\t|Start\t|End\t|Type");
         for(int i = 0; i < map.getLength(); i++) {
             long blockBaseAddress = map.elementAt(i).baseAddress;
             long blockLength = map.elementAt(i).blockLength;
             int blockType = map.elementAt(i).blockType;
-            Console.println();
-            Console.print("Block ");
             Console.print(i);
-            Console.println(":");
+            Console.print("\t|");
 
             Console.printHex(blockBaseAddress);
-            Console.print("-");
+            Console.print("\t|");
             Console.printHex(blockBaseAddress + blockLength);
+            Console.print("\t|");
             switch (blockType) {
                 case 1:
                     Console.setColor(Console.ConsoleColor.Green, Console.ConsoleColor.Black, false, false);
-                    Console.print(": Free (Available to OS)");
+                    Console.print(": Free");
                     break;
                 case 2:
                     Console.setColor(Console.ConsoleColor.Red, Console.ConsoleColor.Black, false, false);
@@ -82,5 +84,21 @@ public class MemoryMap {
             Console.setColor(Console.ConsoleColor.Gray, Console.ConsoleColor.Black, false, false);
             Console.println();
         }
+    }
+
+    public static void printMemoryMap2() {
+        Table table = new Table();
+        table.addColumn();
+        table.getColumn(0).addCell("Block");
+        table.getColumn(0).addCell("Start");
+        table.getColumn(0).addCell("End");
+        table.getColumn(0).addCell("Type");
+        table.addColumn();
+        table.getColumn(1).addCell("FUCKTHISDAMNSHIT");
+        table.getColumn(1).addCell("foo");
+        table.getColumn(1).addCell("bar");
+        table.getColumn(1).addCell("baz");
+        Console.print(table.toString(true));
+        //MemoryBlockList map = getMemoryMap();
     }
 }

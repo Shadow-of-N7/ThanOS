@@ -29,7 +29,7 @@ public class CommandProcessor {
         }
         if(input.equals(memMap))
         {
-            MemoryMap.printMemoryMap();
+            MemoryMap.printMemoryMap2();
             recognized = true;
         }
         if(input.equals(pciscan))

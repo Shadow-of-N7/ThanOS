@@ -27,8 +27,6 @@ public class DynamicRuntime
 	public static void initializeFreeAddresses() {
 		if(_nextFreeAddress == 0) {
 			_nextFreeAddress = (MAGIC.imageBase + MAGIC.rMem32(MAGIC.imageBase + 4));
-			Console.printHex(_nextFreeAddress);
-			Console.println();
 		}
 	}
 
@@ -117,8 +115,6 @@ public class DynamicRuntime
 
 		scalarSize = size - relocSize; // TODO: IS THIS CORRECT?
 		scalarSize = (scalarSize + 3) &~ 3;
-		Console.println(size);
-		Console.println(scalarSize + relocSize);
 
 		int objectAddress = startAddress + relocSize;
 

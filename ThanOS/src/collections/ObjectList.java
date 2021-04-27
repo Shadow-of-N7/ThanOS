@@ -1,8 +1,10 @@
 package collections;
 
-public class CharList {
-    private CharListElement _firstElement = null;
-    private CharListElement _lastElement = null;
+import io.Console;
+
+public class ObjectList {
+    private ObjectListElement _firstElement = null;
+    private ObjectListElement _lastElement = null;
     private int _elementCount = 0;
 
 
@@ -10,8 +12,8 @@ public class CharList {
      * Insert a new element into the list.
      * @param data The element to add.
      */
-    public void add(char data) {
-        CharListElement element = new CharListElement(data);
+    public void add(Object data) {
+        ObjectListElement element = new ObjectListElement(data);
         if(_firstElement == null) {
             _firstElement = element;
         }
@@ -25,19 +27,30 @@ public class CharList {
 
 
     /**
-     * Return the element at the given position.
+     * Returns the element at the given position.
      * @param index Element index.
      * @return Element at index.
      */
-    public char elementAt(int index) {
+    public Object elementAt(int index) {
         if(_elementCount > 0) {
-            CharListElement currentElement = _firstElement;
+            ObjectListElement currentElement = _firstElement;
             for(int i = 0; i < index; i++) {
                 currentElement = currentElement.next;
             }
             return currentElement.data;
         }
-        return 0;
+        return null;
+    }
+
+
+    public void setElementAt(int index, Object object) {
+        if(_elementCount > 0) {
+            ObjectListElement currentElement = _firstElement;
+            for(int i = 0; i < index; i++) {
+                currentElement = currentElement.next;
+            }
+            currentElement.data = object;
+        }
     }
 
 
@@ -47,7 +60,7 @@ public class CharList {
      */
     public void removeAt(int index) {
         if(_elementCount > 0) {
-            CharListElement currentElement = _firstElement;
+            ObjectListElement currentElement = _firstElement;
             for(int i = 0; i < index; i++) {
                 currentElement = currentElement.next;
             }
@@ -81,15 +94,6 @@ public class CharList {
     }
 
 
-    public char[] toArray() {
-        char[] array = new char[_elementCount];
-        for(int i = 0; i < _elementCount; i++) {
-            array[i] = elementAt(i);
-        }
-        return array;
-    }
-
-
     /**
      * Returns the amount of elements currently stored within the list.
      * @return List length.
@@ -100,12 +104,12 @@ public class CharList {
     }
 
 
-    private static class CharListElement {
-        char data;
-        public CharListElement next = null;
-        public CharListElement previous = null;
+    private static class ObjectListElement {
+        Object data;
+        public ObjectListElement next = null;
+        public ObjectListElement previous = null;
 
-        public CharListElement(char data) {
+        public ObjectListElement(Object data) {
             this.data = data;
         }
     }

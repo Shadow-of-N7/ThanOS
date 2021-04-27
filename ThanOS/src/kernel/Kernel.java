@@ -13,11 +13,8 @@ public class Kernel {
 
         // Initialization
         Initialize();
+
         // Greeting
-        //Console.clear();
-
-        //testGraphicsMode();
-
         Console.setColor(ConsoleColor.Purple, ConsoleColor.Black, false, false);
 
         Console.println("Welcome to ThanOS - The only OS going down south 50% of the time!");

@@ -28,7 +28,7 @@ public class Memory {
      * Creates initial EmptyObjects in free memory areas above the base image.
      */
     public static void initializeEmptyObjects() {
-
+        // Get first available mem address - always above the system image and basic mode stuff
         int basicSize = DynamicRuntime.getBasicNextAddress();
 
         for(int i = 0; i < map.getLength(); i++) {
@@ -41,9 +41,6 @@ public class Memory {
                 else {
                     addEmptyObject((int) block.baseAddress, (int) block.blockLength);
                 }
-                Console.println();
-                Console.print("Created empty object with size: ");
-                Console.println((_lastEmptyObject._r_relocEntries << 2) + _lastEmptyObject._r_scalarSize);
                 return;
             }
         }
