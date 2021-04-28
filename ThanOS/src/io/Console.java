@@ -509,5 +509,29 @@ public class Console {
         public static final byte Purple = 0x05;
         public static final byte Brown = 0x06;
         public static final byte Gray = 0x07;
+
+
+        /**
+         * Creates a color byte. Use it with the ConsoleColor class to get the values.
+         * @param foregroundColor The foreground color.
+         * @param backgroundColor The background color.
+         * @param bright Whether the foreground color shall be of a bright tone.
+         * @param blink Whether the background color shall be of a bright tone.
+         */
+        public static byte createColor(byte foregroundColor, byte backgroundColor, boolean bright, boolean blink) {
+            // Set foregroundColors first; bits 0-2
+            byte color = foregroundColor;
+            // Bitshift the background color bits to the correct position; bits 4-6
+            color |= backgroundColor << 4;
+            // Apply the bright bit if chosen; bit 3
+            if(bright) {
+                color |= 0x08;
+            }
+            // Apply the blink bit if chosen; bit 7
+            if(blink) {
+                color |= 0x80;
+            }
+            return color;
+        }
     }
 }

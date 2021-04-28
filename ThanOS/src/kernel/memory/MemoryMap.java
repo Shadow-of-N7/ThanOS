@@ -106,12 +106,24 @@ public class MemoryMap {
             table.getColumn(i + 1).addCell(StringConverter.toString(blockLength));
 
             String type = "";
+            byte color = Console.ConsoleColor.createColor(Console.ConsoleColor.Gray,
+                    Console.ConsoleColor.Black,
+                    false,
+                    false);
             switch (blockType) {
                 case 1:
                     type = ": Free";
+                    color = Console.ConsoleColor.createColor(Console.ConsoleColor.Green,
+                            Console.ConsoleColor.Black,
+                            false,
+                            false);
                     break;
                 case 2:
                     type = ": Reserved";
+                    color = Console.ConsoleColor.createColor(Console.ConsoleColor.Red,
+                            Console.ConsoleColor.Black,
+                            false,
+                            false);
                     break;
                 case 3:
                     type = ": ACPI reclaimable";
@@ -121,9 +133,14 @@ public class MemoryMap {
                     break;
                 case 5:
                     type = "Bad memory";
+                    color = Console.ConsoleColor.createColor(Console.ConsoleColor.Gray,
+                            Console.ConsoleColor.Red,
+                            true,
+                            false);
                     break;
             }
-            table.getColumn(i + 1).addCell(type);
+            table.getColumn(i + 1).addCell(type).setColor(color);
+
         }
         Console.print(table.toString(true));
     }

@@ -71,15 +71,15 @@ public class Table {
                     break;
                 }
                 // Update else
-                if(getColumn(y).getCell(x).length() > maxRowLength) {
-                    maxRowLength = getColumn(y).getCell(x).length();
+                if(getColumn(y).getCell(x).text.length() > maxRowLength) {
+                    maxRowLength = getColumn(y).getCell(x).text.length();
                 }
             }
 
             // Fill all row segments with spaces to align the rows
             for(int y = 0; y < getMaxColumnIndex() + 1; y++) {
                 Column column = getColumn(y);
-                String segment = column.getCell(x);
+                String segment = column.getCell(x).text;
 
                 // Fill missing cells to prevent null pointers
                 while (column.getMaxCellIndex() < getMaxCellIndex()) {
@@ -106,13 +106,17 @@ public class Table {
         StringBuilder builder = new StringBuilder();
         for(int y = 0; y < getMaxColumnIndex() + 1; y++) {
             for(int x = 0; x < getMaxCellIndex() + 1; x++) {
-                builder.add(getColumn(y).getCell(x));
+                builder.add(getColumn(y).getCell(x).text);
+
+                // Vertical spacers
+                
                 if(columnSpacers) {
                     builder.add((char)179);
                 }
                 else {
                     builder.add(' ');
                 }
+
             }
             builder.add('\n');
         }
@@ -126,20 +130,24 @@ public class Table {
             _row = new ObjectList();
         }
 
-        public void addCell(String text) {
-            _row.add(text);
+        public Cell addCell(String text) {
+            Cell cell = new Cell(text);
+            _row.add(cell);
+            return cell;
         }
 
         public int getMaxCellIndex() {
             return _row.getLength() - 1;
         }
 
-        public String getCell(int index) {
-            return (String)_row.elementAt(index);
+        public Cell getCell(int index) {
+            return (Cell)_row.elementAt(index);
         }
 
-        public void setCell(int index, String text) {
-            _row.setElementAt(index, text);
+        public Cell setCell(int index, String text) {
+            Cell cell = new Cell(text);
+            _row.setElementAt(index, cell);
+            return cell;
         }
     }
 
@@ -147,6 +155,23 @@ public class Table {
     public static class Cell {
         public String text;
         public byte color;
-    }
 
+        public Cell(String text) {
+            this.text = text;
+            setColor(Console.ConsoleColor.Gray, Console.ConsoleColor.Black, false, false);
+        }
+
+        public Cell(String text, byte color) {
+            this.text = text;
+            this.color = color;
+        }
+
+        public void setColor(byte foregroundColor, byte backgroundColor, boolean bright, boolean blink) {
+            color = Console.ConsoleColor.createColor(foregroundColor, backgroundColor, bright, blink);
+        }
+
+        public void setColor(byte color) {
+            this.color = color;
+        }
+    }
 }
