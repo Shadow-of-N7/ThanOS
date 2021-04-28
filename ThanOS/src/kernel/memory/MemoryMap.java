@@ -104,14 +104,11 @@ public class MemoryMap {
             int blockType = map.elementAt(i).blockType;
             table.addColumn();
             table.getColumn(i + 1).addCell(StringConverter.toString(i));
-            table.getColumn(i + 1).addCell(StringConverter.toString(blockBaseAddress));
-            table.getColumn(i + 1).addCell(StringConverter.toString(blockLength));
+            table.getColumn(i + 1).addCell(StringConverter.toHexString(blockBaseAddress));
+            table.getColumn(i + 1).addCell(StringConverter.toHexString(blockBaseAddress + blockLength));
 
             String type = "";
-            byte color = Console.ConsoleColor.createColor(Console.ConsoleColor.Gray,
-                    Console.ConsoleColor.Black,
-                    false,
-                    false);
+            byte color = Console.ConsoleColor.Gray;
 
             switch (blockType) {
                 case 1:

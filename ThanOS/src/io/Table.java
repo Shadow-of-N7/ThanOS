@@ -2,6 +2,7 @@ package io;
 
 import collections.ObjectList;
 import collections.StringBuilder;
+import util.StringConverter;
 
 public class Table {
     // Use an object list to reduce code duplication
@@ -119,8 +120,12 @@ public class Table {
                     for(int i = 0; i < newSegment.length - segment.length(); i++) {
                         newSegment[segment.length() + i] = ' ';
                     }
+                    // Backup old color
+                    byte color = column.getCell(x).color;
                     // Place new string
                     setCell(y, x, new String(newSegment));
+                    // Patch new cell with the saved color
+                    column.getCell(x).setColor(color);
                 }
             }
         }
@@ -131,7 +136,7 @@ public class Table {
             for(int x = 0; x < rows; x++) {
                 byte color = getColumn(y).getCell(x).color;
                 // Set cell color if necessary
-                if(color != 0x0) {
+                if(color != (byte)0x0) {
                     builder.add(getColorBytes(color));
                 }
                 builder.add(getColumn(y).getCell(x).text);
