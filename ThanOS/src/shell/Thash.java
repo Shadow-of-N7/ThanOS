@@ -97,7 +97,7 @@ public class Thash {
 
     @SJC.Inline
     public static void removeChar() {
-        _commandBuffer[_bufferIndex--] = 0;
+        _commandBuffer[_bufferIndex--] = (char) 0;
     }
 
 

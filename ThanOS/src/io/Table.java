@@ -2,43 +2,49 @@ package io;
 
 import collections.ObjectList;
 import collections.StringBuilder;
-import util.StringConverter;
 
 public class Table {
     // Use an object list to reduce code duplication
-    private final ObjectList _columns;
+    private final ObjectList _rows;
     private byte _defaultColor = 0x07;
 
     public Table() {
-        _columns = new ObjectList();
+        _rows = new ObjectList();
     }
 
+    @SJC.Inline
     public byte getDefaultColor() {
         return _defaultColor;
     }
 
+    @SJC.Inline
     public void setDefaultColor(byte color) {
         _defaultColor = color;
     }
 
-    public void addColumn() {
-        _columns.add(new Column());
+    /**
+     *
+     * @return The index of the new
+     */
+    public int addRow() {
+        _rows.add(new Row());
+        return _rows.getLength() - 1;
     }
 
-    public void setColumn(int index, Column column) {
-        _columns.setElementAt(index, column);
+    public void setRow(int index, Row row) {
+        _rows.setElementAt(index, row);
     }
 
-    public void removeColumn(int index) {
-        _columns.removeAt(index);
+    public void removeRow(int index) {
+        _rows.removeAt(index);
     }
 
-    public Column getColumn(int index) {
-        return (Column) _columns.elementAt(index);
+    public Row getRow(int index) {
+        return (Row) _rows.elementAt(index);
     }
 
     public void setCell(int column, int row, String text) {
-        ((Column)_columns.elementAt(column)).setCell(row, text);
+        ((Row) _rows.elementAt(column)).setCell(row, text);
     }
 
     public void print() {
@@ -56,8 +62,8 @@ public class Table {
      * Returns the maximum index of all columns within the table.
      * @return
      */
-    public int getMaxColumnIndex() {
-        return _columns.getLength() - 1;
+    public int getMaxRowIndex() {
+        return _rows.getLength() - 1;
     }
 
     /**
@@ -66,8 +72,8 @@ public class Table {
      */
     public int getMaxCellIndex() {
         int maxIndex = 0;
-        for(int i = 0; i < getMaxColumnIndex() + 1; i++) {
-            int currentLength = getColumn(i).getMaxCellIndex();
+        for(int i = 0; i < getMaxRowIndex() + 1; i++) {
+            int currentLength = getRow(i).getMaxCellIndex();
             if(currentLength > maxIndex) {
                 maxIndex = currentLength;
             }
@@ -82,7 +88,7 @@ public class Table {
      */
     public String toString(boolean columnSpacers) {
         int counter = 0;
-        int columns = getMaxColumnIndex() + 1;
+        int columns = getMaxRowIndex() + 1;
         int rows = getMaxCellIndex() + 1;
         // Get maximum row length of each column
         for(int x = 0; x < rows; x++) {
@@ -90,23 +96,23 @@ public class Table {
             for(int y = 0; y < columns; y++) {
                 // Get the maximum length of each row within the current column
                 // Skip if cell empty
-                if(getColumn(y).getCell(x) == null) {
+                if(getRow(y).getCell(x) == null) {
                     break;
                 }
                 // Update else
-                if(getColumn(y).getCell(x).text.length() > maxRowLength) {
-                    maxRowLength = getColumn(y).getCell(x).text.length();
+                if(getRow(y).getCell(x).text.length() > maxRowLength) {
+                    maxRowLength = getRow(y).getCell(x).text.length();
                 }
             }
 
             // Fill all row segments with spaces to align the rows
             for(int y = 0; y < columns; y++) {
-                Column column = getColumn(y);
-                String segment = column.getCell(x).text;
+                Row row = getRow(y);
+                String segment = row.getCell(x).text;
 
                 // Fill missing cells to prevent null pointers
-                while (column.getMaxCellIndex() < getMaxCellIndex()) {
-                    column.addCell("");
+                while (row.getMaxCellIndex() < getMaxCellIndex()) {
+                    row.addCell("");
                 }
 
                 // Fill missing spaces if defined
@@ -121,11 +127,11 @@ public class Table {
                         newSegment[segment.length() + i] = ' ';
                     }
                     // Backup old color
-                    byte color = column.getCell(x).color;
+                    byte color = row.getCell(x).color;
                     // Place new string
                     setCell(y, x, new String(newSegment));
                     // Patch new cell with the saved color
-                    column.getCell(x).setColor(color);
+                    row.getCell(x).setColor(color);
                 }
             }
         }
@@ -134,12 +140,12 @@ public class Table {
         for(int y = 0; y < columns; y++) {
             builder.add(getColorBytes(_defaultColor));
             for(int x = 0; x < rows; x++) {
-                byte color = getColumn(y).getCell(x).color;
+                byte color = getRow(y).getCell(x).color;
                 // Set cell color if necessary
                 if(color != (byte)0x0) {
                     builder.add(getColorBytes(color));
                 }
-                builder.add(getColumn(y).getCell(x).text);
+                builder.add(getRow(y).getCell(x).text);
                 // Reset cell color
                 if(color != _defaultColor) {
                     builder.add(getColorBytes(_defaultColor));
@@ -176,10 +182,10 @@ public class Table {
         return new String(chars);
     }
 
-    public static class Column {
+    public static class Row {
         private final ObjectList _row;
 
-        public Column() {
+        public Row() {
             _row = new ObjectList();
         }
 

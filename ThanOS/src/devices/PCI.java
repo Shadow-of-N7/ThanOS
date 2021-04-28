@@ -1,7 +1,6 @@
 package devices;
 
 import collections.PCIScanList;
-import io.Console;
 import io.Table;
 import util.StringConverter;
 
@@ -58,13 +57,13 @@ public class PCI {
         PCIScanList scanResult = scan();
 
         Table table = new Table();
-        table.addColumn();
-        table.getColumn(0).addCell("Bus");
-        table.getColumn(0).addCell("Device");
-        table.getColumn(0).addCell("Function");
-        table.getColumn(0).addCell("Type");
-        table.getColumn(0).addCell("Vendor ID");
-        table.getColumn(0).addCell("Device ID");
+        table.addRow();
+        table.getRow(0).addCell("Bus");
+        table.getRow(0).addCell("Device");
+        table.getRow(0).addCell("Function");
+        table.getRow(0).addCell("Type");
+        table.getRow(0).addCell("Vendor ID");
+        table.getRow(0).addCell("Device ID");
 
         for(int i = 0; i < scanResult.getLength(); i++) {
 
@@ -73,10 +72,10 @@ public class PCI {
 
             // Don't show the device -> 0,-1 means invalid or not present
 
-            table.addColumn();
-            table.getColumn(i + 1).addCell(StringConverter.toString(deviceRecord.BusNumber));
-            table.getColumn(i + 1).addCell(StringConverter.toString(deviceRecord.DeviceNumber));
-            table.getColumn(i + 1).addCell(StringConverter.toString(deviceRecord.FunctionNumber));
+            table.addRow();
+            table.getRow(i + 1).addCell(StringConverter.toString(deviceRecord.BusNumber));
+            table.getRow(i + 1).addCell(StringConverter.toString(deviceRecord.DeviceNumber));
+            table.getRow(i + 1).addCell(StringConverter.toString(deviceRecord.FunctionNumber));
             int baseClass = deviceInfo[2] >> 24;
             String type = "";
             switch (baseClass) {
@@ -129,9 +128,9 @@ public class PCI {
                     type = "Satellite communication";
                     break;
             }
-            table.getColumn(i + 1).addCell(type);
-            table.getColumn(i + 1).addCell(StringConverter.toString(deviceInfo[0] & 0xFFFF));
-            table.getColumn(i + 1).addCell(StringConverter.toString(deviceInfo[0] & 0xFFFF0000));
+            table.getRow(i + 1).addCell(type);
+            table.getRow(i + 1).addCell(StringConverter.toString(deviceInfo[0] & 0xFFFF));
+            table.getRow(i + 1).addCell(StringConverter.toString(deviceInfo[0] & 0xFFFF0000));
         }
         table.print();
     }

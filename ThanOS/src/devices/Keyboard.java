@@ -1,10 +1,9 @@
 package devices;
 
-import collections.Ringbuffer;
-import io.Console;
+import collections.IntRingBuffer;
 
 public class Keyboard {
-    private static Ringbuffer _buffer;
+    private static IntRingBuffer _buffer;
     // These are not publicly exposed, as they are of no interest to other parts of the OS.
     private static boolean _isExtension0Active = false;
     private static boolean _isExtension1Active = false;
@@ -15,7 +14,7 @@ public class Keyboard {
 
 
     public static void initialize() {
-        _buffer = new Ringbuffer(3);
+        _buffer = new IntRingBuffer(3);
         State = new KeyboardState();
     }
 

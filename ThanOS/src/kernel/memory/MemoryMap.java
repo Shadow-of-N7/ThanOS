@@ -92,20 +92,20 @@ public class MemoryMap {
         Table table = new Table();
         //table.setDefaultColor(Console.ConsoleColor.createColor(Console.ConsoleColor.Gray,
         //        Console.ConsoleColor.Blue, true, true));
-        table.addColumn();
-        table.getColumn(0).addCell("Block");
-        table.getColumn(0).addCell("Start address");
-        table.getColumn(0).addCell("End address");
-        table.getColumn(0).addCell("Type");
+        table.addRow();
+        table.getRow(0).addCell("Block");
+        table.getRow(0).addCell("Start address");
+        table.getRow(0).addCell("End address");
+        table.getRow(0).addCell("Type");
 
         for(int i = 0; i < map.getLength(); i++) {
             long blockBaseAddress = map.elementAt(i).baseAddress;
             long blockLength = map.elementAt(i).blockLength;
             int blockType = map.elementAt(i).blockType;
-            table.addColumn();
-            table.getColumn(i + 1).addCell(StringConverter.toString(i));
-            table.getColumn(i + 1).addCell(StringConverter.toHexString(blockBaseAddress));
-            table.getColumn(i + 1).addCell(StringConverter.toHexString(blockBaseAddress + blockLength));
+            table.addRow();
+            table.getRow(i + 1).addCell(StringConverter.toString(i));
+            table.getRow(i + 1).addCell(StringConverter.toHexString(blockBaseAddress));
+            table.getRow(i + 1).addCell(StringConverter.toHexString(blockBaseAddress + blockLength));
 
             String type = "";
             byte color = Console.ConsoleColor.Gray;
@@ -139,7 +139,7 @@ public class MemoryMap {
                             false);
                     break;
             }
-            table.getColumn(i + 1).addCell(type).setColor(color);
+            table.getRow(i + 1).addCell(type).setColor(color);
         }
         table.print();
     }

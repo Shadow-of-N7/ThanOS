@@ -1,15 +1,13 @@
 package collections;
 
-import io.Console;
-
-public class Ringbuffer {
+public class IntRingBuffer {
     // Serves as empty marking, as null is not permitted
     private final static int INT_MIN = -2147483648;
     private final int[] _buffer;
     private int _readerIndex;
     private int _writerIndex;
 
-    public Ringbuffer(int size) {
+    public IntRingBuffer(int size) {
         _buffer = new int[size];
         for(int i = 0; i < size; i++) {
             _buffer[i] = INT_MIN;

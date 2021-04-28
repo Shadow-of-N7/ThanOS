@@ -2,6 +2,7 @@ package shell;
 
 import devices.PCI;
 import io.Console;
+import io.Table;
 import kernel.Kernel;
 import kernel.memory.MemoryMap;
 
@@ -37,9 +38,32 @@ public class CommandProcessor {
             PCI.printScan();
             recognized = true;
         }
+        if(input.equals("gm")) {
+            // TODO: VESA DRIVER
+            return "Not implemented yet.";
+        }
         if(input.equals("help")) {
-            String helpString = "memmap: print a memory map.\ntestgm: Executes a short graphics mode test.\nclear/cls: Clears the screen.\npciscan: Scans the PCI bus for devices.";
-            return helpString;
+            Table table = new Table();
+            int rowIndex = table.addRow();
+            table.getRow(rowIndex).addCell("Command");
+            table.getRow(rowIndex).addCell("Explanation");
+            rowIndex = table.addRow();
+            table.getRow(rowIndex).addCell("testgm");
+            table.getRow(rowIndex).addCell("Executes a short graphics mode test.");
+            rowIndex = table.addRow();
+            table.getRow(rowIndex).addCell("gm");
+            table.getRow(rowIndex).addCell("Starts the graphics mode.");
+            rowIndex = table.addRow();
+            table.getRow(rowIndex).addCell("memmap");
+            table.getRow(rowIndex).addCell("Prints a memory map.");
+            rowIndex = table.addRow();
+            table.getRow(rowIndex).addCell("pciscan");
+            table.getRow(rowIndex).addCell("Scans the PCI bus for devices.");
+            rowIndex = table.addRow();
+            table.getRow(rowIndex).addCell("clear/cls");
+            table.getRow(rowIndex).addCell("Clears the screen.");
+
+            return table.toString(true);
         }
         if(input.equals("shutdown")) {
             Kernel.shutdownQEmu();
