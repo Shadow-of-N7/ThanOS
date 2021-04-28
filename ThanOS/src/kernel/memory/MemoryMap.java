@@ -87,17 +87,21 @@ public class MemoryMap {
     }
 
     public static void printMemoryMap2() {
+        MemoryBlockList map = getMemoryMap();
         Table table = new Table();
         table.addColumn();
         table.getColumn(0).addCell("Block");
         table.getColumn(0).addCell("Start");
         table.getColumn(0).addCell("End");
         table.getColumn(0).addCell("Type");
-        table.addColumn();
-        table.getColumn(1).addCell("FUCKTHISDAMNSHIT");
-        table.getColumn(1).addCell("foo");
-        table.getColumn(1).addCell("bar");
-        table.getColumn(1).addCell("baz");
+
+        for(int i = 0; i < map.getLength(); i++) {
+            long blockBaseAddress = map.elementAt(i).baseAddress;
+            long blockLength = map.elementAt(i).blockLength;
+            int blockType = map.elementAt(i).blockType;
+            table.addColumn();
+            table.getColumn(i + 1).addCell("foo");
+        }
         Console.print(table.toString(true));
         //MemoryBlockList map = getMemoryMap();
     }

@@ -60,17 +60,17 @@ public class Table {
      * @return
      */
     public String toString(boolean columnSpacers) {
+        int counter = 0;
         // Get maximum row length of each column
         for(int x = 0; x < getMaxCellIndex() + 1; x++) {
             int maxRowLength = 0;
             for(int y = 0; y < getMaxColumnIndex() + 1; y++) {
                 // Get the maximum length of each row within the current column
-
                 // Skip if cell empty
                 if(getColumn(y).getCell(x) == null) {
                     break;
                 }
-
+                // Update else
                 if(getColumn(y).getCell(x).length() > maxRowLength) {
                     maxRowLength = getColumn(y).getCell(x).length();
                 }
@@ -78,19 +78,16 @@ public class Table {
 
             // Fill all row segments with spaces to align the rows
             for(int y = 0; y < getMaxColumnIndex() + 1; y++) {
-                String segment = getColumn(y).getCell(x);
-                // Fill with spaces if undefined
-                if(segment == null) {
-                    char[] newChars = new char[maxRowLength];
-                    for (int i = 0; i < maxRowLength; i++) {
-                        newChars[i] = ' ';
-                    }
-                    getColumn(y).setCell(x, new String(newChars));
-                    break;
+                Column column = getColumn(y);
+                String segment = column.getCell(x);
+
+                // Fill missing cells to prevent null pointers
+                while (column.getMaxCellIndex() < getMaxCellIndex()) {
+                    column.addCell("");
                 }
+
                 // Fill missing spaces if defined
-                if( segment.length() < maxRowLength) {
-                    Console.println("asdf");
+                if(segment.length() < maxRowLength) {
                     char[] newSegment = new char[maxRowLength];
                     // Fill in existing text
                     for(int i = 0; i< segment.length(); i++) {
@@ -101,7 +98,6 @@ public class Table {
                         newSegment[segment.length() + i] = ' ';
                     }
                     // Place new string
-                    //getColumn(y).setCell(x, new String(newSegment));
                     setCell(y, x, new String(newSegment));
                 }
             }
@@ -138,11 +134,9 @@ public class Table {
             return _row.getLength() - 1;
         }
 
-
         public String getCell(int index) {
             return (String)_row.elementAt(index);
         }
-
 
         public void setCell(int index, String text) {
             _row.setElementAt(index, text);
