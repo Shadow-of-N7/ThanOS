@@ -2,6 +2,8 @@ package devices;
 
 import collections.PCIScanList;
 import io.Console;
+import io.Table;
+import util.StringConverter;
 
 public class PCI {
     private final static int MAX_BUS_NUMBER = 255;
@@ -55,81 +57,83 @@ public class PCI {
 
         PCIScanList scanResult = scan();
 
-        for(int i = 0; i < 5; i++) {
+        Table table = new Table();
+        table.addColumn();
+        table.getColumn(0).addCell("Bus");
+        table.getColumn(0).addCell("Device");
+        table.getColumn(0).addCell("Function");
+        table.getColumn(0).addCell("Type");
+        table.getColumn(0).addCell("Vendor ID");
+        table.getColumn(0).addCell("Device ID");
+
+        for(int i = 0; i < scanResult.getLength(); i++) {
 
             PCIScanRecord deviceRecord = scanResult.elementAt(i);
             int[] deviceInfo = deviceRecord.DeviceInfo;
 
             // Don't show the device -> 0,-1 means invalid or not present
 
-            Console.print("Found device: Bus ");
-            Console.print(deviceRecord.BusNumber);
-            Console.print(", Device ");
-            Console.printHex(deviceRecord.DeviceNumber);
-            Console.print(", Function ");
-            Console.printHex(deviceRecord.FunctionNumber);
-            Console.println();
-            Console.print("  Type: ");
+            table.addColumn();
+            table.getColumn(i + 1).addCell(StringConverter.toString(deviceRecord.BusNumber));
+            table.getColumn(i + 1).addCell(StringConverter.toString(deviceRecord.DeviceNumber));
+            table.getColumn(i + 1).addCell(StringConverter.toString(deviceRecord.FunctionNumber));
             int baseClass = deviceInfo[2] >> 24;
+            String type = "";
             switch (baseClass) {
                 case 0x00:
-                    Console.print("Old device");
+                    type = "Old device";
                     break;
                 case 0x01:
-                    Console.print("Mass storage device");
+                    type = "Mass storage device";
                     break;
                 case 0x02:
-                    Console.print("Network controller");
+                    type = "Network controller";
                     break;
                 case 0x03:
-                    Console.print("Display controller");
+                    type = "Display controller";
                     break;
                 case 0x04:
-                    Console.print("Multimedia device");
+                    type = "Multimedia device";
                     break;
                 case 0x05:
-                    Console.print("Memory controller");
+                    type = "Memory controller";
                     break;
                 case 0x06:
-                    Console.print("Bridge");
+                    type = "Bridge";
                     break;
                 case 0x07:
-                    Console.print("Communication controller");
+                    type = "Communication controller";
                     break;
                 case 0x08:
-                    Console.print("System peripheral");
+                    type = "System peripheral";
                     break;
                 case 0x09:
-                    Console.print("Input device");
+                    type = "Input device";
                     break;
                 case 0x0A:
-                    Console.print("Docking station");
+                    type = "Docking station";
                     break;
                 case 0x0B:
-                    Console.print("Processor unit");
+                    type = "Processor unit";
                     break;
                 case 0x0C:
-                    Console.print("Serial bus");
+                    type = "Serial bus";
                     break;
                 case 0x0D:
-                    Console.print("Wireless communication device");
+                    type = "Wireless communication device";
                     break;
                 case 0x0E:
-                    Console.print("Intelligent controller");
+                    type = "Intelligent controller";
                     break;
                 case 0x0F:
-                    Console.print("Satellite communication");
+                    type = "Satellite communication";
                     break;
             }
-            Console.print(" (");
-            Console.print(baseClass);
-            Console.println(")");
-            Console.print("  Vendor ID:");
-            Console.print(deviceInfo[0] & 0xFFFF);
-            Console.print(", Device ID:");
-            Console.println(deviceInfo[0] & 0xFFFF0000);
-            Console.println();
+            table.getColumn(i + 1).addCell(type);
+            table.getColumn(i + 1).addCell(StringConverter.toString(deviceInfo[0] & 0xFFFF));
+            table.getColumn(i + 1).addCell(StringConverter.toString(deviceInfo[0] & 0xFFFF0000));
         }
+        table.print();
     }
 
 
