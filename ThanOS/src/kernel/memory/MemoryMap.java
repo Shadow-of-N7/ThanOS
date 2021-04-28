@@ -126,6 +126,5 @@ public class MemoryMap {
             table.getColumn(i + 1).addCell(type);
         }
         Console.print(table.toString(true));
-        //MemoryBlockList map = getMemoryMap();
     }
 }

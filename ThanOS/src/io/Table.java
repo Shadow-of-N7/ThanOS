@@ -143,4 +143,10 @@ public class Table {
         }
     }
 
+
+    public static class Cell {
+        public String text;
+        public byte color;
+    }
+
 }
