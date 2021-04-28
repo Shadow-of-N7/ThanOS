@@ -6,9 +6,18 @@ import collections.StringBuilder;
 public class Table {
     // Use an object list to reduce code duplication
     private final ObjectList _columns;
+    private byte _defaultColor = 0x07;
 
     public Table() {
         _columns = new ObjectList();
+    }
+
+    public byte getDefaultColor() {
+        return _defaultColor;
+    }
+
+    public void setDefaultColor(byte color) {
+        _defaultColor = color;
     }
 
     public void addColumn() {
@@ -29,6 +38,17 @@ public class Table {
 
     public void setCell(int column, int row, String text) {
         ((Column)_columns.elementAt(column)).setCell(row, text);
+    }
+
+    public void print() {
+        String table = toString(true);
+        Console.print(table);
+        close();
+    }
+
+    private void close() {
+        Console.resetColor();
+        Console.println();
     }
 
     /**
@@ -61,10 +81,12 @@ public class Table {
      */
     public String toString(boolean columnSpacers) {
         int counter = 0;
+        int columns = getMaxColumnIndex() + 1;
+        int rows = getMaxCellIndex() + 1;
         // Get maximum row length of each column
-        for(int x = 0; x < getMaxCellIndex() + 1; x++) {
+        for(int x = 0; x < rows; x++) {
             int maxRowLength = 0;
-            for(int y = 0; y < getMaxColumnIndex() + 1; y++) {
+            for(int y = 0; y < columns; y++) {
                 // Get the maximum length of each row within the current column
                 // Skip if cell empty
                 if(getColumn(y).getCell(x) == null) {
@@ -77,7 +99,7 @@ public class Table {
             }
 
             // Fill all row segments with spaces to align the rows
-            for(int y = 0; y < getMaxColumnIndex() + 1; y++) {
+            for(int y = 0; y < columns; y++) {
                 Column column = getColumn(y);
                 String segment = column.getCell(x).text;
 
@@ -104,23 +126,49 @@ public class Table {
         }
         // Create one single string
         StringBuilder builder = new StringBuilder();
-        for(int y = 0; y < getMaxColumnIndex() + 1; y++) {
-            for(int x = 0; x < getMaxCellIndex() + 1; x++) {
+        for(int y = 0; y < columns; y++) {
+            builder.add(getColorBytes(_defaultColor));
+            for(int x = 0; x < rows; x++) {
+                byte color = getColumn(y).getCell(x).color;
+                // Set cell color if necessary
+                if(color != 0x0) {
+                    builder.add(getColorBytes(color));
+                }
                 builder.add(getColumn(y).getCell(x).text);
+                // Reset cell color
+                if(color != _defaultColor) {
+                    builder.add(getColorBytes(_defaultColor));
+                }
 
                 // Vertical spacers
-                
                 if(columnSpacers) {
+                    builder.add(' ');
                     builder.add((char)179);
+                    builder.add(' ');
                 }
                 else {
                     builder.add(' ');
                 }
 
             }
-            builder.add('\n');
+            if(y < columns - 1) {
+                builder.add(getColorBytes((byte)0));
+                builder.add('\n');
+            }
         }
         return builder.toString();
+    }
+
+    /**
+     * Returns a 2 byte String, containing the color indicator prefix and the color byte.
+     * @param color The color to include into the string.
+     * @return
+     */
+    private String getColorBytes(byte color) {
+        char[] chars = new char[2];
+        chars[0] = 0x07;
+        chars[1] = (char) color;
+        return new String(chars);
     }
 
     public static class Column {
@@ -158,7 +206,7 @@ public class Table {
 
         public Cell(String text) {
             this.text = text;
-            setColor(Console.ConsoleColor.Gray, Console.ConsoleColor.Black, false, false);
+            color = (byte) 0x0;
         }
 
         public Cell(String text, byte color) {

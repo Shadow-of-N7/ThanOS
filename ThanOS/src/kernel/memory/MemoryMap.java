@@ -90,10 +90,12 @@ public class MemoryMap {
     public static void printMemoryMap2() {
         MemoryBlockList map = getMemoryMap();
         Table table = new Table();
+        //table.setDefaultColor(Console.ConsoleColor.createColor(Console.ConsoleColor.Gray,
+        //        Console.ConsoleColor.Blue, true, true));
         table.addColumn();
         table.getColumn(0).addCell("Block");
-        table.getColumn(0).addCell("Start");
-        table.getColumn(0).addCell("End");
+        table.getColumn(0).addCell("Start address");
+        table.getColumn(0).addCell("End address");
         table.getColumn(0).addCell("Type");
 
         for(int i = 0; i < map.getLength(); i++) {
@@ -110,26 +112,27 @@ public class MemoryMap {
                     Console.ConsoleColor.Black,
                     false,
                     false);
+
             switch (blockType) {
                 case 1:
-                    type = ": Free";
+                    type = "Free";
                     color = Console.ConsoleColor.createColor(Console.ConsoleColor.Green,
                             Console.ConsoleColor.Black,
                             false,
                             false);
                     break;
                 case 2:
-                    type = ": Reserved";
+                    type = "Reserved";
                     color = Console.ConsoleColor.createColor(Console.ConsoleColor.Red,
                             Console.ConsoleColor.Black,
                             false,
                             false);
                     break;
                 case 3:
-                    type = ": ACPI reclaimable";
+                    type = "ACPI reclaimable";
                     break;
                 case 4:
-                    type = ": ACPI NVS Memory";
+                    type = "ACPI NVS Memory";
                     break;
                 case 5:
                     type = "Bad memory";
@@ -140,8 +143,7 @@ public class MemoryMap {
                     break;
             }
             table.getColumn(i + 1).addCell(type).setColor(color);
-
         }
-        Console.print(table.toString(true));
+        table.print();
     }
 }

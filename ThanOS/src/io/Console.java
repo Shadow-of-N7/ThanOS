@@ -11,11 +11,13 @@ public class Console {
     private static final int VIDEO_MEMORY_BASE = 0xB8000;
     private static final int CHARACTER_AMOUNT = SCREEN_HEIGHT * SCREEN_WIDTH;
     private static final int VIDEO_MEMORY_END = VIDEO_MEMORY_BASE + (CHARACTER_AMOUNT << 1);
+    private static final byte DEFAULT_COLOR = ConsoleColor.Gray;
 
     private static int _videoMemoryPosition = 0xB8000;
     private static int _caretX = 0;
     private static int _caretY = 0;
-    private static byte _currentColor = ConsoleColor.Gray;
+    private static byte _currentColor = DEFAULT_COLOR;
+    private static boolean _awaitingColorCode = false;
     private static final char[] hexChars = {
         '0', '1', '2', '3', '4', '5', '6', '7', '8' ,'9', 'A', 'B', 'C', 'D', 'E', 'F'
     };
@@ -143,7 +145,16 @@ public class Console {
      * @param b The character to print.
      */
     public static void print(byte b) {
+
+        if(_awaitingColorCode) {
+            setColor(b);
+            _awaitingColorCode = false;
+            return;
+        }
         switch (b) {
+            case 0x07:
+                _awaitingColorCode = true;
+                return;
             case '\n':
                 breakLine();
                 clearLine();
@@ -319,6 +330,16 @@ public class Console {
             color |= 0x80;
         }
         _currentColor = color;
+    }
+
+
+    public static void setColor(byte color) {
+        _currentColor = color;
+    }
+
+
+    public static void resetColor() {
+        _currentColor = DEFAULT_COLOR;
     }
 
 
