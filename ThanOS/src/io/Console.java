@@ -2,6 +2,7 @@ package io;
 
 import collections.CharList;
 import collections.CharStack;
+import util.StringConverter;
 
 public class Console {
     // Set some fix values
@@ -103,29 +104,7 @@ public class Console {
      * @param number The long value to print.
      */
     public static void print(long number) {
-        boolean isNegative = false;
-        if(number < 0) {
-            isNegative = true;
-        }
-        if(number == 0) {
-            print('0');
-            return;
-        }
-        CharStack stack = new CharStack();
-        while (number > 0) {
-            int digit = (int)(number % 10);
-            stack.push((char)(digit + 48));
-            number /= 10;
-        }
-
-        int stackSize = stack.getSize();
-        if(isNegative) {
-            print('-');
-        }
-        for (int i = 0; i < stackSize; i++) {
-            char temp = stack.pop();
-            print(temp);
-        }
+        print(StringConverter.toString(number));
     }
 
 
@@ -146,48 +125,7 @@ public class Console {
      * @param precision The amount of digits after the separator to be displayed.
      */
     public static void print(double number, int precision) {
-        // First print all pre-separator digits
-        CharStack stack = new CharStack();
-        while (number > 0) {
-            int digit = ((int)number % 10);
-            stack.push((char)(digit + 48));
-            number /= 10;
-            if(number < 1)
-            {
-                break;
-            }
-        }
-
-        int stackSize = stack.getSize();
-        for (int i = 0; i < stackSize; i++) {
-            char temp = stack.pop();
-            print(temp);
-        }
-        // Separator
-        print('.');
-
-        // Remove the pre-separator digit
-        number -= (int)number;
-
-        CharList list = new CharList();
-        while (number > 0) {
-            // Multiply the after-separator value by 10 to get the digit
-            int digit = (int)(number * 10);
-            list.add((char)(digit + 48));
-            // Num * 10 - digit -> 0.14 * 10 = 1.4, digit 1 -> 1.4 - digit = 0.4
-            number = (number * 10) - digit;
-        }
-
-        // Take everything from the list and omit everything beyond the precision limit
-        int digitCount = list.getLength();
-        int digitCounter = 0;
-        for (int i = 1; i <= digitCount; i++) {
-            if(digitCounter++ >= precision) {
-                return;
-            }
-            char temp = list.elementAt(i);
-            print(temp);
-        }
+        Console.print(StringConverter.toString(number, precision));
     }
 
 
@@ -277,22 +215,7 @@ public class Console {
      * @param number The number to print.
      */
     public static void printHex(long number) {
-        CharStack chars = new CharStack();
-
-        if (number == 0) {
-            print('0');
-            return;
-        }
-
-        while (number > 0) {
-            chars.push(hexChars[(int) number % 16]);
-            number /= 16;
-        }
-
-        int charSize = chars.getSize();
-        for(int j = 0; j < charSize; j++) {
-            print(chars.pop());
-        }
+        Console.print(StringConverter.toHexString(number));
     }
 
 

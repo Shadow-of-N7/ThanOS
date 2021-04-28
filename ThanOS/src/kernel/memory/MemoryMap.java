@@ -4,6 +4,7 @@ import collections.MemoryBlockList;
 import io.Console;
 import io.Table;
 import kernel.BIOS;
+import util.StringConverter;
 
 public class MemoryMap {
 
@@ -100,7 +101,29 @@ public class MemoryMap {
             long blockLength = map.elementAt(i).blockLength;
             int blockType = map.elementAt(i).blockType;
             table.addColumn();
-            table.getColumn(i + 1).addCell("foo");
+            table.getColumn(i + 1).addCell(StringConverter.toString(i));
+            table.getColumn(i + 1).addCell(StringConverter.toString(blockBaseAddress));
+            table.getColumn(i + 1).addCell(StringConverter.toString(blockLength));
+
+            String type = "";
+            switch (blockType) {
+                case 1:
+                    type = ": Free";
+                    break;
+                case 2:
+                    type = ": Reserved";
+                    break;
+                case 3:
+                    type = ": ACPI reclaimable";
+                    break;
+                case 4:
+                    type = ": ACPI NVS Memory";
+                    break;
+                case 5:
+                    type = "Bad memory";
+                    break;
+            }
+            table.getColumn(i + 1).addCell(type);
         }
         Console.print(table.toString(true));
         //MemoryBlockList map = getMemoryMap();

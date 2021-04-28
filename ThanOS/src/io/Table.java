@@ -108,7 +108,7 @@ public class Table {
             for(int x = 0; x < getMaxCellIndex() + 1; x++) {
                 builder.add(getColumn(y).getCell(x));
                 if(columnSpacers) {
-                    builder.add('|');
+                    builder.add((char)179);
                 }
                 else {
                     builder.add(' ');
