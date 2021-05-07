@@ -6,6 +6,7 @@ import io.Table;
 import kernel.Kernel;
 import kernel.memory.MemoryMap;
 import kernel.scheduler.Scheduler;
+import kernel.scheduler.tasks.EditorTask;
 import kernel.scheduler.tasks.TestTask;
 
 public class CommandProcessor {
@@ -16,6 +17,7 @@ public class CommandProcessor {
     private static final String memMap = "memmap";
     private static final String pciscan = "pciscan";
     private static final String tasktest = "tasktest";
+    private static final String editor = "editor";
 
     public String processCommand(String input) {
         boolean recognized = false;
@@ -47,6 +49,10 @@ public class CommandProcessor {
         }
         if(input.equals(tasktest)) {
             Scheduler.addTask(new TestTask());
+            recognized = true;
+        }
+        if(input.equals(editor)) {
+            Scheduler.addTask(new EditorTask());
             recognized = true;
         }
         if(input.equals("help")) {

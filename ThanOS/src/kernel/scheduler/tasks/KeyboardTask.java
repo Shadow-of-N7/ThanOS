@@ -2,6 +2,8 @@ package kernel.scheduler.tasks;
 
 import devices.KeyCode;
 import devices.Keyboard;
+import io.Console;
+import kernel.scheduler.Scheduler;
 import kernel.scheduler.Task;
 import kernel.scheduler.TaskState;
 import shell.Thash;
@@ -23,10 +25,27 @@ public class KeyboardTask extends Task {
                     }
 
                 default:
-                    Thash.takeKeyCode(keyCode);
+                    if(Scheduler.redirectKeyboardInput) {
+                        // CTRL+C instantly completes the task
+                        if(Keyboard.State.IsCtrl && (keyCode == KeyCode.C || keyCode == KeyCode.C + 32)) {
+                            Scheduler.getCurrentTask().setState(TaskState.COMPLETED);
+                        }
+                        else {
+                            Scheduler.getCurrentTask().takeKeyCode(keyCode);
+                        }
+                    }
+                    else {
+                        Thash.takeKeyCode(keyCode);
+                    }
                     break;
             }
         }
         state = TaskState.PAUSED;
     }
+
+    @Override
+    public void takeKeyCode(int keyCode) {}
+
+    @Override
+    public void setState(byte state) {}
 }

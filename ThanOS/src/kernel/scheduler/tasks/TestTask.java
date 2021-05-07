@@ -11,4 +11,10 @@ public class TestTask extends Task {
         Console.println("Hello world task!");
         state = TaskState.COMPLETED;
     }
+
+    @Override
+    public void takeKeyCode(int keyCode) {}
+
+    @Override
+    public void setState(byte state) {}
 }

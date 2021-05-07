@@ -9,8 +9,10 @@ public class Scheduler {
     private static int _currentTaskIndex;
     private static Task _keyboardTask;
     private static boolean _isRunning = false;
-
     private static ObjectList _tasks;
+
+    // Must be set in run() methods to send input to the task instead to the shell
+    public static boolean redirectKeyboardInput = false;
 
     public static void initialize() {
         _tasks = new ObjectList();
@@ -38,6 +40,8 @@ public class Scheduler {
                 // Remove completed or frozen tasks
                 if(_currentTask.state == TaskState.COMPLETED || _currentTask.state == TaskState.FROZEN) {
                     _tasks.removeAt(_currentTaskIndex);
+                    // Reset the redirection
+                    redirectKeyboardInput = false;
                     return;
                 }
                 _currentTask.state = TaskState.RUNNING;
@@ -94,12 +98,7 @@ public class Scheduler {
     }
 
 
-    public static Task getTask(Task task) {
-        for (int i = 0; i < _tasks.getLength(); i++) {
-            if(_tasks.elementAt(i) == task) {
-                return (Task)_tasks.elementAt(i);
-            }
-        }
-        return null;
+    public static Task getCurrentTask() {
+        return _currentTask;
     }
 }

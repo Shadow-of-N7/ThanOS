@@ -59,6 +59,9 @@ public class Thash {
 
 
     public static void takeKeyCode(int keyCode) {
+        if(Scheduler.redirectKeyboardInput) {
+            return;
+        }
         if(Keyboard.isPrintable(keyCode)) {
             char c = Keyboard.getChar(keyCode);
             Console.print(c);
