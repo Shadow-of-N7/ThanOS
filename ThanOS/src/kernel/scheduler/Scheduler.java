@@ -1,4 +1,4 @@
-package kernel;
+package kernel.scheduler;
 
 import collections.ObjectList;
 
@@ -10,10 +10,5 @@ public class Scheduler {
 
     public void initialize() {
         _tasks = new ObjectList();
-    }
-
-
-    public static class Task {
-
     }
 }
