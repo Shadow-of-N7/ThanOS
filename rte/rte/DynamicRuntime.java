@@ -17,6 +17,11 @@ public class DynamicRuntime
 	private static int _previousObjectAddress = 1;
 
 	/**
+	 * Memory size to add to the next object to be allocated.
+	 */
+	public static int sizeOffset = 0;
+
+	/**
 	 * Returns the next free address for basic mode.
 	 * @return
 	 */
@@ -32,6 +37,7 @@ public class DynamicRuntime
 
 	public static Object newInstance(int scalarSize, int relocEntries, SClassDesc type)
 	{
+		Object object;
 		if(Memory.isAdvancedMode) {
 
 			int startAddress, relocSize;
@@ -41,6 +47,8 @@ public class DynamicRuntime
 
 			// Align the scalars
 			scalarSize = (scalarSize + 3) & ~3;
+			// Apply object enlargement if emptyObject is too small
+			scalarSize += sizeOffset;
 
 			int totalSize = relocSize + scalarSize;
 			// Starting address of the new object
@@ -54,7 +62,7 @@ public class DynamicRuntime
 
 			int objectAddress = startAddress + relocSize;
 
-			Object object = MAGIC.cast2Obj(objectAddress);
+			object = MAGIC.cast2Obj(objectAddress);
 			MAGIC.assign(object._r_scalarSize, scalarSize);
 			MAGIC.assign(object._r_relocEntries, relocEntries);
 			MAGIC.assign(object._r_type, type);
@@ -65,7 +73,6 @@ public class DynamicRuntime
 				MAGIC.assign(lastObject._r_next, object);
 			}
 			Memory.updateLastObject(object);
-			return object;
 		}
 		else {
 			int startAddress, relocSize;
@@ -89,7 +96,7 @@ public class DynamicRuntime
 
 			int objectAddress = startAddress + relocSize;
 
-			Object object = MAGIC.cast2Obj(objectAddress);
+			object = MAGIC.cast2Obj(objectAddress);
 			MAGIC.assign(object._r_scalarSize, scalarSize);
 			MAGIC.assign(object._r_relocEntries, relocEntries);
 			MAGIC.assign(object._r_type, type);
@@ -101,8 +108,10 @@ public class DynamicRuntime
 				MAGIC.assign(lastObject._r_next, object);
 			}
 			_previousObjectAddress = objectAddress;
-			return object;
 		}
+		// Reset the size offset after allocation
+		sizeOffset = 0;
+		return object;
 	}
 
 	public static Object newEmptyObject(int startAddress, int size) {
@@ -113,8 +122,12 @@ public class DynamicRuntime
 		int relocSize = relocEntries << 2;
 		int totalSize = relocSize + scalarSize;
 
-		scalarSize = size - relocSize; // TODO: IS THIS CORRECT?
+		scalarSize = size - relocSize;
 		scalarSize = (scalarSize + 3) &~ 3;
+
+		for(int i = startAddress; i < startAddress + totalSize; i += 4) {
+			MAGIC.wMem32(i, 0);
+		}
 
 		int objectAddress = startAddress + relocSize;
 

@@ -41,7 +41,7 @@ public class BlueScreen {
         // First entry is an interrupt handler, so we have to skip oldEBP and all registers from PUSHA
         // PUSHA contains 8 registers -> EAX ECX EDX EBX OLD-ESP EBP ESI EDI
         // So we skip oldEBP + 8 Registers from PUSHA, each being an integer -> 4 bytes each
-        int oldEIP = MAGIC.rMem32(oldEBP + (9 << 2));
+        int oldEIP = MAGIC.rMem32(ebp + (9 << 2));
         while(oldEBP >= 0x70000 && oldEBP <= 0x9FFFF)
         {
             printCallstackEntry(oldEIP);

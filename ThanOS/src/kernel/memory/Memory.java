@@ -1,7 +1,6 @@
 package kernel.memory;
 
 import collections.MemoryBlockList;
-import io.Console;
 import kernel.BlueScreen;
 import rte.DynamicRuntime;
 
@@ -55,22 +54,38 @@ public class Memory {
     public static int getFreeAddress(int size) {
         // Loop through the empty objects and find one big enough for the requested size.
         Object currentEmptyObject = _firstEmptyObject;
-        Object highestFreeObject = null;
+        int requiredSize = (size + 3) & ~3;
+        int emptyObjectMinSize = (getMinimalEmptyObjectSize() + 3) & ~3;
+
+        int freeAddress = 0;
+
         // Find the highest free object
          do {
              int emptyObjectSize = currentEmptyObject._r_scalarSize + (currentEmptyObject._r_relocEntries << 2);
-             if(emptyObjectSize > size) {
-                 highestFreeObject = currentEmptyObject;
+             if(emptyObjectSize >= requiredSize) {
+                 // Object fits with some empty object remaining
+                 if(requiredSize <= emptyObjectSize - emptyObjectMinSize + 8) {
+                     shrinkEmptyObject(currentEmptyObject, size);
+                     freeAddress = MAGIC.cast2Ref(currentEmptyObject) + currentEmptyObject._r_scalarSize;
+                 }
+                 // Not enough space left for a complete empty object
+                 else {
+                    freeAddress = getObjectLowerAddress(currentEmptyObject);
+                    DynamicRuntime.sizeOffset = emptyObjectSize - requiredSize;
+                 }
+
+
              }
              currentEmptyObject = currentEmptyObject._r_next;
         } while ((currentEmptyObject != null ? currentEmptyObject._r_next : null) != null);
         // Shrink the highest free empty object
         // No memory left
-        if(highestFreeObject == null) {
+        if(freeAddress == 0) {
             BlueScreen.raise("out of heap memory");
+            while (true){}
         }
-        shrinkEmptyObject(highestFreeObject, size);
-        return MAGIC.cast2Ref(highestFreeObject) + highestFreeObject._r_scalarSize;
+
+        return freeAddress;
     }
 
 
@@ -119,4 +134,16 @@ public class Memory {
         }
         _lastEmptyObject = emptyObject;
     }
+
+
+    private static int getMinimalEmptyObjectSize() {
+        return MAGIC.getInstScalarSize("EmptyObject") + MAGIC.getInstRelocEntries("EmptyObject") * 4;
+    }
+
+
+    private static int getObjectLowerAddress(Object o) {
+        return MAGIC.cast2Ref(o) - o._r_relocEntries * 4;
+    }
+
+
 }
