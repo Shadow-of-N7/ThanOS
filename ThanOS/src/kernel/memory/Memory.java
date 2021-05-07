@@ -57,7 +57,7 @@ public class Memory {
         int requiredSize = (size + 3) & ~3;
         int emptyObjectMinSize = (getMinimalEmptyObjectSize() + 3) & ~3;
 
-        int freeAddress = 0;
+        int freeAddress = -1;
 
         // Find the highest free object
          do {
@@ -67,20 +67,22 @@ public class Memory {
                  if(requiredSize <= emptyObjectSize - emptyObjectMinSize + 8) {
                      shrinkEmptyObject(currentEmptyObject, size);
                      freeAddress = MAGIC.cast2Ref(currentEmptyObject) + currentEmptyObject._r_scalarSize;
+                     break;
                  }
                  // Not enough space left for a complete empty object
                  else {
                     freeAddress = getObjectLowerAddress(currentEmptyObject);
                     DynamicRuntime.sizeOffset = emptyObjectSize - requiredSize;
+                    removeEmptyObject(currentEmptyObject);
+                    break;
                  }
-
-
              }
              currentEmptyObject = currentEmptyObject._r_next;
+
         } while ((currentEmptyObject != null ? currentEmptyObject._r_next : null) != null);
-        // Shrink the highest free empty object
+
         // No memory left
-        if(freeAddress == 0) {
+        if(freeAddress == -1) {
             BlueScreen.raise("out of heap memory");
             while (true){}
         }
@@ -146,4 +148,19 @@ public class Memory {
     }
 
 
+    private static void removeEmptyObject(Object emptyObject) {
+        MAGIC.assign(getPreviousEmptyObject(emptyObject)._r_next, emptyObject._r_next);
+    }
+
+    private static Object getPreviousEmptyObject(Object o) {
+        Object currentEmptyObject = _firstEmptyObject;
+        Object result = null;
+        while (currentEmptyObject._r_next != null) {
+            if(currentEmptyObject._r_next == o) {
+                result = currentEmptyObject;
+            }
+            currentEmptyObject = currentEmptyObject._r_next;
+        }
+        return result;
+    }
 }

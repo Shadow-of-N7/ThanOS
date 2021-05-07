@@ -7,21 +7,6 @@ public class BlueScreen {
 
     public static void raise(String source)
     {
-        // Get register content first
-        assert BIOS.regs != null; // Just to silence that damn IDE
-        int EAX = BIOS.regs.EAX;
-        int EBX = BIOS.regs.EBX;
-        int ECX = BIOS.regs.ECX;
-        int EDX = BIOS.regs.EDX;
-        int ESI = BIOS.regs.ESI;
-        int EDI = BIOS.regs.EDI;
-        int EBP = BIOS.regs.EBP;
-        int ESP = BIOS.regs.ESP;
-        int DS = BIOS.regs.DS;
-        int ES = BIOS.regs.ES;
-        int FS = BIOS.regs.FS;
-        int FLAGS = BIOS.regs.FLAGS;
-
         Console.clear(ConsoleColor.Gray, ConsoleColor.Blue, true, false);
         Console.print("Caught ");
         Console.print(source);
@@ -38,6 +23,16 @@ public class BlueScreen {
 
         // First entry
         int oldEBP = MAGIC.rMem32(ebp);
+
+        int EAX = MAGIC.rMem32(ebp + 4);
+        int ECX = MAGIC.rMem32(ebp + 4 * 2);
+        int EDX = MAGIC.rMem32(ebp + 4 * 3);
+        int EBX = MAGIC.rMem32(ebp + 4 * 4);
+        //int OLDESP = MAGIC.rMem32(ebp + 4 * 5);
+        int EBP = MAGIC.rMem32(ebp + 4 * 6);
+        int ESI = MAGIC.rMem32(ebp + 4 * 7);
+        int EDI = MAGIC.rMem32(ebp + 4 * 8);
+
         // First entry is an interrupt handler, so we have to skip oldEBP and all registers from PUSHA
         // PUSHA contains 8 registers -> EAX ECX EDX EBX OLD-ESP EBP ESI EDI
         // So we skip oldEBP + 8 Registers from PUSHA, each being an integer -> 4 bytes each
@@ -45,8 +40,12 @@ public class BlueScreen {
         while(oldEBP >= 0x70000 && oldEBP <= 0x9FFFF)
         {
             printCallstackEntry(oldEIP);
-            oldEBP = MAGIC.rMem32(oldEBP);
+            int newEBP = MAGIC.rMem32(oldEBP);
+            if (newEBP < oldEBP)
+                break;
+            oldEBP = newEBP;
             oldEIP = MAGIC.rMem32(oldEBP + 4);
+
         }
 
         // Print register content
@@ -63,11 +62,11 @@ public class BlueScreen {
         printRegisterEntry("\tESI:\t", ESI, spacerX, baseline + 5);
         printRegisterEntry("\tEDI:\t", EDI, spacerX, baseline + 6);
         printRegisterEntry("\tEBP:\t", EBP, spacerX, baseline + 7);
-        printRegisterEntry("\tESP:\t", ESP, spacerX, baseline + 8);
-        printRegisterEntry("\tDS:\t\t", DS, spacerX, baseline + 9);
-        printRegisterEntry("\tES:\t\t", ES, spacerX, baseline + 10);
-        printRegisterEntry("\tFS:\t\t", FS, spacerX, baseline + 11);
-        printRegisterEntry("\tFLAGS:\t", FLAGS, spacerX, baseline + 12);
+        //printRegisterEntry("\tESP:\t", ESP, spacerX, baseline + 8);
+        //printRegisterEntry("\tDS:\t\t", DS, spacerX, baseline + 9);
+        //printRegisterEntry("\tES:\t\t", ES, spacerX, baseline + 10);
+        //printRegisterEntry("\tFS:\t\t", FS, spacerX, baseline + 11);
+        //printRegisterEntry("\tFLAGS:\t", FLAGS, spacerX, baseline + 12);
 
         // Print some lines for more visual beauty
         int verticalLine = baseline;
@@ -94,6 +93,7 @@ public class BlueScreen {
         Console.print("\tEIP: ");
         Console.printHex(eip);
         Console.println();
+
     }
 
     private static void printRegisterEntry(String regName, int content, int x, int y) {
