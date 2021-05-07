@@ -23,6 +23,27 @@ public class EditorTask extends Task {
             char c = Keyboard.getChar(keyCode);
             Console.print(c);
         }
+        else
+        {
+            switch (keyCode) {
+                case KeyCode.Backspace:
+                    if (Console.getCaretX() > 0) {
+                        Console.setCaret(Console.getCaretX() - 1, Console.getCaretY());
+                        Console.deleteChar();
+                    }
+                    break;
+                case KeyCode.ArrowLeft:
+                    if (Console.getCaretX() > 0) {
+                        Console.setCaret(Console.getCaretX() - 1, Console.getCaretY());
+                    }
+                    break;
+                case KeyCode.ArrowRight:
+                    if (Console.getCaretX() < Console.SCREEN_WIDTH) {
+                        Console.setCaret(Console.getCaretX() + 1, Console.getCaretY());
+                    }
+                    break;
+            }
+        }
     }
 
     @Override

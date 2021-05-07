@@ -17,7 +17,7 @@ public class CommandProcessor {
     private static final String memMap = "memmap";
     private static final String pciscan = "pciscan";
     private static final String tasktest = "tasktest";
-    private static final String editor = "editor";
+    private static final String editor = "atto";
 
     public String processCommand(String input) {
         boolean recognized = false;
