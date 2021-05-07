@@ -5,6 +5,8 @@ import io.Console;
 import io.Table;
 import kernel.Kernel;
 import kernel.memory.MemoryMap;
+import kernel.scheduler.Scheduler;
+import kernel.scheduler.tasks.TestTask;
 
 public class CommandProcessor {
     private static final String testGraphics = "testgm";
@@ -13,6 +15,7 @@ public class CommandProcessor {
     private static final String clear = "clear";
     private static final String memMap = "memmap";
     private static final String pciscan = "pciscan";
+    private static final String tasktest = "tasktest";
 
     public String processCommand(String input) {
         boolean recognized = false;
@@ -41,6 +44,10 @@ public class CommandProcessor {
         if(input.equals("gm")) {
             // TODO: VESA DRIVER
             return "Not implemented yet.";
+        }
+        if(input.equals(tasktest)) {
+            Scheduler.addTask(new TestTask());
+            recognized = true;
         }
         if(input.equals("help")) {
             Table table = new Table();

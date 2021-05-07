@@ -5,6 +5,8 @@ import io.Console;
 import io.Console.ConsoleColor;
 import devices.Keyboard;
 import kernel.memory.Memory;
+import kernel.scheduler.Scheduler;
+import kernel.scheduler.tasks.TestTask;
 import shell.Thash;
 
 public class Kernel {
@@ -26,25 +28,7 @@ public class Kernel {
             // Updates keyboard buffers; keyboards won't work without this.
             Keyboard.handleKeyBuffer();
 
-            handleInput();
-        }
-    }
-
-
-    public static void handleInput() {
-        if(Keyboard.isNewKeyAvailable()) {
-            int keyCode = Keyboard.getKeyCode();
-            switch (keyCode) {
-                case KeyCode.Escape:
-                    if(Keyboard.State.IsCtrl && Keyboard.State.IsShift) {
-                        MAGIC.inline(0xCC);
-                    }
-
-                default:
-                    Thash.takeKeyCode(keyCode);
-                    break;
-            }
-
+            Scheduler.run();
         }
     }
 
@@ -84,7 +68,9 @@ public class Kernel {
         Interrupt.useInterrupts(true);
 
         Keyboard.initialize();
+        Scheduler.initialize();
         Thash.intialize();
+        Scheduler.start();
     }
 
 
