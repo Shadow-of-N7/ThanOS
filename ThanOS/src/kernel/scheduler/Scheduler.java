@@ -63,6 +63,17 @@ public class Scheduler {
     }
 
 
+    public static boolean isReadyForInput() {
+        for(int i = 0; i < _tasks.getLength(); i++) {
+            Task currentTask = (Task)_tasks.elementAt(i);
+            if(currentTask.blocking) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
     public static void addTask(Task task) {
         if(_tasks.getLength() == 0) {
             _tasks.add((Object)task);

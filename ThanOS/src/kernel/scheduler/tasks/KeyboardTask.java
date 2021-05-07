@@ -7,6 +7,11 @@ import kernel.scheduler.TaskState;
 import shell.Thash;
 
 public class KeyboardTask extends Task {
+
+    public KeyboardTask() {
+        blocking = false;
+    }
+
     @Override
     public void run() {
         if(Keyboard.isNewKeyAvailable()) {

@@ -3,15 +3,17 @@ package shell;
 import devices.KeyCode;
 import devices.Keyboard;
 import io.Console;
+import kernel.scheduler.Scheduler;
 
 // Stands for "Thanos shell"
 public class Thash {
     private static final char[] _commandBuffer = new char[256];
     private static int _bufferIndex = 0;
     private static CommandProcessor _processor;
-    private static String[] _commandHistory = new String[50];
+    private static final String[] _commandHistory = new String[50];
     private static int _currentRepeatedCommand = -1;
     private static boolean _isRepeatingMode = false;
+    private static boolean _isWaitingForControl = false;
 
 
     public static void intialize() {
@@ -33,7 +35,26 @@ public class Thash {
             }
         }
         _isRepeatingMode = false;
-        Console.print('>');
+        if(Scheduler.isReadyForInput()) {
+            Console.print('>');
+        }
+        else {
+            _isWaitingForControl = true;
+        }
+    }
+
+
+    /**
+     * Only applies after a task. Scheduler tells if there are still blocking tasks to be executed.
+     * After all are done, this removes the waiting flag and prints the input ready symbol.
+     */
+    public static void requestControl() {
+        if(_isWaitingForControl) {
+            if(Scheduler.isReadyForInput()) {
+                Console.print('>');
+                _isWaitingForControl = false;
+            }
+        }
     }
 
 
