@@ -7,6 +7,7 @@ import rte.DynamicRuntime;
 public class Memory {
     private static Object _lastEmptyObject = null;
     private static Object _firstEmptyObject = null;
+    private static Object _firstHeapObject = null;
     private static Object _lastHeapObject = null;
     private static MemoryBlockList map;
 
@@ -20,6 +21,7 @@ public class Memory {
         initializeEmptyObjects();
         // Set this to false to stay in basic mode - works too.
         isAdvancedMode = true;
+        GC.initialize();
     }
 
 
@@ -109,6 +111,9 @@ public class Memory {
      */
     public static void updateLastObject(Object object) {
         _lastHeapObject = object;
+        if(_firstHeapObject == null) {
+            _firstHeapObject = object;
+        }
     }
 
     /**
@@ -143,14 +148,35 @@ public class Memory {
     }
 
 
+    private static int getObjectUpperAddress(Object o) { return MAGIC.cast2Ref(o) + o._r_scalarSize; }
+
+
     private static int getObjectLowerAddress(Object o) {
         return MAGIC.cast2Ref(o) - o._r_relocEntries * 4;
     }
 
 
+    private static int getObjectSize(Object o) { return getObjectUpperAddress(o) - getObjectLowerAddress(o); }
+
+
     private static void removeEmptyObject(Object emptyObject) {
         MAGIC.assign(getPreviousEmptyObject(emptyObject)._r_next, emptyObject._r_next);
     }
+
+
+    public static void removeHeapObject(Object object) {
+        // Update first reference if first object is affected
+        if(object == _firstHeapObject) {
+            _firstHeapObject = object._r_next;
+
+        }
+        else {
+            Object previousObject = getPreviousHeapObject(object);
+            MAGIC.assign(previousObject._r_next, object._r_next);
+        }
+        addEmptyObject(getObjectLowerAddress(object), getObjectSize(object));
+    }
+
 
     private static Object getPreviousEmptyObject(Object o) {
         Object currentEmptyObject = _firstEmptyObject;
@@ -162,5 +188,24 @@ public class Memory {
             currentEmptyObject = currentEmptyObject._r_next;
         }
         return result;
+    }
+
+
+    private static Object getPreviousHeapObject(Object o) {
+        Object currentObject = _firstHeapObject;
+        Object result = null;
+        while (currentObject._r_next != null) {
+            if(currentObject._r_next == o) {
+                result = currentObject;
+            }
+            currentObject = currentObject._r_next;
+        }
+        return result;
+    }
+
+
+    @SJC.Inline
+    public static Object getFirstHeapObject() {
+        return _firstHeapObject;
     }
 }

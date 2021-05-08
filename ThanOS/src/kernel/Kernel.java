@@ -4,6 +4,7 @@ import devices.KeyCode;
 import io.Console;
 import io.Console.ConsoleColor;
 import devices.Keyboard;
+import kernel.memory.GC;
 import kernel.memory.Memory;
 import kernel.scheduler.Scheduler;
 import kernel.scheduler.tasks.TestTask;
@@ -30,6 +31,7 @@ public class Kernel {
 
             Scheduler.run();
             Thash.requestControl();
+            GC.collect();
         }
     }
 

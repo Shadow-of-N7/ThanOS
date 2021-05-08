@@ -12,6 +12,7 @@ public class Timer {
     @SJC.Inline
     public static void updateTimer() {
         ++_timerBaseCount;
+        _elapsedTime++;
     }
 
 
@@ -30,9 +31,12 @@ public class Timer {
      */
     @SJC.NoOptimization
     public static void waitReal(long amount) {
+        _elapsedTime = 0;
         while (_timerBaseCount < amount) {
             // This only exists to stop the compiler from optimizing the loop away
             ++_elapsedTime;
         }
+        _timerBaseCount = 0;
+        _elapsedTime = 0;
     }
 }
