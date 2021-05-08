@@ -247,6 +247,8 @@ public class Memory {
 
                     // Current beneath compare
                     if (currentUpperAddress == compareLowerAddress) {
+                        // If currentEmpty points to compare, we must ensure compare doesn't point to itself after
+                        // the next update!
                         if(compareObject._r_next == currentEmptyObject) {
                             MAGIC.assign(getPreviousEmptyObject(compareObject)._r_next, currentEmptyObject);
                         } else {
