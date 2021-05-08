@@ -42,6 +42,12 @@ public class Scheduler {
                     _tasks.removeAt(_currentTaskIndex);
                     // Reset the redirection
                     redirectKeyboardInput = false;
+                    Console.println();
+                    if(_currentTask.fullScreen) {
+                        Console.clear();
+                        Console.setCaret(0, 0);
+                    }
+                    _currentTask = null;
                     return;
                 }
                 _currentTask.state = TaskState.RUNNING;

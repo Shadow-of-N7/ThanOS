@@ -64,7 +64,7 @@ public class Memory {
              int emptyObjectSize = currentEmptyObject._r_scalarSize + (currentEmptyObject._r_relocEntries << 2);
              if(emptyObjectSize >= requiredSize) {
                  // Object fits with some empty object remaining
-                 if(requiredSize <= emptyObjectSize - emptyObjectMinSize + 8) {
+                 if(requiredSize <= emptyObjectSize - emptyObjectMinSize + 8 /*Adapt to size when marked is used*/) {
                      shrinkEmptyObject(currentEmptyObject, size);
                      freeAddress = MAGIC.cast2Ref(currentEmptyObject) + currentEmptyObject._r_scalarSize;
                      break;

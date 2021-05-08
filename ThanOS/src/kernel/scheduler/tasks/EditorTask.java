@@ -7,14 +7,21 @@ import kernel.scheduler.Scheduler;
 import kernel.scheduler.Task;
 
 public class EditorTask extends Task {
+    private boolean _isInitialized = false;
 
     public EditorTask() {
         blocking = true;
+        fullScreen = true;
     }
 
     @Override
     public void run() {
         Scheduler.redirectKeyboardInput = true;
+        if(!_isInitialized) {
+            Console.clear();
+            Console.setCaret(0, 0);
+            _isInitialized = true;
+        }
     }
 
     @Override
