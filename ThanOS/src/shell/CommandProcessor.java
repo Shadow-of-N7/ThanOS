@@ -4,6 +4,7 @@ import devices.PCI;
 import io.Console;
 import io.Table;
 import kernel.Kernel;
+import kernel.memory.GC;
 import kernel.memory.MemoryMap;
 import kernel.scheduler.Scheduler;
 import kernel.scheduler.tasks.EditorTask;
@@ -18,6 +19,7 @@ public class CommandProcessor {
     private static final String pciscan = "pciscan";
     private static final String tasktest = "tasktest";
     private static final String editor = "atto";
+    private static final String gc = "gc";
 
     public String processCommand(String input) {
         boolean recognized = false;
@@ -53,6 +55,10 @@ public class CommandProcessor {
         }
         if(input.equals(editor)) {
             Scheduler.addTask(new EditorTask());
+            recognized = true;
+        }
+        if(input.equals(gc)) {
+            GC.collect(true);
             recognized = true;
         }
         if(input.equals("help")) {

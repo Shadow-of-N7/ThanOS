@@ -1,6 +1,7 @@
 package kernel.memory;
 
 import collections.MemoryBlockList;
+import io.Console;
 import kernel.BlueScreen;
 import rte.DynamicRuntime;
 
@@ -168,13 +169,34 @@ public class Memory {
         // Update first reference if first object is affected
         if(object == _firstHeapObject) {
             _firstHeapObject = object._r_next;
-
         }
         else {
             Object previousObject = getPreviousHeapObject(object);
-            MAGIC.assign(previousObject._r_next, object._r_next);
+            if(object == _lastHeapObject) {
+                _lastHeapObject = previousObject;
+            }
+            if(previousObject != null) {
+                MAGIC.assign(previousObject._r_next, object._r_next);
+            }
         }
         addEmptyObject(getObjectLowerAddress(object), getObjectSize(object));
+    }
+
+
+    public static void mergeEmptyObjects() {
+        Object currentEmptyObject = _firstEmptyObject;
+
+        while (currentEmptyObject._r_next != null) {
+            Object compareObject = _firstEmptyObject;
+
+            while (compareObject._r_next != null) {
+                int currentLowerAddress = getObjectLowerAddress(currentEmptyObject);
+                int compareLowerAddress = getObjectLowerAddress(compareObject);
+                int currentUpperAddress = getObjectUpperAddress(currentEmptyObject);
+                int compareUpperAddress = getObjectUpperAddress(compareObject);
+
+            }
+        }
     }
 
 

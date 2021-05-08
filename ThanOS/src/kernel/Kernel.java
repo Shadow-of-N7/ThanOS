@@ -1,17 +1,15 @@
 package kernel;
 
-import devices.KeyCode;
 import io.Console;
 import io.Console.ConsoleColor;
 import devices.Keyboard;
-import kernel.memory.GC;
 import kernel.memory.Memory;
 import kernel.scheduler.Scheduler;
-import kernel.scheduler.tasks.TestTask;
 import shell.Thash;
 
 public class Kernel {
 
+    private static int _counter = 0;
     public static void main() {
 
         // Initialization
@@ -27,11 +25,16 @@ public class Kernel {
 
         while(true) {
             // Updates keyboard buffers; keyboards won't work without this.
+            if(_counter++ == 1000) {
+                //GC.collect();
+                _counter = 0;
+            }
             Keyboard.handleKeyBuffer();
 
             Scheduler.run();
             Thash.requestControl();
-            GC.collect();
+
+
         }
     }
 
