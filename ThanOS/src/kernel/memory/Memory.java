@@ -150,7 +150,11 @@ public class Memory {
         Object currentEmptyObject = _firstEmptyObject;
         while (currentEmptyObject != null) {
             ++counter;
+            if(currentEmptyObject == currentEmptyObject._r_next) {
+                return counter;
+            }
             currentEmptyObject = currentEmptyObject._r_next;
+            Console.println("foo");
         }
         return counter;
     }
@@ -165,6 +169,10 @@ public class Memory {
             Console.print('-');
             Console.printHex(getObjectUpperAddress(currentEmptyObject));
             Console.println();
+
+            if(currentEmptyObject == currentEmptyObject._r_next) {
+                return;
+            }
             currentEmptyObject = currentEmptyObject._r_next;
         }
 
@@ -176,17 +184,23 @@ public class Memory {
     }
 
 
-    private static int getObjectUpperAddress(Object o) { return MAGIC.cast2Ref(o) + o._r_scalarSize; }
+    @SJC.Inline
+    private static int getObjectUpperAddress(Object object) { return MAGIC.cast2Ref(object) + object._r_scalarSize; }
 
 
-    private static int getObjectLowerAddress(Object o) {
-        return MAGIC.cast2Ref(o) - o._r_relocEntries * 4;
+    @SJC.Inline
+    private static int getObjectLowerAddress(Object object) {
+        return MAGIC.cast2Ref(object) - object._r_relocEntries * 4;
     }
 
 
-    private static int getObjectSize(Object o) { return getObjectUpperAddress(o) - getObjectLowerAddress(o); }
+    @SJC.Inline
+    private static int getObjectSize(Object object) {
+        return getObjectUpperAddress(object) - getObjectLowerAddress(object);
+    }
 
 
+    @SJC.Inline
     private static void removeEmptyObject(Object emptyObject) {
         MAGIC.assign(getPreviousEmptyObject(emptyObject)._r_next, emptyObject._r_next);
     }
@@ -210,6 +224,10 @@ public class Memory {
     }
 
 
+    /**
+     * Merges neighbouring empty objects into one bigger.
+     * @return How many merge operations have been executed.
+     */
     public static int mergeEmptyObjects() {
         int counter = 0;
         Object currentEmptyObject = _firstEmptyObject;
@@ -219,29 +237,37 @@ public class Memory {
             Object compareObject = _firstEmptyObject;
 
             while (compareObject != null) {
-                if(currentEmptyObject instanceof EmptyObject && compareObject instanceof EmptyObject) {
+                if(currentEmptyObject instanceof EmptyObject
+                        && compareObject instanceof EmptyObject
+                        && currentEmptyObject != compareObject) {
                     int currentLowerAddress = getObjectLowerAddress(currentEmptyObject);
                     int compareLowerAddress = getObjectLowerAddress(compareObject);
                     int currentUpperAddress = getObjectUpperAddress(currentEmptyObject);
                     int compareUpperAddress = getObjectUpperAddress(compareObject);
 
                     // Current beneath compare
-                    if (currentUpperAddress > compareLowerAddress - 4 && currentUpperAddress < compareLowerAddress) {
-                        StaticV24.print("Compare Lower: ");
-                        StaticV24.println(compareLowerAddress);
-                        StaticV24.print("Current Upper: ");
-                        StaticV24.println(currentUpperAddress);
-                        MAGIC.assign(currentEmptyObject._r_next, compareObject._r_next); // Chain up
+                    if (currentUpperAddress == compareLowerAddress) {
+                        if(compareObject._r_next == currentEmptyObject) {
+                            MAGIC.assign(getPreviousEmptyObject(compareObject)._r_next, currentEmptyObject);
+                        } else {
+                            MAGIC.assign(currentEmptyObject._r_next, compareObject._r_next); // Chain up
+                        }
                         MAGIC.assign(currentEmptyObject._r_scalarSize, currentEmptyObject._r_scalarSize + getObjectSize(compareObject));
-                        StaticV24.print(counter);
                         counter++;
+                        break;
                     }
                     // Current above compare
-                    if (currentLowerAddress < compareUpperAddress + 4 && compareUpperAddress < currentLowerAddress) {
-                        MAGIC.assign(compareObject._r_next, currentEmptyObject._r_next);
+                    if (currentLowerAddress == compareUpperAddress) {
+                        // If currentEmpty points to compare, we must ensure compare doesn't point to itself after
+                        // the next update!
+                        if(currentEmptyObject._r_next == compareObject) {
+                            MAGIC.assign(getPreviousEmptyObject(currentEmptyObject)._r_next, compareObject);
+                        }else {
+                            MAGIC.assign(compareObject._r_next, currentEmptyObject._r_next);
+                        }
                         MAGIC.assign(compareObject._r_scalarSize, compareObject._r_scalarSize + getObjectSize(currentEmptyObject));
-                        StaticV24.print(counter);
                         counter++;
+                        break;
                     }
                 }
                 compareObject = compareObject._r_next;
