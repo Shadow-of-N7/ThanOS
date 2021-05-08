@@ -1,6 +1,7 @@
 package kernel.memory;
 
 import collections.MemoryBlockList;
+import devices.StaticV24;
 import io.Console;
 import kernel.BlueScreen;
 import rte.DynamicRuntime;
@@ -144,6 +145,32 @@ public class Memory {
     }
 
 
+    private static int getEmptyObjectCount() {
+        int counter = 0;
+        Object currentEmptyObject = _firstEmptyObject;
+        while (currentEmptyObject != null) {
+            ++counter;
+            currentEmptyObject = currentEmptyObject._r_next;
+        }
+        return counter;
+    }
+
+
+    public static void printEmptyObjectInfo() {
+        Console.println(getEmptyObjectCount());
+        Object currentEmptyObject = _firstEmptyObject;
+        while (currentEmptyObject != null) {
+            Console.print("\t");
+            Console.printHex(getObjectLowerAddress(currentEmptyObject));
+            Console.print('-');
+            Console.printHex(getObjectUpperAddress(currentEmptyObject));
+            Console.println();
+            currentEmptyObject = currentEmptyObject._r_next;
+        }
+
+    }
+
+
     private static int getMinimalEmptyObjectSize() {
         return MAGIC.getInstScalarSize("EmptyObject") + MAGIC.getInstRelocEntries("EmptyObject") * 4;
     }
@@ -183,20 +210,45 @@ public class Memory {
     }
 
 
-    public static void mergeEmptyObjects() {
+    public static int mergeEmptyObjects() {
+        int counter = 0;
         Object currentEmptyObject = _firstEmptyObject;
 
-        while (currentEmptyObject._r_next != null) {
+
+        while (currentEmptyObject != null) {
             Object compareObject = _firstEmptyObject;
 
-            while (compareObject._r_next != null) {
-                int currentLowerAddress = getObjectLowerAddress(currentEmptyObject);
-                int compareLowerAddress = getObjectLowerAddress(compareObject);
-                int currentUpperAddress = getObjectUpperAddress(currentEmptyObject);
-                int compareUpperAddress = getObjectUpperAddress(compareObject);
+            while (compareObject != null) {
+                if(currentEmptyObject instanceof EmptyObject && compareObject instanceof EmptyObject) {
+                    int currentLowerAddress = getObjectLowerAddress(currentEmptyObject);
+                    int compareLowerAddress = getObjectLowerAddress(compareObject);
+                    int currentUpperAddress = getObjectUpperAddress(currentEmptyObject);
+                    int compareUpperAddress = getObjectUpperAddress(compareObject);
 
+                    // Current beneath compare
+                    if (currentUpperAddress > compareLowerAddress - 4 && currentUpperAddress < compareLowerAddress) {
+                        StaticV24.print("Compare Lower: ");
+                        StaticV24.println(compareLowerAddress);
+                        StaticV24.print("Current Upper: ");
+                        StaticV24.println(currentUpperAddress);
+                        MAGIC.assign(currentEmptyObject._r_next, compareObject._r_next); // Chain up
+                        MAGIC.assign(currentEmptyObject._r_scalarSize, currentEmptyObject._r_scalarSize + getObjectSize(compareObject));
+                        StaticV24.print(counter);
+                        counter++;
+                    }
+                    // Current above compare
+                    if (currentLowerAddress < compareUpperAddress + 4 && compareUpperAddress < currentLowerAddress) {
+                        MAGIC.assign(compareObject._r_next, currentEmptyObject._r_next);
+                        MAGIC.assign(compareObject._r_scalarSize, compareObject._r_scalarSize + getObjectSize(currentEmptyObject));
+                        StaticV24.print(counter);
+                        counter++;
+                    }
+                }
+                compareObject = compareObject._r_next;
             }
+            currentEmptyObject = currentEmptyObject._r_next;
         }
+        return counter;
     }
 
 

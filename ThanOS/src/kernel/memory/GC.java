@@ -47,6 +47,9 @@ public class GC {
             mark();
             sweep();
         }
+        Memory.printEmptyObjectInfo();
+        Memory.mergeEmptyObjects();
+        Memory.printEmptyObjectInfo();
     }
 
 
@@ -54,7 +57,6 @@ public class GC {
         _markCounter = 0;
         for(int i = 0; i < _rootSet.getLength(); i++) {
             markObject(_rootSet.elementAt(i));
-            Console.print('f');
         }
         return _markCounter;
     }
