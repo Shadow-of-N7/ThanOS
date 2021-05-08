@@ -1,5 +1,6 @@
 package kernel;
 
+import devices.StaticV24;
 import io.Console;
 import io.Console.ConsoleColor;
 import devices.Keyboard;

@@ -26,6 +26,6 @@ mv syminfo.txt build/syminfo.txt
 
 
 case $start in
-  (true)    qemu-system-i386 -boot a -fda build/BOOT_FLP.IMG;;
+  (true)    qemu-system-i386 -serial stdio -boot a -fda build/BOOT_FLP.IMG;;
   (false)   ;;
 esac

@@ -27,6 +27,7 @@ public class GC {
             _rootSet.add(currentObject);
             currentObjectAddress = MAGIC.cast2Ref(currentObject._r_next);
         }
+        _rootSet.add(Memory.getFirstHeapObject());
     }
 
 
@@ -53,6 +54,7 @@ public class GC {
         _markCounter = 0;
         for(int i = 0; i < _rootSet.getLength(); i++) {
             markObject(_rootSet.elementAt(i));
+            Console.print('f');
         }
         return _markCounter;
     }
@@ -66,11 +68,15 @@ public class GC {
                 heapObject._a_marked = false;
             }
             else {
-                Memory.removeHeapObject(heapObject);
-                _sweepCounter++;
+                // TODO: Is this check really required?
+                if(MAGIC.cast2Ref(heapObject) >= _sjcImageUpperAddress) {
+                    Memory.removeHeapObject(heapObject);
+                    _sweepCounter++;
+                }
             }
             heapObject = heapObject._r_next;
         }
+
         initialize();
         for(int i = 0; i < _rootSet.getLength(); i++) {
             unmarkObject(_rootSet.elementAt(i));
