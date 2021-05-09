@@ -56,7 +56,7 @@ public class DynamicRuntime
 
 
 			// Zero-initialize the allocated memory
-			for (int i = startAddress; i < totalSize; i += 4) {
+			for (int i = startAddress; i < startAddress + totalSize; i += 4) {
 				MAGIC.wMem32(i, 0);
 			}
 

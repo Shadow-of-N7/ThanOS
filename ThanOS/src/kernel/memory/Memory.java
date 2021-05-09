@@ -66,20 +66,20 @@ public class Memory {
         // Find the highest free object
          do {
              int emptyObjectSize = currentEmptyObject._r_scalarSize + (currentEmptyObject._r_relocEntries << 2);
+
              if(emptyObjectSize >= requiredSize) {
                  // Object fits with some empty object remaining
-                 if(requiredSize <= emptyObjectSize - emptyObjectMinSize + 8 /*Adapt to size when marked is used*/) {
+                 if(requiredSize <= emptyObjectSize - emptyObjectMinSize + 9 /*Adapt to size when marked is used*/) {
                      shrinkEmptyObject(currentEmptyObject, size);
                      freeAddress = MAGIC.cast2Ref(currentEmptyObject) + currentEmptyObject._r_scalarSize;
-                     break;
                  }
                  // Not enough space left for a complete empty object
                  else {
                     freeAddress = getObjectLowerAddress(currentEmptyObject);
                     DynamicRuntime.sizeOffset = emptyObjectSize - requiredSize;
                     removeEmptyObject(currentEmptyObject);
-                    break;
                  }
+                 break;
              }
              currentEmptyObject = currentEmptyObject._r_next;
 
@@ -90,7 +90,6 @@ public class Memory {
             BlueScreen.raise("out of heap memory");
             while (true){}
         }
-
         return freeAddress;
     }
 
@@ -113,6 +112,8 @@ public class Memory {
      */
     public static void updateLastObject(Object object) {
         _lastHeapObject = object;
+        //StaticV24.printHex(MAGIC.cast2Ref(_lastHeapObject), 8);
+        //StaticV24.println();
         if(_firstHeapObject == null) {
             _firstHeapObject = object;
         }
@@ -154,21 +155,21 @@ public class Memory {
                 return counter;
             }
             currentEmptyObject = currentEmptyObject._r_next;
-            Console.println("foo");
         }
         return counter;
     }
 
 
     public static void printEmptyObjectInfo() {
-        Console.println(getEmptyObjectCount());
+        StaticV24.print("Empty object count: ");
+        StaticV24.println(getEmptyObjectCount());
         Object currentEmptyObject = _firstEmptyObject;
         while (currentEmptyObject != null) {
-            Console.print("\t");
-            Console.printHex(getObjectLowerAddress(currentEmptyObject));
-            Console.print('-');
-            Console.printHex(getObjectUpperAddress(currentEmptyObject));
-            Console.println();
+            //Console.print("\t");
+            StaticV24.printHex(getObjectLowerAddress(currentEmptyObject), 8);
+            StaticV24.print('-');
+            StaticV24.printHex(getObjectUpperAddress(currentEmptyObject), 8);
+            StaticV24.println();
 
             if(currentEmptyObject == currentEmptyObject._r_next) {
                 return;
@@ -180,7 +181,7 @@ public class Memory {
 
 
     private static int getMinimalEmptyObjectSize() {
-        return MAGIC.getInstScalarSize("EmptyObject") + MAGIC.getInstRelocEntries("EmptyObject") * 4;
+        return MAGIC.getInstScalarSize("EmptyObject") + (MAGIC.getInstRelocEntries("EmptyObject") * 4);
     }
 
 

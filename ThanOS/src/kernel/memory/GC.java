@@ -1,6 +1,7 @@
 package kernel.memory;
 
 import collections.ObjectList;
+import devices.StaticV24;
 import io.Console;
 
 public class GC {
@@ -38,10 +39,12 @@ public class GC {
     public static void collect(boolean outputStats){
         initialize();
         if(outputStats) {
-            Console.print("Objects marked: ");
-            Console.println(mark());
-            Console.print("Objects sweeped: ");
-            Console.println(sweep());
+            int markCount = mark();
+            StaticV24.print("Objects marked: ");
+            StaticV24.println(markCount);
+            int sweepCount = sweep();
+            StaticV24.print("Objects sweeped: ");
+            StaticV24.println(sweepCount);
         }
         else {
             mark();
@@ -49,6 +52,7 @@ public class GC {
         }
         Memory.printEmptyObjectInfo();
         Memory.mergeEmptyObjects();
+        StaticV24.println("Merging empty objects if possible...");
         Memory.printEmptyObjectInfo();
     }
 
@@ -72,6 +76,9 @@ public class GC {
             else {
                 // TODO: Is this check really required?
                 if(MAGIC.cast2Ref(heapObject) >= _sjcImageUpperAddress) {
+                    StaticV24.print("Sweeped: ");
+                    StaticV24.printHex(MAGIC.cast2Ref(heapObject), 8);
+                    StaticV24.println();
                     Memory.removeHeapObject(heapObject);
                     _sweepCounter++;
                 }
@@ -80,9 +87,11 @@ public class GC {
         }
 
         initialize();
+        /*
         for(int i = 0; i < _rootSet.getLength(); i++) {
             unmarkObject(_rootSet.elementAt(i));
         }
+         */
         return _sweepCounter;
     }
 
@@ -92,8 +101,11 @@ public class GC {
      * @param object
      * @return Amount of marked objects.
      */
-    private static void markObject(Object object) {
+    private static void markObject(Object object) { // TODO: FAILS AFTER SOME REPEATS
         if(!object._a_marked && !(object instanceof EmptyObject)) {
+            StaticV24.print("Marked: ");
+            StaticV24.printHex(MAGIC.cast2Ref(object), 8);
+            StaticV24.println();
             object._a_marked = true;
             ++_markCounter;
             int address = MAGIC.cast2Ref(object);
