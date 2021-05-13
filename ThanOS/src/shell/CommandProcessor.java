@@ -5,6 +5,7 @@ import io.Console;
 import io.Table;
 import kernel.Kernel;
 import kernel.memory.GC;
+import kernel.memory.Memory;
 import kernel.memory.MemoryMap;
 import kernel.scheduler.Scheduler;
 import kernel.scheduler.tasks.EditorTask;
@@ -60,6 +61,9 @@ public class CommandProcessor {
         if(input.equals(gc)) {
             GC.collect(true);
             recognized = true;
+        }
+        if(input.equals("ho")) {
+            Console.println(Memory.getHeapObjectCount());
         }
         if(input.equals("help")) {
             Table table = new Table();

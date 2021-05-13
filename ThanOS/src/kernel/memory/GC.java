@@ -2,20 +2,15 @@ package kernel.memory;
 
 import collections.ObjectList;
 import devices.StaticV24;
-import io.Console;
 
 public class GC {
     private static ObjectList _rootSet = null;
-    private static int _sjcImageSize;
-    private static int _sjcImageUpperAddress;
     private static int _markCounter = 0;
     private static int _sweepCounter = 0;
 
 
     public static void initialize() {
         int currentObjectAddress = MAGIC.imageBase + 16;
-        _sjcImageSize = MAGIC.rMem32(MAGIC.imageBase + 4);
-        _sjcImageUpperAddress = MAGIC.imageBase + _sjcImageSize;
         // GC starts from the root set, consisting of all objects within the SJC image.
         if(_rootSet == null) {
             _rootSet = new ObjectList();
@@ -23,7 +18,7 @@ public class GC {
             _rootSet.clear();
         }
 
-        while (currentObjectAddress < _sjcImageUpperAddress && currentObjectAddress > MAGIC.imageBase) {
+        while (currentObjectAddress < Memory.getSjcUpperAddress() && currentObjectAddress > MAGIC.imageBase) {
             Object currentObject = MAGIC.cast2Obj(currentObjectAddress);
             _rootSet.add(currentObject);
             currentObjectAddress = MAGIC.cast2Ref(currentObject._r_next);
@@ -69,13 +64,14 @@ public class GC {
     private static int sweep() {
         _sweepCounter = 0;
         Object heapObject = Memory.getFirstHeapObject();
-        while(heapObject != null) {
+        while(heapObject._r_next != null) {
+            heapObject = heapObject._r_next;
             if(heapObject._a_marked) {
                 heapObject._a_marked = false;
             }
             else {
                 // TODO: Is this check really required?
-                if(MAGIC.cast2Ref(heapObject) >= _sjcImageUpperAddress) {
+                if(MAGIC.cast2Ref(heapObject) >= Memory.getSjcUpperAddress() && !(heapObject instanceof EmptyObject)) {
                     StaticV24.print("Sweeped: ");
                     StaticV24.printHex(MAGIC.cast2Ref(heapObject), 8);
                     StaticV24.println();
@@ -83,15 +79,12 @@ public class GC {
                     _sweepCounter++;
                 }
             }
-            heapObject = heapObject._r_next;
         }
 
         initialize();
-        /*
         for(int i = 0; i < _rootSet.getLength(); i++) {
             unmarkObject(_rootSet.elementAt(i));
         }
-         */
         return _sweepCounter;
     }
 
@@ -113,7 +106,7 @@ public class GC {
                 // Subtract additional 2 to skip next and type
                 int nextAddress = MAGIC.rMem32(address - ((i + 2) * MAGIC.ptrSize));
                 Object nextObject = MAGIC.cast2Obj(nextAddress);
-                if(nextObject != null && nextAddress > _sjcImageUpperAddress) {
+                if(nextObject != null && nextAddress > Memory.getSjcUpperAddress()) {
                     markObject(object);
                 }
             }
@@ -130,7 +123,7 @@ public class GC {
                 // Subtract additional 2 to skip next and type
                 int nextAddress = MAGIC.rMem32(address - ((i + 2) * MAGIC.ptrSize));
                 Object nextObject = MAGIC.cast2Obj(nextAddress);
-                if(nextObject != null && nextAddress > _sjcImageUpperAddress) {
+                if(nextObject != null && nextAddress > Memory.getSjcUpperAddress()) {
                     unmarkObject(object);
                 }
             }

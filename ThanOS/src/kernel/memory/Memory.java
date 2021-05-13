@@ -2,7 +2,6 @@ package kernel.memory;
 
 import collections.MemoryBlockList;
 import devices.StaticV24;
-import io.Console;
 import kernel.BlueScreen;
 import rte.DynamicRuntime;
 
@@ -12,11 +11,16 @@ public class Memory {
     private static Object _firstHeapObject = null;
     private static Object _lastHeapObject = null;
     private static MemoryBlockList map;
+    private static int _sjcImageSize;
+    private static int _sjcImageUpperAddress;
+
 
     public static boolean isAdvancedMode = false;
 
     public static void initialize() {
         // Create Object List
+        _sjcImageSize = MAGIC.rMem32(MAGIC.imageBase + 4);
+        _sjcImageUpperAddress = MAGIC.imageBase + _sjcImageSize;
         DynamicRuntime.initializeFreeAddresses();
         map = MemoryMap.getMemoryMap();
 
@@ -310,5 +314,22 @@ public class Memory {
     @SJC.Inline
     public static Object getFirstHeapObject() {
         return _firstHeapObject;
+    }
+
+
+    @SJC.Inline
+    public static int getSjcUpperAddress() {
+        return _sjcImageUpperAddress;
+    }
+
+
+    public static int getHeapObjectCount() {
+        int counter = 0;
+        Object currentObject = _firstHeapObject;
+        while (currentObject != _lastHeapObject) {
+            counter++;
+            currentObject = currentObject._r_next;
+        }
+        return counter;
     }
 }
