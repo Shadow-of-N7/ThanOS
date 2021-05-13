@@ -1,6 +1,5 @@
 package kernel;
 
-import devices.StaticV24;
 import io.Console;
 import io.Console.ConsoleColor;
 import devices.Keyboard;
@@ -34,8 +33,6 @@ public class Kernel {
 
             Scheduler.run();
             Thash.requestControl();
-
-
         }
     }
 
@@ -44,7 +41,7 @@ public class Kernel {
      * Draws a funny pattern for a few seconds, then returns to text mode.
      */
     public static void testGraphicsMode() {
-        BIOS.regs.EAX=0x0013;
+        BIOS.regs.EAX = 0x0013;
         BIOS.rint(0x10);
         int screenPixels = 320 * 200;
         byte color = 0;
@@ -57,7 +54,7 @@ public class Kernel {
 
         Timer.waitReal(64);
         //Console.clear();
-        BIOS.regs.EAX=0x0003;
+        BIOS.regs.EAX = 0x0003;
         BIOS.rint(0x10);
         Console.clear();
         Console.setCaret(0, 0);
@@ -76,7 +73,7 @@ public class Kernel {
 
         Keyboard.initialize();
         Scheduler.initialize();
-        Thash.intialize();
+        Thash.initialize();
         Scheduler.start();
     }
 

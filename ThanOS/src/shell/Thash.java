@@ -16,7 +16,7 @@ public class Thash {
     private static boolean _isWaitingForControl = false;
 
 
-    public static void intialize() {
+    public static void initialize() {
         _processor = new CommandProcessor();
     }
 

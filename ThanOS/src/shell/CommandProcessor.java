@@ -1,6 +1,7 @@
 package shell;
 
 import devices.PCI;
+import devices.StaticV24;
 import io.Console;
 import io.Table;
 import kernel.Kernel;
@@ -65,6 +66,7 @@ public class CommandProcessor {
         if(input.equals("ho")) {
             Console.print("Heap object count: ");
             Console.println(Memory.getHeapObjectCount());
+            recognized = true;
         }
         if(input.equals("help")) {
             Table table = new Table();

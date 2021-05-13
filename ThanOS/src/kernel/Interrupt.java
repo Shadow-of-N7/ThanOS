@@ -210,7 +210,7 @@ public class Interrupt {
 
     @SJC.Interrupt
     public static void handleDivisionException() {
-        Console.println("Division exception.");
+        BlueScreen.raise("division exception");
     }
 
     @SJC.Interrupt
