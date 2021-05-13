@@ -211,8 +211,14 @@ public class Memory {
     }
 
 
-    public static void removeHeapObject(Object object) {
+    /**
+     * Deletes an object.
+     * @param object
+     * @return The next object as seen by the deleted object.
+     */
+    public static Object removeHeapObject(Object object) {
         // Update first reference if first object is affected
+        Object nextObject = object._r_next;
         if(object == _firstHeapObject) {
             _firstHeapObject = object._r_next;
         }
@@ -226,6 +232,7 @@ public class Memory {
             }
         }
         addEmptyObject(getObjectLowerAddress(object), getObjectSize(object));
+        return nextObject;
     }
 
 
@@ -236,7 +243,6 @@ public class Memory {
     public static int mergeEmptyObjects() {
         int counter = 0;
         Object currentEmptyObject = _firstEmptyObject;
-
 
         while (currentEmptyObject != null) {
             Object compareObject = _firstEmptyObject;

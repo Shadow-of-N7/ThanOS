@@ -63,6 +63,7 @@ public class CommandProcessor {
             recognized = true;
         }
         if(input.equals("ho")) {
+            Console.print("Heap object count: ");
             Console.println(Memory.getHeapObjectCount());
         }
         if(input.equals("help")) {
