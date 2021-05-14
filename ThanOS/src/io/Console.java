@@ -2,6 +2,7 @@ package io;
 
 import collections.CharList;
 import collections.CharStack;
+import devices.StaticV24;
 import util.StringConverter;
 
 public class Console {
@@ -28,6 +29,7 @@ public class Console {
     // When the window is at the end, where to start
     private int _defaultBufferStart = _consoleBuffer.length - ((SCREEN_WIDTH << 1) * SCREEN_HEIGHT);
     private int _bufferStart = _defaultBufferStart;
+    private static int _printableWidth = SCREEN_WIDTH;
 
 
     /**
@@ -163,14 +165,14 @@ public class Console {
                 returnCarriage();
                 return;
             case '\t':
-                int xpos = getCaretX();
+                int xPos = getCaretX();
                 do {
-                    xpos++;
-                } while(xpos % 4 != 0);
-                if(xpos > SCREEN_WIDTH) {
-                    setCaret(xpos - SCREEN_WIDTH, _caretY + 1);
+                    xPos++;
+                } while(xPos % 4 != 0);
+                if(xPos > _printableWidth) {
+                    setCaret(xPos - _printableWidth, _caretY + 1);
                 }
-                setCaret(xpos, _caretY);
+                setCaret(xPos, _caretY);
                 return;
         }
         proceedCaret();
@@ -417,6 +419,16 @@ public class Console {
     }
 
 
+    public static void setPrintableWidth(int width) {
+        _printableWidth = width;
+    }
+
+
+    public static void resetPrintableWidth() {
+        _printableWidth = SCREEN_WIDTH;
+    }
+
+
     public static void DisableCursor() {
         MAGIC.wIOs8(0x3D4, (byte)0x0A);
         MAGIC.wIOs8(0x3D5, (byte)0x20);
@@ -484,9 +496,10 @@ public class Console {
      * Causes a line break if at the last position within a line.
      */
     private static void proceedCaret() {
-        if(++_caretX == SCREEN_WIDTH) {
+        if(++_caretX >= _printableWidth) {
             _caretX = 0;
             ++_caretY;
+            _videoMemoryPosition = getMemoryAddressFromCaretPosition();
         }
         updateCursor();
     }

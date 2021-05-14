@@ -225,7 +225,7 @@ public class Interrupt {
 
     @SJC.Interrupt
     public static void handleBreakpoint() {
-        BlueScreen.raise("breakpoint");
+        BlueScreen.raise("breakpoint", "A breakpoint exception has been thrown, either by hand or programmatically.");
     }
 
     @SJC.Interrupt
@@ -255,7 +255,13 @@ public class Interrupt {
 
     @SJC.Interrupt
     public static void handlePageFault(int param) {
-        Console.println("Page fault.");
+        String reason = "page fault";
+        if(param == 0) {
+            BlueScreen.raise(reason, "The system attempted to access a memory page that was not present.");
+        }
+        else {
+            BlueScreen.raise("page fault", "The system attempted to write to a read-only memory page.");
+        }
     }
 
     @SJC.Interrupt

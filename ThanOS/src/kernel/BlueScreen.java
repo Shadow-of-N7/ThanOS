@@ -5,7 +5,11 @@ import io.Console.ConsoleColor;
 
 public class BlueScreen {
 
-    public static void raise(String source)
+    public static void raise(String source) {
+        raise(source, null);
+    }
+
+    public static void raise(String source, String additionalInformation)
     {
         Console.clear(ConsoleColor.Gray, ConsoleColor.Blue, true, false);
         Console.print("Caught ");
@@ -36,10 +40,11 @@ public class BlueScreen {
         // First entry is an interrupt handler, so we have to skip oldEBP and all registers from PUSHA
         // PUSHA contains 8 registers -> EAX ECX EDX EBX OLD-ESP EBP ESI EDI
         // So we skip oldEBP + 8 Registers from PUSHA, each being an integer -> 4 bytes each
-        int oldEIP = MAGIC.rMem32(ebp + (9 << 2));
+        int oldEIP = MAGIC.rMem32(ebp + 4 * 9);
+        int lastEntryHeight = 0;
         while(oldEBP >= 0x70000 && oldEBP <= 0x9FFFF)
         {
-            printCallstackEntry(oldEIP);
+            lastEntryHeight = printCallstackEntry(oldEIP);
             int newEBP = MAGIC.rMem32(oldEBP);
             if (newEBP < oldEBP)
                 break;
@@ -83,17 +88,36 @@ public class BlueScreen {
             Console.print((byte)205);
         }
         Console.print((byte)205);
+
+        if(additionalInformation != null) {
+            horizontalLine = 0;
+            Console.setCaret(0, lastEntryHeight + 1);
+            while (Console.getCaretX() < spacerX) {
+                Console.setCaret(horizontalLine++, lastEntryHeight + 1);
+                Console.print((byte) 205);
+            }
+            Console.setCaret(horizontalLine++, lastEntryHeight + 1);
+            Console.print((byte) 185);
+
+            Console.setPrintableWidth(spacerX);
+            Console.println(additionalInformation);
+        }
         Console.DisableCursor();
 
         while (true) {}
     }
 
-    private static void printCallstackEntry(int eip)
+    /**
+     * Prints a call stack entry.
+     * @param eip
+     * @return Current Cursor Y position.
+     */
+    private static int printCallstackEntry(int eip)
     {
         Console.print("\tEIP: ");
         Console.printHex(eip);
         Console.println();
-
+        return Console.getCaretY();
     }
 
     private static void printRegisterEntry(String regName, int content, int x, int y) {

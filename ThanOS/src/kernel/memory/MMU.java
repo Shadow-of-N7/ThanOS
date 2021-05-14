@@ -30,4 +30,15 @@ public class MMU {
             directory[i] = 0x3;
         }
     }
+
+
+    private static int[] buildPageTable() {
+        int[] table = new int[1024];
+
+        // Set lower bits - Writable and Present
+        for(int i = 0; i < table.length; i++) {
+            table[i] = 0x3;
+        }
+        return table;
+    }
 }
