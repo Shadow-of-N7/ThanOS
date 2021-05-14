@@ -182,7 +182,7 @@ public class Table {
         return new String(chars);
     }
 
-    public static class Row {
+    public class Row {
         private final ObjectList _row;
 
         public Row() {
@@ -211,7 +211,7 @@ public class Table {
     }
 
 
-    public static class Cell {
+    public class Cell {
         public String text;
         public byte color;
 

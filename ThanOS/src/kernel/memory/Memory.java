@@ -18,6 +18,7 @@ public class Memory {
     public static boolean isAdvancedMode = false;
 
     public static void initialize() {
+        //initializeFirstObject();
         // Create Object List
         _sjcImageSize = MAGIC.rMem32(MAGIC.imageBase + 4);
         _sjcImageUpperAddress = MAGIC.imageBase + _sjcImageSize;
@@ -337,5 +338,29 @@ public class Memory {
             currentObject = currentObject._r_next;
         }
         return counter;
+    }
+
+
+    /**
+     * Determines whether the given object is part of the image.
+     * @param object The object to check.
+     * @return Whether the given object is part of the image.
+     */
+    public static boolean isImageObject(Object object)
+    {
+        if (object == null) {
+            return false;
+        }
+        int objectAddress = MAGIC.cast2Ref(object);
+        return objectAddress > MAGIC.imageBase && objectAddress < Memory.getSjcUpperAddress();
+    }
+
+
+    private static void initializeFirstObject() {
+        Object imageObject = MAGIC.cast2Obj(MAGIC.imageBase + 16);
+        while(isImageObject(imageObject)) {
+            imageObject = imageObject._r_next;
+        }
+        _firstHeapObject = imageObject;
     }
 }
