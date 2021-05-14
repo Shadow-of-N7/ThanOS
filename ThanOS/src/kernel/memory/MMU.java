@@ -1,6 +1,10 @@
 package kernel.memory;
 
 public class MMU {
+    // Directory starts at this address, directly followed by the tables
+    private static int _baseAddress;
+    private static int _currentAddress = _baseAddress;
+
     public static void setCR3(int addr) {
         MAGIC.inline(0x8B, 0x45); MAGIC.inlineOffset(1, addr); //mov eax,[ebp+8]
         MAGIC.inline(0x0F, 0x22, 0xD8); //mov cr3,eax
@@ -22,23 +26,50 @@ public class MMU {
     }
 
 
-    private static void buildPageDirectory() {
-        int[] directory = new int[1024];
+    private static void buildStructure() {
 
-        // Set lower bits - Writable and Present
-        for(int i = 0; i < directory.length; i++) {
-            directory[i] = 0x3;
+        for(int i = 0; i < 1024; i++) {
+            buildPageDirectoryEntry(); // Align to 4096 bytes
+        }
+
+        for(int i = 0; i < 1024; i++) {
+            buildPageTable(i);
+        }
+
+        // TODO: Set DynamicRuntime next basic address to the address after the dir and tables so it doesn't get overwritten
+    }
+
+
+    /**
+     * Creates a page directory entry. Should point at one page table.
+     * @param targetAddress Which address the entry shall point at.
+     */
+    private static void buildPageDirectoryEntry(int targetAddress) {
+        int value = 3;
+        // TODO: Get address of a page table
+    }
+
+
+    /**
+     * Builds a page table entry.
+     * @param offset The table number, so not every table points at the same pages.
+     */
+    private static void buildPageTable(int offset) {
+        for(int i = 0; i < 1024; i++) {
+            buildPageTableEntry(4096 * i * offset);
         }
     }
 
 
-    private static int[] buildPageTable() {
-        int[] table = new int[1024];
-
+    /**
+     * Creates a page table entry.
+     * @param targetAddress Which address the entry shall point at.
+     */
+    private static void buildPageTableEntry(int targetAddress) {
         // Set lower bits - Writable and Present
-        for(int i = 0; i < table.length; i++) {
-            table[i] = 0x3;
-        }
-        return table;
+        int value = 0x3;
+        value |= (targetAddress << 12);
+        MAGIC.wMem32(value, _currentAddress);
+        _currentAddress += 4;
     }
 }

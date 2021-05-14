@@ -225,7 +225,7 @@ public class Interrupt {
 
     @SJC.Interrupt
     public static void handleBreakpoint() {
-        BlueScreen.raise("breakpoint", "A breakpoint exception has been thrown, either by hand or programmatically.");
+        BlueScreen.raise("breakpoint", "A breakpoint exception has been thrown, either by hand or programmatically.\nFor more details, go check the code yourself!");
     }
 
     @SJC.Interrupt

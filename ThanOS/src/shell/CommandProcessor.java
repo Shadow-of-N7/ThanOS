@@ -6,6 +6,7 @@ import io.Console;
 import io.Table;
 import kernel.Kernel;
 import kernel.memory.GC;
+import kernel.memory.MMU;
 import kernel.memory.Memory;
 import kernel.memory.MemoryMap;
 import kernel.scheduler.Scheduler;
@@ -22,9 +23,15 @@ public class CommandProcessor {
     private static final String tasktest = "tasktest";
     private static final String editor = "atto";
     private static final String gc = "gc";
+    private static final String vm = "virtmem";
 
     public String processCommand(String input) {
         boolean recognized = false;
+        if(input.equals(vm))
+        {
+            MMU.enableVirtualMemory();
+            recognized = true;
+        }
         if(input.equals(cls) || input.equals(clear)) {
             Console.clear();
             recognized = true;

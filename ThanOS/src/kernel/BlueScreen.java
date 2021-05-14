@@ -58,7 +58,7 @@ public class BlueScreen {
         int spacerX = Console.SCREEN_WIDTH - 26;
 
         Console.setCaret(spacerX, baseline);
-        Console.print("  Register contents (hex):");
+        Console.print("  Register contents (hex)");
 
         printRegisterEntry("\tEAX:\t", EAX, spacerX, baseline + 1);
         printRegisterEntry("\tEBX:\t", EBX, spacerX, baseline + 2);
