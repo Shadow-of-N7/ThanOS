@@ -1,5 +1,6 @@
 package kernel.memory;
 
+import devices.StaticV24;
 import rte.DynamicRuntime;
 
 public class MMU {
@@ -17,6 +18,7 @@ public class MMU {
         // Build page dir and tables
         _baseAddress = DynamicRuntime.allocateSpecialMemory(4096 + 1024 * 4096, 4096);
         _currentAddress = _baseAddress;
+        buildStructure();
     }
 
 
@@ -44,7 +46,7 @@ public class MMU {
     private static void buildStructure() {
 
         for(int i = 0; i < 1024; i++) {
-            //buildPageDirectoryEntry(); // Align to 4096 bytes
+            buildPageDirectoryEntry((_baseAddress + 4096) + 4096 * i);
         }
 
         for(int i = 0; i < 1024; i++) {
@@ -61,7 +63,11 @@ public class MMU {
      */
     private static void buildPageDirectoryEntry(int targetAddress) {
         int value = 3;
-        // TODO: Get address of a page table
+        value |= (targetAddress << 12);
+        StaticV24.printBinary(value);
+        StaticV24.println();
+        MAGIC.wMem32(_currentAddress, value);
+        _currentAddress += 4;
     }
 
 

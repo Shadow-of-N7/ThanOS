@@ -1,7 +1,7 @@
 package rte;
 
-import devices.StaticV24;
 import kernel.memory.Memory;
+// Seemingly useless, this import statement is required for the compiler to resolve class references
 import kernel.memory.EmptyObject;
 import java.lang.Object;
 
@@ -45,7 +45,6 @@ public class DynamicRuntime
 		else {
 			while (startAddress % alignment != 0) {
 				startAddress++;
-				StaticV24.print('c');
 			}
 			_nextFreeAddress = startAddress + size;
 		}

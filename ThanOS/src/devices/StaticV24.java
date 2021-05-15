@@ -154,4 +154,47 @@ public class StaticV24 {
         print(str);
         println();
     }
+
+    public static void printBinary(int n) {
+        for (int i = 31; i >= 0; i--) {
+            int k = n >> i;
+            if ((k & 1) > 0)
+                print('1');
+            else
+                print('0');
+        }
+    }
+
+
+    public static void printBinary(long n) {
+        for (int i = 63; i >= 0; i--) {
+            long k = n >> i;
+            if ((k & 1) > 0)
+                print('1');
+            else
+                print('0');
+        }
+    }
+
+
+    public static void printBinary(short n) {
+        for (int i = 15; i >= 0; i--) {
+            int k = n >> i;
+            if ((k & 1) > 0)
+                print('1');
+            else
+                print('0');
+        }
+    }
+
+
+    public static void printBinary(byte n) {
+        for (int i = 7; i >= 0; i--) {
+            int k = n >> i;
+            if ((k & 1) > 0)
+                print('1');
+            else
+                print('0');
+        }
+    }
 }
