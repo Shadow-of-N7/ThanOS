@@ -6,7 +6,9 @@ import rte.DynamicRuntime;
 public class MMU {
     // Directory starts at this address, directly followed by the tables
     private static int _baseAddress;
+    // Points at the current entries of page directory and tables
     private static int _currentAddress;
+    // Points at the pages
     private static int _currentTargetAddress = 0;
     private static boolean _isInitialized = false;
     private static int _lastAccessedAddress;
@@ -32,7 +34,7 @@ public class MMU {
             buildStructure();
         }
         _isInitialized = true;
-        //enableVirtualMemory();
+        enableVirtualMemory();
     }
 
 
@@ -66,6 +68,9 @@ public class MMU {
         for(int i = 0; i < DIRECTORY_ENTRY_COUNT; i++) {
             int tableAddress = (_baseAddress + 4096) + 4096 * i;
             buildPageDirectoryEntry(tableAddress);
+        }
+        // Two different loops so the current
+        for(int i = 0; i < DIRECTORY_ENTRY_COUNT; i++) {
             buildPageTable(i);
         }
 
@@ -81,8 +86,6 @@ public class MMU {
         int value = 3;
         // No shifting required, the lower 12 bits of targetAddress are 0 because of the 4096 bit alignment
         value |= targetAddress;
-        //StaticV24.printBinary(targetAddress);
-        //StaticV24.println();
         MAGIC.wMem32(_currentAddress, value);
         _currentAddress += 4;
     }
@@ -104,12 +107,10 @@ public class MMU {
      * Creates a page table entry.
      */
     private static void buildPageTableEntry() {
-        //StaticV24.print((long)_currentTargetAddress);
-        //StaticV24.println();
         // Set lower bits - Writable and Present
         int value = 0x3;
         // No shifting required, the lower 12 bits of targetAddress are 0 because of the 4096 bit alignment
-        value |= _currentAddress;
+        value |= _currentTargetAddress;
         _currentTargetAddress += 4096;
         MAGIC.wMem32(_currentAddress, value);
         _currentAddress += 4;
