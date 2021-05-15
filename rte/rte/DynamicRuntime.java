@@ -1,13 +1,8 @@
 package rte;
 
-import io.Console;
+import devices.StaticV24;
 import kernel.memory.Memory;
-import rte.SArray;
-import rte.SClassDesc;
-import rte.SIntfDesc;
-import rte.SIntfMap;
 import kernel.memory.EmptyObject;
-
 import java.lang.Object;
 
 public class DynamicRuntime
@@ -33,6 +28,28 @@ public class DynamicRuntime
 		if(_nextFreeAddress == 0) {
 			_nextFreeAddress = (MAGIC.imageBase + MAGIC.rMem32(MAGIC.imageBase + 4));
 		}
+	}
+
+
+	/**
+	 * Allocates heap memory for special purposes which can't be cleaned up.
+	 * Only works before advanced memory mode is active.
+	 * @param size The size of the given memory block.
+	 * @param alignment If the starting address needs to be aligned to a multiple of the given value. 0 if no alignment.
+	 */
+	public static int allocateSpecialMemory(int size, int alignment) {
+		int startAddress = getBasicNextAddress();
+		if(alignment == 0) {
+			_nextFreeAddress += size;
+		}
+		else {
+			while (startAddress % alignment != 0) {
+				startAddress++;
+				StaticV24.print('c');
+			}
+			_nextFreeAddress = startAddress + size;
+		}
+		return startAddress;
 	}
 
 	public static Object newInstance(int scalarSize, int relocEntries, SClassDesc type)

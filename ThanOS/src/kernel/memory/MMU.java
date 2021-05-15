@@ -1,9 +1,24 @@
 package kernel.memory;
 
+import rte.DynamicRuntime;
+
 public class MMU {
     // Directory starts at this address, directly followed by the tables
     private static int _baseAddress;
-    private static int _currentAddress = _baseAddress;
+    private static int _currentAddress;
+
+    // https://www.youtube.com/watch?v=59rEMnKWoS4
+
+
+    /**
+     * Initializes the MMU. Needs to be called before advanced memory mode is activated.
+     */
+    public static void initialize() {
+        // Build page dir and tables
+        _baseAddress = DynamicRuntime.allocateSpecialMemory(4096 + 1024 * 4096, 4096);
+        _currentAddress = _baseAddress;
+    }
+
 
     public static void setCR3(int addr) {
         MAGIC.inline(0x8B, 0x45); MAGIC.inlineOffset(1, addr); //mov eax,[ebp+8]
@@ -29,7 +44,7 @@ public class MMU {
     private static void buildStructure() {
 
         for(int i = 0; i < 1024; i++) {
-            buildPageDirectoryEntry(); // Align to 4096 bytes
+            //buildPageDirectoryEntry(); // Align to 4096 bytes
         }
 
         for(int i = 0; i < 1024; i++) {

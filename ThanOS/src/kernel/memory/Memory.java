@@ -23,6 +23,7 @@ public class Memory {
         _sjcImageSize = MAGIC.rMem32(MAGIC.imageBase + 4);
         _sjcImageUpperAddress = MAGIC.imageBase + _sjcImageSize;
         DynamicRuntime.initializeFreeAddresses();
+        MMU.initialize();
         map = MemoryMap.getMemoryMap();
 
         initializeEmptyObjects();
