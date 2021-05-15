@@ -7,6 +7,14 @@ public class MMU {
     // Directory starts at this address, directly followed by the tables
     private static int _baseAddress;
     private static int _currentAddress;
+    private static int _currentTargetAddress = 0;
+    private static boolean _isInitialized = false;
+    private static int _lastAccessedAddress;
+
+    private static final int DIRECTORY_ENTRY_COUNT = 1024;
+    private static final int DIRECTORY_SIZE = 4096;
+    private static final int TABLE_COUNT = 1024;
+    private static final int TABLE_SIZE = 4096;
 
     // https://www.youtube.com/watch?v=59rEMnKWoS4
 
@@ -15,27 +23,37 @@ public class MMU {
      * Initializes the MMU. Needs to be called before advanced memory mode is activated.
      */
     public static void initialize() {
-        // Build page dir and tables
-        _baseAddress = DynamicRuntime.allocateSpecialMemory(4096 + 1024 * 4096, 4096);
-        _currentAddress = _baseAddress;
-        buildStructure();
+        if(!_isInitialized) {
+            // Build page dir and tables
+            _baseAddress = DynamicRuntime.allocateSpecialMemory(
+                    DIRECTORY_SIZE + (TABLE_COUNT * TABLE_SIZE),
+                    4096);
+            _currentAddress = _baseAddress;
+            buildStructure();
+        }
+        _isInitialized = true;
+        //enableVirtualMemory();
     }
 
 
-    public static void setCR3(int addr) {
+    private static void setCR3(int addr) {
         MAGIC.inline(0x8B, 0x45); MAGIC.inlineOffset(1, addr); //mov eax,[ebp+8]
         MAGIC.inline(0x0F, 0x22, 0xD8); //mov cr3,eax
     }
 
 
     public static void enableVirtualMemory() {
+        if(!_isInitialized) {
+            initialize();
+        }
+
         MAGIC.inline(0x0F, 0x20, 0xC0); //mov eax,cr0
         MAGIC.inline(0x0D, 0x00, 0x00, 0x01, 0x80); //or eax,0x80010000
         MAGIC.inline(0x0F, 0x22, 0xC0); //mov cr0,eax
     }
 
 
-    public static int getCR2() {
+    private static int getCR2() {
         int cr2=0;
         MAGIC.inline(0x0F, 0x20, 0xD0); //mov e/rax,cr2
         MAGIC.inline(0x89, 0x45); MAGIC.inlineOffset(1, cr2); //mov [ebp-4],eax
@@ -45,15 +63,13 @@ public class MMU {
 
     private static void buildStructure() {
 
-        for(int i = 0; i < 1024; i++) {
-            buildPageDirectoryEntry((_baseAddress + 4096) + 4096 * i);
-        }
-
-        for(int i = 0; i < 1024; i++) {
+        for(int i = 0; i < DIRECTORY_ENTRY_COUNT; i++) {
+            int tableAddress = (_baseAddress + 4096) + 4096 * i;
+            buildPageDirectoryEntry(tableAddress);
             buildPageTable(i);
         }
 
-        // TODO: Set DynamicRuntime next basic address to the address after the dir and tables so it doesn't get overwritten
+        setCR3(_baseAddress);
     }
 
 
@@ -63,9 +79,10 @@ public class MMU {
      */
     private static void buildPageDirectoryEntry(int targetAddress) {
         int value = 3;
-        value |= (targetAddress << 12);
-        StaticV24.printBinary(value);
-        StaticV24.println();
+        // No shifting required, the lower 12 bits of targetAddress are 0 because of the 4096 bit alignment
+        value |= targetAddress;
+        //StaticV24.printBinary(targetAddress);
+        //StaticV24.println();
         MAGIC.wMem32(_currentAddress, value);
         _currentAddress += 4;
     }
@@ -76,21 +93,35 @@ public class MMU {
      * @param offset The table number, so not every table points at the same pages.
      */
     private static void buildPageTable(int offset) {
+        int adjustedOffset = offset + 1;
         for(int i = 0; i < 1024; i++) {
-            buildPageTableEntry(4096 * i * offset);
+            buildPageTableEntry();
         }
     }
 
 
     /**
      * Creates a page table entry.
-     * @param targetAddress Which address the entry shall point at.
      */
-    private static void buildPageTableEntry(int targetAddress) {
+    private static void buildPageTableEntry() {
+        //StaticV24.print((long)_currentTargetAddress);
+        //StaticV24.println();
         // Set lower bits - Writable and Present
         int value = 0x3;
-        value |= (targetAddress << 12);
-        MAGIC.wMem32(value, _currentAddress);
+        // No shifting required, the lower 12 bits of targetAddress are 0 because of the 4096 bit alignment
+        value |= _currentAddress;
+        _currentTargetAddress += 4096;
+        MAGIC.wMem32(_currentAddress, value);
         _currentAddress += 4;
+    }
+
+
+    /**
+     * Returns the last accessed address.
+     * @return The last accessed address.
+     */
+    @SJC.Inline
+    public static int getLastAccessedAddress() {
+        return _lastAccessedAddress;
     }
 }

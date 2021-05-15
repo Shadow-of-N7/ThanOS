@@ -2,6 +2,8 @@ package kernel;
 
 import io.Console;
 import devices.Keyboard;
+import kernel.memory.MMU;
+import util.StringConverter;
 
 public class Interrupt {
     private final static int MASTER = 0x20, SLAVE = 0xA0;
@@ -256,11 +258,16 @@ public class Interrupt {
     @SJC.Interrupt
     public static void handlePageFault(int param) {
         String reason = "page fault";
+        String faultyAddress = StringConverter.toHexString(MMU.getLastAccessedAddress());
         if(param == 0) {
-            BlueScreen.raise(reason, "The system attempted to access a memory page that was not present.");
+            String info = "The system attempted to access a memory page that was not present.\nRequested address was 0x";
+             info = String.concat(info, faultyAddress);
+            BlueScreen.raise(reason, info);
         }
         else {
-            BlueScreen.raise("page fault", "The system attempted to write to a read-only memory page.");
+            String info = "The system attempted to write to a read-only memory page.\nRequested address was 0x";
+            info = String.concat(info, faultyAddress);
+            BlueScreen.raise("page fault", info);
         }
     }
 
