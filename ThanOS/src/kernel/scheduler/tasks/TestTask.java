@@ -9,7 +9,7 @@ public class TestTask extends Task {
     public void run() {
         Console.clearLine();
         Console.println("Hello world task!");
-        state = TaskState.COMPLETED;
+        _t_state = TaskState.COMPLETED;
     }
 
     @Override

@@ -10,8 +10,8 @@ public class EditorTask extends Task {
     private boolean _isInitialized = false;
 
     public EditorTask() {
-        blocking = true;
-        fullScreen = true;
+        _t_blocking = true;
+        _t_fullScreen = true;
     }
 
     @Override
@@ -55,6 +55,6 @@ public class EditorTask extends Task {
 
     @Override
     public void setState(byte state) {
-        this.state = state;
+        this._t_state = state;
     }
 }

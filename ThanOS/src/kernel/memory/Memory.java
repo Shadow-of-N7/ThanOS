@@ -10,7 +10,6 @@ public class Memory {
     private static Object _firstEmptyObject = null;
     private static Object _firstHeapObject = null;
     private static Object _lastHeapObject = null;
-    private static MemoryBlockList map;
     private static int _sjcImageSize;
     private static int _sjcImageUpperAddress;
 
@@ -24,9 +23,11 @@ public class Memory {
         _sjcImageUpperAddress = MAGIC.imageBase + _sjcImageSize;
         DynamicRuntime.initializeFreeAddresses();
         MMU.initialize();
-        map = MemoryMap.getMemoryMap();
+        MMU.enableVirtualMemory();
+        DynamicRuntime.setDebug(true);
 
         initializeEmptyObjects();
+        MMU.setLastEntryNotPresent();
         // Set this to false to stay in basic mode - works too.
         isAdvancedMode = true;
         GC.initialize();
@@ -39,7 +40,7 @@ public class Memory {
     public static void initializeEmptyObjects() {
         // Get first available mem address - always above the system image and basic mode stuff
         int basicSize = DynamicRuntime.getBasicNextAddress();
-
+        MemoryBlockList map = MemoryMap.getMemoryMap();
         for(int i = 0; i < map.getLength(); i++) {
             MemoryBlock block = map.elementAt(i);
             if(block.blockType == MemoryBlock.BlockType.Free

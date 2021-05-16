@@ -38,19 +38,19 @@ public class Scheduler {
         if (_isRunning) {
             if(_currentTask != null) {
                 // Remove completed or frozen tasks
-                if(_currentTask.state == TaskState.COMPLETED || _currentTask.state == TaskState.FROZEN) {
+                if(_currentTask._t_state == TaskState.COMPLETED || _currentTask._t_state == TaskState.FROZEN) {
                     _tasks.removeAt(_currentTaskIndex);
                     // Reset the redirection
                     redirectKeyboardInput = false;
                     Console.println();
-                    if(_currentTask.fullScreen) {
+                    if(_currentTask._t_fullScreen) {
                         Console.clear();
                         Console.setCaret(0, 0);
                     }
                     _currentTask = null;
                     return;
                 }
-                _currentTask.state = TaskState.RUNNING;
+                _currentTask._t_state = TaskState.RUNNING;
                 _currentTask.run();
             }
             else {
@@ -76,7 +76,7 @@ public class Scheduler {
     public static boolean isReadyForInput() {
         for(int i = 0; i < _tasks.getLength(); i++) {
             Task currentTask = (Task)_tasks.elementAt(i);
-            if(currentTask.blocking) {
+            if(currentTask._t_blocking) {
                 return false;
             }
         }
@@ -98,7 +98,7 @@ public class Scheduler {
 
     public static void removeTask(int index) {
         Task task = (Task)_tasks.elementAt(index);
-        if(task.state != TaskState.RUNNING) {
+        if(task._t_state != TaskState.RUNNING) {
             _tasks.removeAt(index);
         }
     }

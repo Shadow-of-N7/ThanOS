@@ -23,10 +23,15 @@ public class GC {
         Object imageObject = MAGIC.cast2Obj(MAGIC.imageBase + 16);
         while(Memory.isImageObject(imageObject)) {
             markCount += mark(imageObject);
-            imageObject = imageObject._r_next;
-            StaticV24.println("Image object and descendants done");
-        }
 
+            if(imageObject._r_next != null) {
+                imageObject = imageObject._r_next;
+            }
+            else {
+                break;
+            }
+        }
+        StaticV24.println("Mark done");
 
 
         if(outputStats) {
@@ -34,9 +39,9 @@ public class GC {
             StaticV24.print("Objects marked: ");
             StaticV24.println(markCount);
             StaticV24.println("Starting sweep...");
-            int sweepCount = sweep();
+            //int sweepCount = sweep();
             StaticV24.print("Objects swept: ");
-            StaticV24.println(sweepCount);
+            //StaticV24.println(sweepCount);
         }
         else {
             //mark(Memory.getFirstHeapObject());
@@ -48,6 +53,11 @@ public class GC {
     }
 
 
+    private static int test(Object object) {
+        return ++_markCounter;
+    }
+
+
     /**
      * Recursively marks all reachable objects for deletion.
      * @param object The object to mark. Usually initialized with the first heap object.
@@ -55,15 +65,24 @@ public class GC {
      */
     private static int mark(Object object) {
         if(!object._a_marked && !(object instanceof EmptyObject)) {
+            StaticV24.print("Current: ");
             StaticV24.println(ObjectInfo.getName(object));
             object._a_marked = true;
             ++_markCounter;
             int address = MAGIC.cast2Ref(object);
+            StaticV24.println(address);
             for(int i = 0; i < object._r_relocEntries; i++) {
                 // Subtract additional 2 to skip next and type - fetched by instRelocEntries
                 int nextAddress = MAGIC.rMem32(address - ((i + MAGIC.getInstRelocEntries("Object")) * MAGIC.ptrSize));
                 Object nextObject = MAGIC.cast2Obj(nextAddress);
-                int oType = MAGIC.rMem32(nextAddress - 4);
+                StaticV24.print("Next: ");
+                StaticV24.println(nextAddress);
+                StaticV24.println(ObjectInfo.getName(nextObject));
+                if(nextObject == null) {
+                    StaticV24.println("GOTCHA");
+                    continue;
+                }
+                int oType = MAGIC.rMem32(nextAddress - 4); // THIS IS THE FUCKER
                 if(nextObject != null && nextAddress > Memory.getSjcUpperAddress() && oType > MAGIC.imageBase) {
                     mark(nextObject);
                 }

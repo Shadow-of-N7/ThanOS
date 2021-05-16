@@ -1,5 +1,6 @@
 package rte;
 
+import devices.StaticV24;
 import kernel.memory.Memory;
 // Seemingly useless, this import statement is required for the compiler to resolve class references
 import kernel.memory.EmptyObject;
@@ -10,6 +11,7 @@ public class DynamicRuntime
 	// Was 0
 	private static int _nextFreeAddress = 0;
 	private static int _previousObjectAddress = 1;
+	private static boolean _isDebug = false;
 
 	/**
 	 * Memory size to add to the next object to be allocated.
@@ -28,6 +30,11 @@ public class DynamicRuntime
 		if(_nextFreeAddress == 0) {
 			_nextFreeAddress = (MAGIC.imageBase + MAGIC.rMem32(MAGIC.imageBase + 4));
 		}
+	}
+
+
+	public static void setDebug(boolean state) {
+		_isDebug = state;
 	}
 
 
@@ -54,15 +61,14 @@ public class DynamicRuntime
 	public static Object newInstance(int scalarSize, int relocEntries, SClassDesc type)
 	{
 		Object object;
+		int startAddress, relocSize;
+		// 4 bytes per reloc required
+		relocSize = relocEntries << 2;
+		// Align the scalars
+		scalarSize = (scalarSize + 3) & ~3;
+
 		if(Memory.isAdvancedMode) {
 
-			int startAddress, relocSize;
-
-			// 4 bytes per reloc required
-			relocSize = relocEntries << 2;
-
-			// Align the scalars
-			scalarSize = (scalarSize + 3) & ~3;
 			// Apply object enlargement if emptyObject is too small
 			scalarSize += sizeOffset;
 
@@ -91,14 +97,6 @@ public class DynamicRuntime
 			Memory.updateLastObject(object);
 		}
 		else {
-			int startAddress, relocSize;
-
-			// 4 bytes per reloc required
-			relocSize = relocEntries << 2;
-
-			// Align the scalars
-			scalarSize = (scalarSize + 3) &~ 3;
-
 			// Starting address of the new object
 			startAddress = _nextFreeAddress;
 
@@ -125,6 +123,7 @@ public class DynamicRuntime
 			}
 			_previousObjectAddress = objectAddress;
 		}
+
 		// Reset the size offset after allocation
 		sizeOffset = 0;
 		return object;
@@ -267,8 +266,8 @@ public class DynamicRuntime
 	}
 
 	public static void nullException() {
-		//Console.println();
-		//Console.println("Null reference exception!");
-		while (true);
+		StaticV24.println();
+		StaticV24.println("Null reference exception!");
+		//while (true);
 	}
 }

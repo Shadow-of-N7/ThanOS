@@ -1,11 +1,18 @@
 package collections;
 
+import devices.StaticV24;
 import kernel.memory.MemoryBlock;
 
 public class MemoryBlockList {
-    private MemoryBlockListElement _firstElement = null;
-    private MemoryBlockListElement _lastElement = null;
+    private MemoryBlockListElement _firstElement;
+    private MemoryBlockListElement _lastElement;
     private int _elementCount = 0;
+
+
+    public MemoryBlockList() {
+        _firstElement = null;
+        _lastElement = null;
+    }
 
 
     /**

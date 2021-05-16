@@ -1,9 +1,10 @@
 package kernel.scheduler;
 
 public abstract class Task {
-    public byte state = 0;
-    public boolean blocking = true;
-    public boolean fullScreen = false;
+    // Convention: All variables shared by all tasks shall begin with _t_
+    public byte _t_state = 0;
+    public boolean _t_blocking = true;
+    public boolean _t_fullScreen = false;
 
     // Convention: At the end of run() a TaskState should be set.
     // If complete/frozen is not set at some point in time, the task will be executed forever.

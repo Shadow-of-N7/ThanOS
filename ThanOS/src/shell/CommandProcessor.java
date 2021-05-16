@@ -11,6 +11,7 @@ import kernel.memory.Memory;
 import kernel.memory.MemoryMap;
 import kernel.scheduler.Scheduler;
 import kernel.scheduler.tasks.EditorTask;
+import kernel.scheduler.tasks.NullTask;
 import kernel.scheduler.tasks.TestTask;
 
 public class CommandProcessor {
@@ -24,9 +25,15 @@ public class CommandProcessor {
     private static final String editor = "atto";
     private static final String gc = "gc";
     private static final String vm = "virtmem";
+    private static final String nulltask = "nulltask";
 
     public String processCommand(String input) {
         boolean recognized = false;
+        if(input.equals(nulltask))
+        {
+            Scheduler.addTask(new NullTask());
+            recognized = true;
+        }
         if(input.equals(vm))
         {
             MMU.enableVirtualMemory();

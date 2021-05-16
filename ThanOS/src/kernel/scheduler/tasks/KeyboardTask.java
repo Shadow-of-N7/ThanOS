@@ -10,7 +10,7 @@ import shell.Thash;
 public class KeyboardTask extends Task {
 
     public KeyboardTask() {
-        blocking = false;
+        _t_blocking = false;
     }
 
     @Override
@@ -39,7 +39,7 @@ public class KeyboardTask extends Task {
                     break;
             }
         }
-        state = TaskState.PAUSED;
+        _t_state = TaskState.PAUSED;
     }
 
     @Override
