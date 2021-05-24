@@ -228,6 +228,10 @@ public class Interrupt {
     @SJC.Interrupt
     public static void handleBreakpoint() {
         BlueScreen.raise("breakpoint", "A breakpoint exception has been thrown, either by hand or programmatically.\nFor more details, go check the code yourself!");
+        //int ebp = 0; // First EBP pointing to the stack
+        //MAGIC.inline(0x89, 0x6D);
+        //MAGIC.inlineOffset(1, ebp); //mov [ebp+xx],ebp
+        //BlueScreen.test(ebp, "Test");
     }
 
     @SJC.Interrupt
@@ -269,6 +273,13 @@ public class Interrupt {
             info = String.concat(info, faultyAddress);
             BlueScreen.raise("page fault", info);
         }
+        /*
+        int ebp = 0; // First EBP pointing to the stack
+        MAGIC.inline(0x89, 0x6D);
+        MAGIC.inlineOffset(1, ebp); //mov [ebp+xx],ebp
+        BlueScreen.test(ebp, "Test");
+
+         */
     }
 
     @SJC.Interrupt

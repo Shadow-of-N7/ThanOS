@@ -1,22 +1,29 @@
 package kernel;
 
+import collections.StringBuilder;
+import devices.StaticV24;
 import io.Console;
 import io.Console.ConsoleColor;
+import rte.SClassDesc;
+import rte.SMthdBlock;
+import rte.SPackage;
 
 public class BlueScreen {
+
+    private static StringBuilder builder;
 
     public static void raise(String source) {
         raise(source, null);
     }
 
-    public static void raise(String source, String additionalInformation)
-    {
+    public static void raise(String source, String additionalInformation) {
+        builder = new StringBuilder();
         Console.clear(ConsoleColor.Gray, ConsoleColor.Blue, true, false);
         Console.print("Caught ");
         Console.print(source);
         Console.println(" exception.");
-        for(int i = 0; i < Console.SCREEN_WIDTH; i++) {
-            Console.print((byte)205);
+        for (int i = 0; i < Console.SCREEN_WIDTH; i++) {
+            Console.print((byte) 205);
         }
         Console.println("Call stack:");
 
@@ -42,15 +49,13 @@ public class BlueScreen {
         // So we skip oldEBP + 8 Registers from PUSHA, each being an integer -> 4 bytes each
         int oldEIP = MAGIC.rMem32(ebp + 4 * 9);
         int lastEntryHeight = 0;
-        while(oldEBP >= 0x70000 && oldEBP <= 0x9FFFF)
-        {
-            lastEntryHeight = printCallstackEntry(oldEIP);
+        while (oldEBP >= 0x70000 && oldEBP <= 0x9FFFF) {
+            lastEntryHeight = printCallstackEntry(oldEIP, oldEBP);
             int newEBP = MAGIC.rMem32(oldEBP);
             if (newEBP < oldEBP)
                 break;
             oldEBP = newEBP;
             oldEIP = MAGIC.rMem32(oldEBP + 4);
-
         }
 
         // Print register content
@@ -78,18 +83,18 @@ public class BlueScreen {
         Console.setCaret(spacerX, baseline);
         while (Console.getCaretY() < Console.SCREEN_HEIGHT - 1) {
             Console.setCaret(spacerX, verticalLine++);
-            Console.print((byte)186);
+            Console.print((byte) 186);
         }
         int horizontalLine = spacerX;
         Console.setCaret(horizontalLine++, baseline - 1);
-        Console.print((byte)203);
+        Console.print((byte) 203);
         while (Console.getCaretX() < Console.SCREEN_WIDTH - 1) {
             Console.setCaret(horizontalLine++, baseline - 1);
-            Console.print((byte)205);
+            Console.print((byte) 205);
         }
-        Console.print((byte)205);
+        Console.print((byte) 205);
 
-        if(additionalInformation != null) {
+        if (additionalInformation != null) {
             horizontalLine = 0;
             Console.setCaret(0, lastEntryHeight + 1);
             while (Console.getCaretX() < spacerX) {
@@ -104,18 +109,23 @@ public class BlueScreen {
         }
         Console.DisableCursor();
 
-        while (true) {}
+        while (true) {
+        }
     }
 
     /**
      * Prints a call stack entry.
+     *
      * @param eip
      * @return Current Cursor Y position.
      */
-    private static int printCallstackEntry(int eip)
-    {
+    private static int printCallstackEntry(int eip, int ebp) {
         Console.print("\tEIP: ");
         Console.printHex(eip);
+        //Console.print(", EBP: ");
+        //Console.printHex(ebp);
+        Console.print(' ');
+        Console.print(searchPackage(SPackage.root.subPacks, eip));
         Console.println();
         return Console.getCaretY();
     }
@@ -124,5 +134,48 @@ public class BlueScreen {
         Console.setCaret(x, y);
         Console.print(regName);
         Console.printHex(content);
+    }
+
+
+    private static String searchPackage(SPackage pack, int eip) {
+        SClassDesc clss;
+        SMthdBlock mthd;
+        // Search subpacks if present
+
+        while (pack != null) {
+            if(pack.subPacks == null) {
+            }
+            else {
+                String result = searchPackage(pack.subPacks, eip);
+                // If subpacks found something, immediately return it and don't search on own level
+                if(!result.equals("")) {
+                    return result;
+                }
+            }
+
+            clss = pack.units;
+            while (clss != null) {
+                mthd = clss.mthds;
+                while (mthd != null) {
+                    int mthdAddress = MAGIC.cast2Ref(mthd);
+                    int mthdStart = mthdAddress - mthd._r_relocEntries * MAGIC.ptrSize;
+                    int mthdEnd = mthdAddress + mthd._r_scalarSize;
+                    if (eip >= mthdStart && eip < mthdEnd) {
+                        builder.add(pack.name);
+                        builder.add('.');
+                        builder.add(clss.name);
+                        builder.add('.');
+                        builder.add(mthd.namePar);
+                        String stackTraceEntry = builder.toString();
+                        StaticV24.println(stackTraceEntry);
+                        return stackTraceEntry;
+                    }
+                    mthd = mthd.nextMthd;
+                }
+                clss = clss.nextUnit;
+            }
+            pack = pack.nextPack;
+        }
+        return "";
     }
 }

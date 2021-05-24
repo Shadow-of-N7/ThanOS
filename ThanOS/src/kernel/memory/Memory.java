@@ -130,6 +130,7 @@ public class Memory {
      * Returns the object of the last created object.
      * @return Object address of the last created object.
      */
+    @SJC.Inline
     public static Object getLastObject() {
         return _lastHeapObject;
     }
@@ -216,7 +217,7 @@ public class Memory {
 
     /**
      * Deletes an object.
-     * @param object
+     * @param object The object to delete.
      * @return The next object as seen by the deleted object.
      */
     public static Object removeHeapObject(Object object) {

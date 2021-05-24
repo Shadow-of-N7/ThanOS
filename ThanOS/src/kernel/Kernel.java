@@ -1,10 +1,12 @@
 package kernel;
 
+import devices.StaticV24;
 import io.Console;
 import io.Console.ConsoleColor;
 import devices.Keyboard;
 import kernel.memory.Memory;
 import kernel.scheduler.Scheduler;
+import rte.SPackage;
 import shell.Thash;
 
 public class Kernel {
@@ -22,6 +24,17 @@ public class Kernel {
         Console.setColor(ConsoleColor.Gray, ConsoleColor.Black, false, false);
 
         Console.print('>');
+
+        /*
+        SPackage pack = SPackage.root.subPacks;
+        while (pack.nextPack != null) {
+            StaticV24.println(pack.name);
+            if(pack.subPacks != null) {
+                StaticV24.println(pack.subPacks.name);
+            }
+            pack = pack.nextPack;
+        }
+         */
 
         while(true) {
             // Updates keyboard buffers; keyboards won't work without this.
