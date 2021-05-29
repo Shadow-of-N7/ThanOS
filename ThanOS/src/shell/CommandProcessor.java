@@ -13,6 +13,7 @@ import kernel.scheduler.Scheduler;
 import kernel.scheduler.tasks.EditorTask;
 import kernel.scheduler.tasks.NullTask;
 import kernel.scheduler.tasks.TestTask;
+import kernel.scheduler.tasks.spaceInvaders.SpaceInvadersTask;
 
 public class CommandProcessor {
     private static final String testGraphics = "testgm";
@@ -26,6 +27,7 @@ public class CommandProcessor {
     private static final String gc = "gc";
     private static final String vm = "virtmem";
     private static final String nulltask = "nulltask";
+    private static final String spaceInvaders = "game";
 
     public String processCommand(String input) {
         boolean recognized = false;
@@ -75,6 +77,10 @@ public class CommandProcessor {
         }
         if(input.equals(gc)) {
             GC.collect(true);
+            recognized = true;
+        }
+        if(input.equals(spaceInvaders)) {
+            Scheduler.addTask(new SpaceInvadersTask());
             recognized = true;
         }
         if(input.equals("ho")) {

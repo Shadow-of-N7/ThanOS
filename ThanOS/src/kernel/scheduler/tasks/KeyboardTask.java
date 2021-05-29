@@ -2,6 +2,7 @@ package kernel.scheduler.tasks;
 
 import devices.KeyCode;
 import devices.Keyboard;
+import devices.StaticV24;
 import kernel.scheduler.Scheduler;
 import kernel.scheduler.Task;
 import kernel.scheduler.TaskState;
