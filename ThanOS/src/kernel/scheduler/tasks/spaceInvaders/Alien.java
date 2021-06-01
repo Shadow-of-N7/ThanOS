@@ -1,10 +1,8 @@
 package kernel.scheduler.tasks.spaceInvaders;
 
-import devices.VESAGraphics;
-
 public class Alien extends GameObject {
     private final ColorMap _colorMap;
-    VESAGraphics _graphics;
+    DrawPlane _graphics;
     private static final int[][] map = {
             {0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0},
             {0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0},
@@ -17,9 +15,9 @@ public class Alien extends GameObject {
     };
     // false: left, true: right
     private boolean _movementDir = false;
-    private static final float xSpeed = 0.001f;
+    private static final float xSpeed = 0.01f;
 
-    public Alien(VESAGraphics graphics) {
+    public Alien(DrawPlane graphics) {
         width = 11;
         height = 8;
         positionX = 50;

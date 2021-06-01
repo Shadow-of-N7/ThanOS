@@ -1,5 +1,6 @@
 package kernel.scheduler.tasks.spaceInvaders;
 
+import devices.StaticV24;
 import devices.VESAGraphics;
 
 public class DrawPlane {
@@ -7,40 +8,46 @@ public class DrawPlane {
     int height = DataManager.screenHeight;
     VESAGraphics _graphics;
 
-    private int[] plane = new int[width * height];
+    private int[][] plane = new int[height][width];
 
     public DrawPlane(VESAGraphics graphics) {
         _graphics = graphics;
-        for(int i = 0; i < plane.length; i++) {
-            plane[i] = 0;
-        }
+        clear();
     }
 
     public void setPixel(int x, int y, int col) {
-        plane[(width * y) + x] = col;
+        plane[y][x] = col;
     }
 
     /**
      * Takes a delta of the frame before and the current one and clears everything not black.
      */
     public void clearDelta(DrawPlane oldPlane) {
-        for(int i = 0; i < oldPlane.plane.length; i++) {
-            int x = oldPlane.plane.length % oldPlane.height;
-            int y = (oldPlane.plane.length - x) / width;
-            _graphics.setPixel(x, y, 0);
-        }
-    }
-
-    public void draw() {
-        for(int i = 0; i < plane.length; i++) {
-            if(plane[i] != 0) {
-                int x = plane.length % height;
-                int y = (plane.length - x) / width;
-                _graphics.setPixel(x, y, plane[i]);
+        for(int y = 0; y < height; y++) {
+            for(int x = 0; x < width; x++) {
+                // Delete everything that was not 0 in the old frame and that is 0 in this frame
+                if(/*oldPlane.plane[y][x] != 0 &&*/ plane[y][x] == 0) {
+                    _graphics.setPixel(x, y, 0);
+                }
             }
         }
     }
 
+    public void draw() {
+        for(int y = 0; y < height; y++) {
+            for(int x = 0; x < width; x++) {
+                if (plane[y][x] != 0) {
+                    _graphics.setPixel(x, y, plane[y][x]);
+                }
+            }
+        }
+    }
 
-
+    public void clear() {
+        for(int y = 0; y < height; y++) {
+            for(int x = 0; x < width; x++) {
+                plane[y][x] = 0;
+            }
+        }
+    }
 }

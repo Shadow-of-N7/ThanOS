@@ -4,11 +4,11 @@ import devices.VESAGraphics;
 
 public class Player extends GameObject{
     private ColorMap _colorMap;
-    VESAGraphics _graphics;
+    DrawPlane _graphics;
     Bullet[] bulletPool;
     int bulletIterator = 0;
 
-    public Player(VESAGraphics graphics) {
+    public Player(DrawPlane graphics) {
         _graphics = graphics;
         bulletPool = new Bullet[20];
 

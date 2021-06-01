@@ -1,14 +1,15 @@
 package kernel.scheduler.tasks.spaceInvaders;
 
+import devices.StaticV24;
 import devices.VESAGraphics;
 
 public class ColorMap {
-    VESAGraphics _graphics;
+    DrawPlane _graphics;
     private int[][] _colors;
     private final int _width;
     private final int _height;
 
-    public ColorMap(VESAGraphics graphics, int width, int height) {
+    public ColorMap(DrawPlane graphics, int width, int height) {
         _graphics = graphics;
         _colors = new int[width][height];
         _width = width;
