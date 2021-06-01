@@ -40,14 +40,17 @@ public class SpaceInvadersTask extends Task {
                 // TODO
                 break;
             case GameState.PLAYING:
-
+                clear();
+                /*
                 col++;
                 for(int y = 0; y < 200; y++) {
                     for(int x = 0; x < 320; x++) {
                         _graphics.setPixel(x, y, col++);
                     }
                 }
-
+                 */
+                alien.update();
+                alien.draw();
                 break;
             case GameState.DEAD:
                 // TODO

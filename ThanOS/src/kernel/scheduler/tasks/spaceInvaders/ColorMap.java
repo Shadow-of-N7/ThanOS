@@ -5,8 +5,8 @@ import devices.VESAGraphics;
 public class ColorMap {
     VESAGraphics _graphics;
     private int[][] _colors;
-    private int _width;
-    private int _height;
+    private final int _width;
+    private final int _height;
 
     public ColorMap(VESAGraphics graphics, int width, int height) {
         _graphics = graphics;
@@ -14,6 +14,7 @@ public class ColorMap {
         _width = width;
         _height = height;
     }
+
 
     public void setColors(int[][] colors) {
         _colors = colors;
@@ -30,5 +31,11 @@ public class ColorMap {
                 _graphics.setPixel(xPosition + x, yPosition + y, _colors[y][x]);
             }
         }
+        _graphics.setPixel(xPosition, yPosition, 5);
+    }
+
+
+    public void draw(float xPosition, float yPosition) {
+        draw((int) xPosition, (int) yPosition);
     }
 }
