@@ -2,7 +2,6 @@ package kernel.scheduler.tasks.spaceInvaders;
 
 public class Alien extends GameObject {
     private final ColorMap _colorMap;
-    DrawPlane _graphics;
     private static final int[][] map = {
             {0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0},
             {0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0},
@@ -15,15 +14,14 @@ public class Alien extends GameObject {
     };
     // false: left, true: right
     private boolean _movementDir = false;
-    private static final float xSpeed = 0.01f;
+    private static final float xSpeed = 0.2f;
 
-    public Alien(DrawPlane graphics) {
+    public Alien() {
         width = 11;
         height = 8;
         positionX = 50;
         positionY = 50;
-        _graphics = graphics;
-        _colorMap = new ColorMap(graphics, width, height);
+        _colorMap = new ColorMap(width, height);
         _colorMap.setColors(map);
     }
 

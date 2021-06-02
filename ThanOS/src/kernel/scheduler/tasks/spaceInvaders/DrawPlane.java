@@ -8,7 +8,7 @@ public class DrawPlane {
     int height = DataManager.screenHeight;
     VESAGraphics _graphics;
 
-    private int[][] plane = new int[height][width];
+    private final int[][] plane = new int[height][width];
 
     public DrawPlane(VESAGraphics graphics) {
         _graphics = graphics;
@@ -26,7 +26,7 @@ public class DrawPlane {
         for(int y = 0; y < height; y++) {
             for(int x = 0; x < width; x++) {
                 // Delete everything that was not 0 in the old frame and that is 0 in this frame
-                if(/*oldPlane.plane[y][x] != 0 &&*/ plane[y][x] == 0) {
+                if(plane[y][x] == 0 && oldPlane.plane[y][x] == 0 ) { // The second should be != 0, but this works better - no idea why
                     _graphics.setPixel(x, y, 0);
                 }
             }

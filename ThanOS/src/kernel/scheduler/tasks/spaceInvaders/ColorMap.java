@@ -1,16 +1,11 @@
 package kernel.scheduler.tasks.spaceInvaders;
 
-import devices.StaticV24;
-import devices.VESAGraphics;
-
 public class ColorMap {
-    DrawPlane _graphics;
     private int[][] _colors;
     private final int _width;
     private final int _height;
 
-    public ColorMap(DrawPlane graphics, int width, int height) {
-        _graphics = graphics;
+    public ColorMap( int width, int height) {
         _colors = new int[width][height];
         _width = width;
         _height = height;
@@ -29,10 +24,10 @@ public class ColorMap {
     public void draw(int xPosition, int yPosition) {
         for(int x = 0; x < _width; x++) {
             for(int y = 0; y < _height; y++) {
-                _graphics.setPixel(xPosition + x, yPosition + y, _colors[y][x]);
+                DataManager.drawPlane.setPixel(xPosition + x, yPosition + y, _colors[y][x]);
             }
         }
-        _graphics.setPixel(xPosition, yPosition, 5);
+        DataManager.drawPlane.setPixel(xPosition, yPosition, 5);
     }
 
 

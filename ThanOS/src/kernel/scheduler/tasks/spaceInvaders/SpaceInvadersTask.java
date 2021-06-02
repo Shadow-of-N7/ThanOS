@@ -36,10 +36,11 @@ public class SpaceInvadersTask extends Task {
             _drawPlanes[0] = new DrawPlane(_graphics);
             _drawPlanes[1] = new DrawPlane(_graphics);
             _currentDrawPlane = _drawPlanes[0];
+            DataManager.drawPlane = _currentDrawPlane;
 
             _isInitialized = true;
-            player = new Player(_currentDrawPlane);
-            alien  = new Alien(_currentDrawPlane);
+            player = new Player();
+            alien  = new Alien();
         }
 
         switch (gameState) {
@@ -47,9 +48,23 @@ public class SpaceInvadersTask extends Task {
                 // TODO
                 break;
             case GameState.PLAYING:
+                // Frame preparation
+
                 switchDrawPlanes();
+                DataManager.setDrawPlane(_currentDrawPlane);
+
+                // Update step
+
                 alien.update();
+                player.update();
+
+                // Draw step
+
                 alien.draw();
+                player.draw();
+
+                // Flush to screen
+
                 _currentDrawPlane.clearDelta(_oldDrawPlane);
                 _currentDrawPlane.draw();
                 break;
@@ -72,7 +87,7 @@ public class SpaceInvadersTask extends Task {
 
     @Override
     public void takeKeyCode(int keyCode) {
-        StaticV24.print(Keyboard.getChar(keyCode));
+        int offset = 3;
         if(keyCode == KeyCode.Escape) {
             _graphics.setTextMode();
             _t_state = TaskState.COMPLETED;
@@ -80,10 +95,10 @@ public class SpaceInvadersTask extends Task {
 
         if(gameState == GameState.PLAYING) {
             if(keyCode == KeyCode.ArrowLeft) {
-                player.updatePosition(-1);
+                player.updatePosition(-offset);
             }
             if(keyCode == KeyCode.ArrowRight) {
-                player.updatePosition(1);
+                player.updatePosition(offset);
             }
             if(keyCode == KeyCode.Space) {
                 player.fire();
