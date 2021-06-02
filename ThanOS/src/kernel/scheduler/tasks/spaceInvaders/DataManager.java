@@ -6,6 +6,7 @@ public class DataManager {
     public static DrawPlane drawPlane;
     public static Player player;
     public static AlienManager alienManager;
+    public static ObstacleManager obstacleManager;
 
 
     public static void setDrawPlane(DrawPlane plane) {

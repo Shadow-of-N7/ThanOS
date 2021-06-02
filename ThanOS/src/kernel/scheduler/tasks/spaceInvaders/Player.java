@@ -1,18 +1,20 @@
 package kernel.scheduler.tasks.spaceInvaders;
 
 public class Player extends GameObject{
-    Bullet[] bulletPool;
-    int bulletIterator = 0;
+    private Bullet[] bulletPool;
+    private int bulletIterator = 0;
     private static final int[][] map = {
-            {0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0},
-            {1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1},
-            {1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1},
-            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-            {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
-            {0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0},
+            {0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 7, 3, 7, 0, 0, 0, 0},
+            {7, 0, 0, 7, 7, 3, 7, 7, 0, 0, 7},
+            {7, 0, 7, 7, 7, 7, 7, 7, 7, 0, 7},
+            {7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7},
+            {7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7},
+            {0, 8, 7, 7, 8, 8, 8, 7, 7, 8, 0},
+            {0, 8, 8, 8, 8, 0, 8, 8, 8, 8, 0},
     };
+    public static final int baseHealth = 100;
+    public int health = 100;
 
     public Player() {
         width = 11;
@@ -84,6 +86,14 @@ public class Player extends GameObject{
         positionX = (int)(DataManager.screenWidth / 2);
         for(Bullet bullet : bulletPool) {
             bullet.isActive = false;
+        }
+        health = Player.baseHealth;
+    }
+
+    public void decreaseHealth(int amount) {
+        health -= amount;
+        if(health <= 0) {
+            isActive = false;
         }
     }
 }

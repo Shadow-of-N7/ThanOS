@@ -1,18 +1,14 @@
 package java.util;
 
-@SJC.IgnoreUnit
+import kernel.Timer;
+
 public class Random {
     private long seed;
     private static final long serialVersionUID = 3905348978240129619L;
 
 
     public Random() {
-        // No chance this works until interrupts work.
-        // Besides that, it's required to access the HPET (High Precision Event Timer).
-        // this(System.currentTimeMillis());
-
-        // TODO: Remove this and do it correctly.
-        this(7298345761L);
+        this(Timer.getUptimeReal());
     }
 
 

@@ -6,7 +6,8 @@ import devices.VESAGraphics;
 public class DrawPlane {
     int width = DataManager.screenWidth;
     int height = DataManager.screenHeight;
-    VESAGraphics _graphics;
+    private final VESAGraphics _graphics;
+    DrawPlane otherPlane;
 
     private final int[][] plane = new int[height][width];
 
@@ -16,7 +17,8 @@ public class DrawPlane {
     }
 
     public void setPixel(int x, int y, int col) {
-        plane[y][x] = col;
+        if(otherPlane.plane[y][x] != col)
+            plane[y][x] = col;
     }
 
     /**
