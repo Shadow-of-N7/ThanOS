@@ -23,8 +23,6 @@ public class Alien extends GameObject {
     public Alien() {
         width = 11;
         height = 8;
-        positionX = 50;
-        positionY = 50;
 
         bulletPool = new Bullet[20];
         for(int i = 0; i < bulletPool.length; i++) {
@@ -70,6 +68,7 @@ public class Alien extends GameObject {
      */
     public void fire() {
         bulletPool[bulletIterator].isActive = true;
+        bulletPool[bulletIterator]._owner = this;
         bulletPool[bulletIterator].positionX = positionX + (int)(width / 2) - (int)(bulletPool[bulletIterator].width / 2);
         bulletPool[bulletIterator++].positionY = positionY;
         if(bulletIterator == bulletPool.length) {
@@ -93,5 +92,13 @@ public class Alien extends GameObject {
                 bullet.draw();
             }
         }
+    }
+
+
+    public void reset() {
+        for (Bullet bullet : bulletPool) {
+            bullet.isActive = false;
+        }
+        _currentFireCoolDown = 0;
     }
 }

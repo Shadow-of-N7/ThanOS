@@ -1,12 +1,10 @@
 package kernel.scheduler.tasks.spaceInvaders;
 
-import devices.StaticV24;
-
 public class Bullet extends GameObject {
     // If true, it is actively used; reserve otherwise
-    private GameObject _owner;
+    public GameObject _owner;
     public boolean isActive;
-    private int speed;
+    private final int speed;
     private static final int[][] map = {
             {3},
             {3},
@@ -41,7 +39,7 @@ public class Bullet extends GameObject {
 
     /**
      * Checks for collisions.
-     *
+     * This method may look somewhat ugly, but out of missing time, I simply don't care ¯\_(ツ)_/¯
      * @return Whether a collision was detected.
      */
     public boolean checkCollision() {
@@ -64,7 +62,6 @@ public class Bullet extends GameObject {
                     && positionX <= DataManager.player.positionX + DataManager.player.width
                     && positionY >= DataManager.player.positionY
                     && positionY <= DataManager.player.positionY + DataManager.player.height) {
-                StaticV24.print('v');
                 DataManager.player.isActive = false;
                 this.isActive = false;
                 return true;

@@ -1,13 +1,16 @@
 package kernel.scheduler.tasks.spaceInvaders;
 
 import devices.KeyCode;
+import devices.StaticV24;
 import devices.VESAGraphics;
+import io.Console;
 import kernel.scheduler.Scheduler;
 import kernel.scheduler.Task;
 import kernel.scheduler.TaskState;
 
 public class SpaceInvadersTask extends Task {
     private boolean _isInitialized = false;
+    private boolean _isWinInitialized = false;
     private byte gameState = GameState.PLAYING;
     private final VESAGraphics _graphics = new VESAGraphics();
     private final DrawPlane[] _drawPlanes = new DrawPlane[2];
@@ -16,9 +19,9 @@ public class SpaceInvadersTask extends Task {
 
     @Override
     public void run() {
-        if(!_isInitialized) {
+        if (!_isInitialized) {
             _t_fullScreen = true;
-             _graphics.setGraphics320x200Mode();
+            _graphics.setGraphics320x200Mode();
             Scheduler.redirectKeyboardInput = true;
             _drawPlanes[0] = new DrawPlane(_graphics);
             _drawPlanes[1] = new DrawPlane(_graphics);
@@ -54,9 +57,23 @@ public class SpaceInvadersTask extends Task {
 
                 _currentDrawPlane.clearDelta(_oldDrawPlane);
                 _currentDrawPlane.draw();
+                if (DataManager.alienManager.getActiveAlienCount() == 0) {
+                    gameState = GameState.WIN;
+                }
                 break;
             case GameState.DEAD:
                 // TODO
+                break;
+            case GameState.WIN:
+                if(!_isWinInitialized) {
+                    _graphics.setTextMode();
+                    Console.disableCursor();
+                    Console.setCaret((Console.SCREEN_WIDTH / 2) - 4, (Console.SCREEN_HEIGHT / 2) - 1);
+                    Console.println("!You win!");
+                    Console.setCaret((Console.SCREEN_WIDTH / 2) - 20, (Console.SCREEN_HEIGHT / 2));
+                    Console.println("Press ENTER to play again or ESC to quit.");
+                    _isWinInitialized = true;
+                }
                 break;
         }
     }
@@ -65,8 +82,8 @@ public class SpaceInvadersTask extends Task {
      * Clears the screen.
      */
     public void clear() {
-        for(int y = 0; y < 200; y++) {
-            for(int x = 0; x < 320; x++) {
+        for (int y = 0; y < 200; y++) {
+            for (int x = 0; x < 320; x++) {
                 _graphics.setPixel(x, y, 0);
             }
         }
@@ -75,22 +92,38 @@ public class SpaceInvadersTask extends Task {
     @Override
     public void takeKeyCode(int keyCode) {
         int offset = 3;
-        if(keyCode == KeyCode.Escape) {
+        if (keyCode == KeyCode.Escape) {
             gameState = GameState.OFF;
             _t_state = TaskState.COMPLETED;
             _graphics.setTextMode();
         }
 
-        if(gameState == GameState.PLAYING) {
-            if(keyCode == KeyCode.ArrowLeft) {
-                DataManager.player.updatePosition(-offset);
-            }
-            if(keyCode == KeyCode.ArrowRight) {
-                DataManager.player.updatePosition(offset);
-            }
-            if(keyCode == KeyCode.Space) {
-                DataManager.player.fire();
-            }
+        switch (gameState) {
+            case GameState.PLAYING:
+
+                if (keyCode == KeyCode.ArrowLeft) {
+                    DataManager.player.updatePosition(-offset);
+                }
+                if (keyCode == KeyCode.ArrowRight) {
+                    DataManager.player.updatePosition(offset);
+                }
+                if (keyCode == KeyCode.Space) {
+                    DataManager.player.fire();
+                }
+                if (keyCode == KeyCode.K + 32) {
+                    for(int i = 0; i < DataManager.alienManager.alienList.length; i++) {
+                        DataManager.alienManager.alienList[i].isActive = false;
+                    }
+                }
+                break;
+
+            case GameState.WIN:
+                if (keyCode == KeyCode.Enter) {
+                    gameState = GameState.PLAYING;
+                    reset();
+                    _isWinInitialized = false;
+                }
+                break;
         }
     }
 
@@ -101,15 +134,22 @@ public class SpaceInvadersTask extends Task {
 
 
     private void switchDrawPlanes() {
-        if(_currentDrawPlane == _drawPlanes[0]) {
+        if (_currentDrawPlane == _drawPlanes[0]) {
             _currentDrawPlane = _drawPlanes[1];
             _oldDrawPlane = _drawPlanes[0];
-        }
-        else {
+        } else {
             _currentDrawPlane = _drawPlanes[0];
             _oldDrawPlane = _drawPlanes[1];
         }
         // Only the new plane shall be cleared, otherwise no delta is possible
         _currentDrawPlane.clear();
+    }
+
+
+    private void reset() {
+        StaticV24.println("Resetting...");
+        _graphics.setGraphics320x200Mode();
+        DataManager.alienManager.reset();
+        DataManager.player.reset();
     }
 }

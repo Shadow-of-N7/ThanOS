@@ -8,7 +8,7 @@ public class AlienManager {
     public final Alien[] alienList = new Alien[rows * columns];
 
     public AlienManager() {
-        int yPosition = 30;
+        int yPosition = 15;
         int counter = 0;
         boolean inverseDirection = false;
         for(int y = 0; y < rows; y++) {
@@ -95,6 +95,33 @@ public class AlienManager {
             aliens[i].positionX = xPlace;
             aliens[i].positionY = yPosition;
             xPlace += stepSize;
+        }
+    }
+
+    public int getActiveAlienCount() {
+        int activeCount = 0;
+        for(int i = 0; i < alienList.length; i++) {
+            if(alienList[i].isActive) {
+                ++activeCount;
+            }
+        }
+        return activeCount;
+    }
+
+    public void reset() {
+        int yPosition = 15;
+        boolean direction = false;
+
+        for(int y = 0; y < rows; y++) {
+            placeAliens(aliens[y], yPosition);
+            yPosition += 15;
+
+            for (Alien alien : aliens[y]) {
+                alien.movementDirection = direction;
+                alien.isActive = true;
+                alien.reset();
+            }
+            direction =! direction;
         }
     }
 }

@@ -429,13 +429,13 @@ public class Console {
     }
 
 
-    public static void DisableCursor() {
+    public static void disableCursor() {
         MAGIC.wIOs8(0x3D4, (byte)0x0A);
         MAGIC.wIOs8(0x3D5, (byte)0x20);
     }
 
 
-    public static void EnableCursor() {
+    public static void enableCursor() {
         MAGIC.wIOs8(0x3D4, (byte)0x0A);
         MAGIC.wIOs8(0x3D5, ((byte) (MAGIC.rIOs8(0x3D5) & 0xC0)));
 

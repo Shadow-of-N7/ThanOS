@@ -41,6 +41,7 @@ public class Player extends GameObject{
      */
     public void fire() {
         bulletPool[bulletIterator].isActive = true;
+        bulletPool[bulletIterator]._owner = this;
         bulletPool[bulletIterator].positionX = positionX + (int)(width / 2) - (int)(bulletPool[bulletIterator].width / 2);
         bulletPool[bulletIterator++].positionY = positionY;
         if(bulletIterator == bulletPool.length) {
@@ -74,6 +75,15 @@ public class Player extends GameObject{
             if (bullet.isActive) {
                 bullet.draw();
             }
+        }
+    }
+
+
+    public void reset() {
+        isActive = true;
+        positionX = (int)(DataManager.screenWidth / 2);
+        for(Bullet bullet : bulletPool) {
+            bullet.isActive = false;
         }
     }
 }

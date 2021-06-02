@@ -113,7 +113,7 @@ public class BlueScreen {
             Console.setPrintableWidth(spacerX);
             Console.println(additionalInformation);
         }
-        Console.DisableCursor();
+        Console.disableCursor();
 
         while (true) {
         }
