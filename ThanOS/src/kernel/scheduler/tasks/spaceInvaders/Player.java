@@ -31,7 +31,9 @@ public class Player extends GameObject{
      * @param offset The offset to apply to the player.
      */
     public void updatePosition(int offset) {
-        positionX += offset;
+        if(positionX + offset > 0 && positionX + offset + width < DataManager.screenWidth) {
+            positionX += offset;
+        }
     }
 
     /**

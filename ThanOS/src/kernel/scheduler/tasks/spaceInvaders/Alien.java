@@ -16,6 +16,9 @@ public class Alien extends GameObject {
     public final float xSpeed = 0.2f;
     Bullet[] bulletPool;
     int bulletIterator = 0;
+    int fireTolerance = 5;
+    private final int _fireCoolDown = 100;
+    private int _currentFireCoolDown = 0;
 
     public Alien() {
         width = 11;
@@ -31,26 +34,33 @@ public class Alien extends GameObject {
 
     @Override
     public void update() {
-        /*
-        if(positionX - xSpeed <= 1 || positionX + width + xSpeed >= DataManager.screenWidth - 1) {
-            movementDirection =!movementDirection;
-        }
-
-         */
         if(isActive) {
             // Right
+            updateBullets();
             if(movementDirection) {
                 positionX += xSpeed;
             }
             else {
                 positionX -= xSpeed;
             }
+
+            if(_currentFireCoolDown > 0) {
+                --_currentFireCoolDown;
+            }
+            if(_currentFireCoolDown <= 0
+                    && positionX < DataManager.player.positionX + fireTolerance
+                    && positionX > DataManager.player.positionX - fireTolerance) {
+                fire();
+                _currentFireCoolDown = _fireCoolDown;
+            }
         }
+
     }
 
     @Override
     public void draw() {
         if(isActive) {
+            drawBullets();
             ColorMap.draw(map, positionX, positionY, width, height);
         }
     }
@@ -64,6 +74,24 @@ public class Alien extends GameObject {
         bulletPool[bulletIterator++].positionY = positionY;
         if(bulletIterator == bulletPool.length) {
             bulletIterator = 0;
+        }
+    }
+
+    private void updateBullets() {
+        for(int i = 0; i < bulletPool.length; i++) {
+            // Only update active bullets
+            if(bulletPool[i].isActive) {
+                bulletPool[i].update();
+            }
+        }
+    }
+
+    private void drawBullets() {
+        for(int i = 0; i < bulletPool.length; i++) {
+            // Only update active bullets
+            if(bulletPool[i].isActive) {
+                bulletPool[i].draw();
+            }
         }
     }
 }

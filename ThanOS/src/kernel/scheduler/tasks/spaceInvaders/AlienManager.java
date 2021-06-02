@@ -1,17 +1,26 @@
 package kernel.scheduler.tasks.spaceInvaders;
 
 public class AlienManager {
-    private int rows = 1;
-    private int columns = 2;
+    private int rows = 4;
+    private int columns = 6;
     private final Alien[][] aliens = new Alien[rows][columns];
 
     public AlienManager() {
+        int yPosition = 30;
+        boolean inverseDirection = false;
         for(int y = 0; y < rows; y++) {
             for(int x = 0; x < columns; x++) {
                 aliens[y][x] = new Alien();
             }
             // Set the aliens to appropriate positions
-            placeAliens(aliens[y]);
+            placeAliens(aliens[y], yPosition);
+            yPosition += 15;
+
+            // Change row direction in a toggle pattern
+            if(inverseDirection) {
+                changeRowDirection(aliens[y]);
+            }
+            inverseDirection =! inverseDirection;
         }
     }
 
@@ -65,11 +74,12 @@ public class AlienManager {
     }
 
 
-    private void placeAliens(Alien[] aliens) {
+    private void placeAliens(Alien[] aliens, int yPosition) {
         int stepSize = DataManager.screenWidth / (columns + 1);
         int xPlace = stepSize;
         for(int i = 0; i < columns; i++) {
             aliens[i].positionX = xPlace;
+            aliens[i].positionY = yPosition;
             xPlace += stepSize;
         }
     }

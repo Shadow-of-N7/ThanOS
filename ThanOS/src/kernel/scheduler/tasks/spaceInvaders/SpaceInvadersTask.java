@@ -15,15 +15,9 @@ public class SpaceInvadersTask extends Task {
     private final DrawPlane[] _drawPlanes = new DrawPlane[2];
     private DrawPlane _currentDrawPlane;
     private DrawPlane _oldDrawPlane;
-    int col = 0;
-    Player player;
-    AlienManager alienManager;
 
     // TODO:
     /*
-    Bullet pool from which bullets can be taken
-    Alien array
-    Player control
     Score
      */
 
@@ -39,9 +33,8 @@ public class SpaceInvadersTask extends Task {
             DataManager.drawPlane = _currentDrawPlane;
 
             _isInitialized = true;
-            player = new Player();
-            alienManager = new AlienManager();
-
+            DataManager.player = new Player();
+            DataManager.alienManager = new AlienManager();
         }
 
         switch (gameState) {
@@ -56,13 +49,13 @@ public class SpaceInvadersTask extends Task {
 
                 // Update step
 
-                alienManager.update();
-                player.update();
+                DataManager.alienManager.update();
+                DataManager.player.update();
 
                 // Draw step
 
-                alienManager.draw();
-                player.draw();
+                DataManager.alienManager.draw();
+                DataManager.player.draw();
 
                 // Flush to screen
 
@@ -90,19 +83,20 @@ public class SpaceInvadersTask extends Task {
     public void takeKeyCode(int keyCode) {
         int offset = 3;
         if(keyCode == KeyCode.Escape) {
-            _graphics.setTextMode();
+            gameState = GameState.OFF;
             _t_state = TaskState.COMPLETED;
+            _graphics.setTextMode();
         }
 
         if(gameState == GameState.PLAYING) {
             if(keyCode == KeyCode.ArrowLeft) {
-                player.updatePosition(-offset);
+                DataManager.player.updatePosition(-offset);
             }
             if(keyCode == KeyCode.ArrowRight) {
-                player.updatePosition(offset);
+                DataManager.player.updatePosition(offset);
             }
             if(keyCode == KeyCode.Space) {
-                player.fire();
+                DataManager.player.fire();
             }
         }
     }
