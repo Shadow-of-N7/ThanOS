@@ -11,13 +11,13 @@ import kernel.scheduler.TaskState;
 public class SpaceInvadersTask extends Task {
     private boolean _isInitialized = false;
     private byte gameState = GameState.PLAYING;
-    private VESAGraphics _graphics = new VESAGraphics();
-    private DrawPlane[] _drawPlanes = new DrawPlane[2];
+    private final VESAGraphics _graphics = new VESAGraphics();
+    private final DrawPlane[] _drawPlanes = new DrawPlane[2];
     private DrawPlane _currentDrawPlane;
     private DrawPlane _oldDrawPlane;
     int col = 0;
     Player player;
-    Alien alien;
+    Alien[] aliens = new Alien[1];
 
     // TODO:
     /*
@@ -40,7 +40,10 @@ public class SpaceInvadersTask extends Task {
 
             _isInitialized = true;
             player = new Player();
-            alien  = new Alien();
+
+            for(int i = 0; i < aliens.length; i++) {
+                aliens[i] = new Alien();
+            }
         }
 
         switch (gameState) {
@@ -55,12 +58,16 @@ public class SpaceInvadersTask extends Task {
 
                 // Update step
 
-                alien.update();
+                for (Alien alien : aliens) {
+                    alien.update();
+                }
                 player.update();
 
                 // Draw step
 
-                alien.draw();
+                for (Alien alien : aliens) {
+                    alien.draw();
+                }
                 player.draw();
 
                 // Flush to screen

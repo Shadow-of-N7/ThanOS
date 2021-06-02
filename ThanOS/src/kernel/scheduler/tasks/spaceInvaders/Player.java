@@ -1,7 +1,6 @@
 package kernel.scheduler.tasks.spaceInvaders;
 
 public class Player extends GameObject{
-    private final ColorMap _colorMap;
     Bullet[] bulletPool;
     int bulletIterator = 0;
     private static final int[][] map = {
@@ -12,7 +11,7 @@ public class Player extends GameObject{
             {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
             {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
             {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
-            {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
+            {0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0},
     };
 
     public Player() {
@@ -22,10 +21,8 @@ public class Player extends GameObject{
         positionY = DataManager.screenHeight - 20;
         bulletPool = new Bullet[20];
         for(int i = 0; i < bulletPool.length; i++) {
-            bulletPool[i] = new Bullet();
+            bulletPool[i] = new Bullet(-5);
         }
-        _colorMap = new ColorMap(width, height);
-        _colorMap.setColors(map);
         // TODO: Colormap
     }
 
@@ -51,12 +48,13 @@ public class Player extends GameObject{
 
     @Override
     public void update() {
-
+        updateBullets();
     }
 
     @Override
     public void draw() {
-        _colorMap.draw(positionX, positionY);
+        drawBullets();
+        ColorMap.draw(map, positionX, positionY, width, height);
     }
 
     private void updateBullets() {
@@ -64,6 +62,15 @@ public class Player extends GameObject{
             // Only update active bullets
             if(bulletPool[i].isActive) {
                 bulletPool[i].update();
+            }
+        }
+    }
+
+    private void drawBullets() {
+        for(int i = 0; i < bulletPool.length; i++) {
+            // Only update active bullets
+            if(bulletPool[i].isActive) {
+                bulletPool[i].draw();
             }
         }
     }

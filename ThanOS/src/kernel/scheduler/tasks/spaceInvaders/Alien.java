@@ -1,7 +1,6 @@
 package kernel.scheduler.tasks.spaceInvaders;
 
 public class Alien extends GameObject {
-    private final ColorMap _colorMap;
     private static final int[][] map = {
             {0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0},
             {0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0},
@@ -15,14 +14,19 @@ public class Alien extends GameObject {
     // false: left, true: right
     private boolean _movementDir = false;
     private static final float xSpeed = 0.2f;
+    Bullet[] bulletPool;
+    int bulletIterator = 0;
 
     public Alien() {
         width = 11;
         height = 8;
         positionX = 50;
         positionY = 50;
-        _colorMap = new ColorMap(width, height);
-        _colorMap.setColors(map);
+
+        bulletPool = new Bullet[20];
+        for(int i = 0; i < bulletPool.length; i++) {
+            bulletPool[i] = new Bullet(5);
+        }
     }
 
     @Override
@@ -44,7 +48,19 @@ public class Alien extends GameObject {
     @Override
     public void draw() {
         if(isActive) {
-            _colorMap.draw(positionX, positionY);
+            ColorMap.draw(map, positionX, positionY, width, height);
+        }
+    }
+
+    /**
+     * Fires the primary weapon.
+     */
+    public void fire() {
+        bulletPool[bulletIterator].isActive = true;
+        bulletPool[bulletIterator].positionX = positionX + (int)(width / 2) - (int)(bulletPool[bulletIterator].width / 2);
+        bulletPool[bulletIterator++].positionY = positionY;
+        if(bulletIterator == bulletPool.length) {
+            bulletIterator = 0;
         }
     }
 }

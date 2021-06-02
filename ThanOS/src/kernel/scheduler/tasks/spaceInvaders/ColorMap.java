@@ -1,37 +1,33 @@
 package kernel.scheduler.tasks.spaceInvaders;
 
 public class ColorMap {
-    private int[][] _colors;
-    private final int _width;
-    private final int _height;
-
-    public ColorMap( int width, int height) {
-        _colors = new int[width][height];
-        _width = width;
-        _height = height;
-    }
-
-
-    public void setColors(int[][] colors) {
-        _colors = colors;
-    }
-
     /**
      * Draws the color map.
+     * @param colors A 2D integer array containing the color definitions.
      * @param xPosition Top left position, X component.
      * @param yPosition Top left position, Y component.
+     * @param width The width of the color array.
+     * @param height The height of the color array.
      */
-    public void draw(int xPosition, int yPosition) {
-        for(int x = 0; x < _width; x++) {
-            for(int y = 0; y < _height; y++) {
-                DataManager.drawPlane.setPixel(xPosition + x, yPosition + y, _colors[y][x]);
+    public static void draw(int[][] colors, int xPosition, int yPosition, int width, int height) {
+        for(int x = 0; x < width; x++) {
+            for(int y = 0; y < height; y++) {
+                DataManager.drawPlane.setPixel(xPosition + x, yPosition + y, colors[y][x]);
             }
         }
         DataManager.drawPlane.setPixel(xPosition, yPosition, 5);
     }
 
 
-    public void draw(float xPosition, float yPosition) {
-        draw((int) xPosition, (int) yPosition);
+    /**
+     * Draws the color map.
+     * @param colors A 2D integer array containing the color definitions.
+     * @param xPosition Top left position, X component.
+     * @param yPosition Top left position, Y component.
+     * @param width The width of the color array.
+     * @param height The height of the color array.
+     */
+    public static void draw(int[][] colors, float xPosition, float yPosition, int width, int height) {
+        draw(colors, (int) xPosition, (int) yPosition, width, height);
     }
 }
