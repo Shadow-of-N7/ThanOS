@@ -1,15 +1,16 @@
 package devices;
 
 import kernel.BIOS;
+import rte.DynamicRuntime;
 
 public class VESAGraphics extends VGA {
     public VESAMode modes, curMode;
-
+    //static int KM_SCRATCH_4k = DynamicRuntime.allocateSpecialMemory(4096, 4096);
     /*
     private final static VESAControllerInfoStruct contrInfo
-            = (VESAControllerInfoStruct) MAGIC.cast2Struct(KernelConst.KM_SCRATCH_4k);
+            = (VESAControllerInfoStruct) MAGIC.cast2Struct(KM_SCRATCH_4k);
     private final static VESAModeInfoStruct modeInfo
-            = (VESAModeInfoStruct) MAGIC.cast2Struct(KernelConst.KM_SCRATCH_4k);
+            = (VESAModeInfoStruct) MAGIC.cast2Struct(KM_SCRATCH_4k);
 
     public static VESAGraphics detectDevice() {
         int modePtr, modeNr;
@@ -19,8 +20,8 @@ public class VESAGraphics extends VGA {
         //get information through real mode interrupt
         contrInfo.id = 0x32454256; //VBE2
         BIOS.regs.EAX = 0x4F00; //get controller information
-        BIOS.regs.ES = (short) (KernelConst.KM_SCRATCH_4k >>> 4);
-        BIOS.regs.EDI = KernelConst.KM_SCRATCH_4k & 0xF;
+        BIOS.regs.ES = (short) (KM_SCRATCH_4k >>> 4);
+        BIOS.regs.EDI = KM_SCRATCH_4k & 0xF;
         BIOS.rint(0x10);
 
         //check signatures
@@ -46,8 +47,8 @@ public class VESAGraphics extends VGA {
         while (mode != null) {
             BIOS.regs.EAX = 0x4F01; //get mode information
             BIOS.regs.ECX = mode.modeNr;
-            BIOS.regs.ES = (short) (KernelConst.KM_SCRATCH_4k >>> 4);
-            BIOS.regs.EDI = KernelConst.KM_SCRATCH_4k & 0xF;
+            BIOS.regs.ES = (short) (KM_SCRATCH_4k >>> 4);
+            BIOS.regs.EDI = KM_SCRATCH_4k & 0xF;
             BIOS.rint(0x10);
             if ((modeInfo.attributes & VESAModeInfoStruct.ATTR_LINFRMBUF) == (short) 0) { //no linear frame buffer
                 //TODO remove mode from list
@@ -64,7 +65,7 @@ public class VESAGraphics extends VGA {
         //return driver object
         return me;
     }
-     */
+    */
     public void setTextMode() {
         curMode = null;
         super.setTextMode();

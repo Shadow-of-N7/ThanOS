@@ -78,19 +78,19 @@ public class Alien extends GameObject {
     }
 
     private void updateBullets() {
-        for(int i = 0; i < bulletPool.length; i++) {
+        for (Bullet bullet : bulletPool) {
             // Only update active bullets
-            if(bulletPool[i].isActive) {
-                bulletPool[i].update();
+            if (bullet.isActive) {
+                bullet.update();
             }
         }
     }
 
     private void drawBullets() {
-        for(int i = 0; i < bulletPool.length; i++) {
+        for (Bullet bullet : bulletPool) {
             // Only update active bullets
-            if(bulletPool[i].isActive) {
-                bulletPool[i].draw();
+            if (bullet.isActive) {
+                bullet.draw();
             }
         }
     }

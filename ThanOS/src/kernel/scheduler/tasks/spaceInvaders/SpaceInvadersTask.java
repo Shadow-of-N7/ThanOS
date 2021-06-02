@@ -16,16 +16,11 @@ public class SpaceInvadersTask extends Task {
     private DrawPlane _currentDrawPlane;
     private DrawPlane _oldDrawPlane;
 
-    // TODO:
-    /*
-    Score
-     */
-
     @Override
     public void run() {
         if(!_isInitialized) {
             _t_fullScreen = true;
-            _graphics.setGraphics320x200Mode();
+             _graphics.setGraphics320x200Mode();
             Scheduler.redirectKeyboardInput = true;
             _drawPlanes[0] = new DrawPlane(_graphics);
             _drawPlanes[1] = new DrawPlane(_graphics);
