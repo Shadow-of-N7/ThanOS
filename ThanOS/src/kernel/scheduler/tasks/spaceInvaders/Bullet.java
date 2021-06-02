@@ -5,11 +5,11 @@ import devices.StaticV24;
 public class Bullet extends GameObject{
     // If true, it is actively used; reserve otherwise
     public boolean isActive;
-    private int speed = 2;
+    private int speed;
     private static final int[][] map = {
-            {1},
-            {1},
-            {1}
+            {3},
+            {3},
+            {3}
     };
 
     public Bullet(int speed) {

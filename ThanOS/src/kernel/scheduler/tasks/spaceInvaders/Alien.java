@@ -12,8 +12,8 @@ public class Alien extends GameObject {
             {0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0},
     };
     // false: left, true: right
-    private boolean _movementDir = false;
-    private static final float xSpeed = 0.2f;
+    public boolean movementDirection = false;
+    public final float xSpeed = 0.2f;
     Bullet[] bulletPool;
     int bulletIterator = 0;
 
@@ -31,12 +31,15 @@ public class Alien extends GameObject {
 
     @Override
     public void update() {
+        /*
         if(positionX - xSpeed <= 1 || positionX + width + xSpeed >= DataManager.screenWidth - 1) {
-            _movementDir =! _movementDir;
+            movementDirection =!movementDirection;
         }
+
+         */
         if(isActive) {
             // Right
-            if(_movementDir) {
+            if(movementDirection) {
                 positionX += xSpeed;
             }
             else {

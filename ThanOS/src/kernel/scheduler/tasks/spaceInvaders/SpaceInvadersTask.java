@@ -17,7 +17,7 @@ public class SpaceInvadersTask extends Task {
     private DrawPlane _oldDrawPlane;
     int col = 0;
     Player player;
-    Alien[] aliens = new Alien[1];
+    AlienManager alienManager;
 
     // TODO:
     /*
@@ -40,10 +40,8 @@ public class SpaceInvadersTask extends Task {
 
             _isInitialized = true;
             player = new Player();
+            alienManager = new AlienManager();
 
-            for(int i = 0; i < aliens.length; i++) {
-                aliens[i] = new Alien();
-            }
         }
 
         switch (gameState) {
@@ -58,16 +56,12 @@ public class SpaceInvadersTask extends Task {
 
                 // Update step
 
-                for (Alien alien : aliens) {
-                    alien.update();
-                }
+                alienManager.update();
                 player.update();
 
                 // Draw step
 
-                for (Alien alien : aliens) {
-                    alien.draw();
-                }
+                alienManager.draw();
                 player.draw();
 
                 // Flush to screen
