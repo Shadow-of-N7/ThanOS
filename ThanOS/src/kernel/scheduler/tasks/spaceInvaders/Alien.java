@@ -28,7 +28,7 @@ public class Alien extends GameObject {
 
         bulletPool = new Bullet[20];
         for(int i = 0; i < bulletPool.length; i++) {
-            bulletPool[i] = new Bullet(5);
+            bulletPool[i] = new Bullet(5, this);
         }
     }
 

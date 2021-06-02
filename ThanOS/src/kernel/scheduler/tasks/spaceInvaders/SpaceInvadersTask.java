@@ -1,8 +1,6 @@
 package kernel.scheduler.tasks.spaceInvaders;
 
 import devices.KeyCode;
-import devices.Keyboard;
-import devices.StaticV24;
 import devices.VESAGraphics;
 import kernel.scheduler.Scheduler;
 import kernel.scheduler.Task;
