@@ -1,5 +1,7 @@
 package kernel.scheduler.tasks.spaceInvaders;
 
+import devices.StaticV24;
+
 public class Alien extends GameObject {
     private static final int[][] map = {
             {0, 0, 4, 0, 0, 0, 0, 0, 4, 0, 0},
@@ -13,12 +15,13 @@ public class Alien extends GameObject {
     };
     // false: left, true: right
     public boolean movementDirection = false;
-    public final float xSpeed = 0.2f;
+    public final float baseXSpeed = 0.2f;
+    public float xSpeed = baseXSpeed;
     Bullet[] bulletPool;
     int bulletIterator = 0;
     int fireTolerance = 5;
-    private final int _fireCoolDown = 100;
-    private int _currentFireCoolDown = 0;
+    public int fireCoolDown = 100;
+    public int currentFireCoolDown = 0;
 
     public Alien() {
         width = 11;
@@ -42,14 +45,13 @@ public class Alien extends GameObject {
                 positionX -= xSpeed;
             }
 
-            if(_currentFireCoolDown > 0) {
-                --_currentFireCoolDown;
+            if(currentFireCoolDown > 0) {
+                --currentFireCoolDown;
             }
-            if(_currentFireCoolDown <= 0
+            if(currentFireCoolDown <= 0
                     && positionX < DataManager.player.positionX + fireTolerance
                     && positionX > DataManager.player.positionX - fireTolerance) {
                 fire();
-                _currentFireCoolDown = _fireCoolDown;
             }
         }
 
@@ -71,6 +73,7 @@ public class Alien extends GameObject {
         bulletPool[bulletIterator]._owner = this;
         bulletPool[bulletIterator].positionX = positionX + (int)(width / 2) - (int)(bulletPool[bulletIterator].width / 2);
         bulletPool[bulletIterator++].positionY = positionY;
+        currentFireCoolDown = fireCoolDown;
         if(bulletIterator == bulletPool.length) {
             bulletIterator = 0;
         }
@@ -99,6 +102,7 @@ public class Alien extends GameObject {
         for (Bullet bullet : bulletPool) {
             bullet.isActive = false;
         }
-        _currentFireCoolDown = 0;
+        currentFireCoolDown = 0;
+        StaticV24.println(fireCoolDown);
     }
 }

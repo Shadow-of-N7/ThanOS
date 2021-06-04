@@ -89,6 +89,7 @@ public class SpaceInvadersTask extends Task {
                     Console.resetColor();
                     Console.setCaret((Console.SCREEN_WIDTH / 2) - 20, (Console.SCREEN_HEIGHT / 2));
                     Console.println("Press ENTER to play again or ESC to quit.");
+                    LevelStrings.reset();
                     _isLooseInitialized = true;
                 }
                 break;
@@ -102,6 +103,9 @@ public class SpaceInvadersTask extends Task {
                     Console.resetColor();
                     Console.setCaret((Console.SCREEN_WIDTH / 2) - 20, (Console.SCREEN_HEIGHT / 2));
                     Console.println("Press ENTER to play again or ESC to quit.");
+
+                    Console.setCaret(0, (Console.SCREEN_HEIGHT / 2) + 2);
+                    Console.print(LevelStrings.getNextString());
                     _isWinInitialized = true;
                 }
                 break;
@@ -160,8 +164,24 @@ public class SpaceInvadersTask extends Task {
                 break;
 
             case GameState.DEAD:
+                if (keyCode == KeyCode.Enter) {
+                    DataManager.level = 1;
+                    gameState = GameState.PLAYING;
+                    reset();
+                    _isWinInitialized = false;
+                    _isLooseInitialized = false;
+                }
             case GameState.WIN:
                 if (keyCode == KeyCode.Enter) {
+                    if(DataManager.level > 3) {
+                        DataManager.level += 5;
+                    }
+                    else {
+                        DataManager.level += 1;
+                    }
+                    if(LevelStrings.currentString >= 7) {
+                        DataManager.level += 40;
+                    }
                     gameState = GameState.PLAYING;
                     reset();
                     _isWinInitialized = false;

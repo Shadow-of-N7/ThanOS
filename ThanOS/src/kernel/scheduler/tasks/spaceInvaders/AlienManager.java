@@ -118,6 +118,10 @@ public class AlienManager {
 
             for (Alien alien : aliens[y]) {
                 alien.movementDirection = direction;
+                alien.xSpeed = alien.baseXSpeed * (DataManager.level / 1.5f);
+                if(alien.fireCoolDown > 20) {
+                    alien.fireCoolDown = 100 - ((DataManager.level - 1) * 10);
+                }
                 alien.isActive = true;
                 alien.reset();
             }

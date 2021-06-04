@@ -4,13 +4,13 @@ import java.util.Random;
 
 public class Obstacle extends GameObject{
     static int width = 40;
-    static int height = 15;
+    static int height = 25;
     // Not static, as this should be changeable for each obstacle
     private int[][] map;
     private final Random _random = new Random();
 
     public Obstacle() {
-        positionY = DataManager.screenHeight - 50;
+        positionY = DataManager.screenHeight - 60;
         map = generateMap();
     }
 

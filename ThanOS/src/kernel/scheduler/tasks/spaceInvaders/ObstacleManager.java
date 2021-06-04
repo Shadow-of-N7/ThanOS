@@ -23,8 +23,18 @@ public class ObstacleManager {
     }
 
     public void reset() {
+        Obstacle.height = 25 - ((DataManager.level - 1) * 3);
+        if(Obstacle.height < 0) {
+            Obstacle.height = 0;
+        }
         for(Obstacle obstacle : obstacles) {
             obstacle.reset();
+            if(Obstacle.height == 0) {
+                obstacle.isActive = false;
+            }
+            else {
+                obstacle.isActive = true;
+            }
         }
     }
 
