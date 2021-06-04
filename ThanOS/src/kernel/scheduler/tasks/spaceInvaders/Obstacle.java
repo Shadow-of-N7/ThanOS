@@ -64,7 +64,7 @@ public class Obstacle extends GameObject{
 
         if(map[offsetY][offsetX] != 0) {
             map[offsetY][offsetX] = 0;
-            damage(offsetX, offsetY);
+            damage(offsetX, offsetY, 1);
             return true;
         }
         return false;
@@ -90,26 +90,26 @@ public class Obstacle extends GameObject{
         return lowest;
     }
 
-    private void damage(int x, int y) {
+    private void damage(int x, int y, int iteration) {
         if(y < Obstacle.height && y >= 0 && x >= 0 && y < Obstacle.width) {
             map[y][x] = 0;
         }
         else return;
         // Above
-        if(_random.nextFloat() < 0.1) {
-            damage(x, y - 1);
+        if(_random.nextFloat() < 0.1 / (0.3f * iteration)) {
+            damage(x, y - 1, iteration + 1);
         }
         // Below
-        if(_random.nextFloat() < 0.1) {
-            damage(x, y + 1);
+        if(_random.nextFloat() < 0.1 / (0.3f * iteration)) {
+            damage(x, y + 1, iteration + 1);
         }
         // Left
-        if(_random.nextFloat() < 0.3) {
-            damage(x - 1, y);
+        if(_random.nextFloat() < 0.4 / (0.3f * iteration)) {
+            damage(x - 1, y, iteration + 1);
         }
         // Right
-        if(_random.nextFloat() < 0.3) {
-            damage(x + 1, y);
+        if(_random.nextFloat() < 0.4 / (0.3f * iteration)) {
+            damage(x + 1, y, iteration + 1);
         }
     }
 }

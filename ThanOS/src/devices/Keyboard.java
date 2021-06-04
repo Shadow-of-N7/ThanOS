@@ -11,7 +11,7 @@ public class Keyboard {
     private static boolean _newKeyAvailable = false;
 
     public static KeyboardState State;
-
+    public static boolean redirectBreakCodes = false;
 
     public static void initialize() {
         _buffer = new IntRingBuffer(3);
@@ -73,6 +73,12 @@ public class Keyboard {
                 setStatus(getKeyCode(scanCode - 128), false);
                 _isExtension0Active = false;
                 _isExtension1Active = false;
+
+                if(redirectBreakCodes) {
+                    keyCode = scanCode;
+                    _lastKeyCode = keyCode;
+                    _newKeyAvailable = true;
+                }
             }
 
             // Handle extension 0 codes

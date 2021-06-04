@@ -1,8 +1,6 @@
 package kernel.scheduler.tasks.spaceInvaders;
 
-import devices.KeyCode;
-import devices.StaticV24;
-import devices.VESAGraphics;
+import devices.*;
 import io.Console;
 import kernel.scheduler.Scheduler;
 import kernel.scheduler.Task;
@@ -17,6 +15,7 @@ public class SpaceInvadersTask extends Task {
     private final DrawPlane[] _drawPlanes = new DrawPlane[2];
     private DrawPlane _currentDrawPlane;
     private DrawPlane _oldDrawPlane;
+    private final int _playerMovementSpeed = 3;
 
     @Override
     public void run() {
@@ -35,6 +34,7 @@ public class SpaceInvadersTask extends Task {
             DataManager.player = new Player();
             DataManager.alienManager = new AlienManager();
             DataManager.obstacleManager = new ObstacleManager();
+            Keyboard.redirectBreakCodes = true;
         }
 
         switch (gameState) {
@@ -50,6 +50,14 @@ public class SpaceInvadersTask extends Task {
                 // Update step
 
                 DataManager.alienManager.update();
+
+                if(KeyStates.leftArrowPressed) {
+                    DataManager.player.updatePosition(-_playerMovementSpeed);
+                }
+                if (KeyStates.rightArrowPressed) {
+                    DataManager.player.updatePosition(_playerMovementSpeed);
+                }
+
                 DataManager.player.update();
                 DataManager.obstacleManager.update();
 
@@ -115,6 +123,7 @@ public class SpaceInvadersTask extends Task {
     public void takeKeyCode(int keyCode) {
         int offset = 3;
         if (keyCode == KeyCode.Escape) {
+            Keyboard.redirectBreakCodes = false;
             gameState = GameState.OFF;
             _t_state = TaskState.COMPLETED;
             _graphics.setTextMode();
@@ -122,16 +131,27 @@ public class SpaceInvadersTask extends Task {
 
         switch (gameState) {
             case GameState.PLAYING:
-
+                // Left make
                 if (keyCode == KeyCode.ArrowLeft) {
-                    DataManager.player.updatePosition(-offset);
+                    KeyStates.leftArrowPressed = true;
                 }
+                // Left break
+                if(keyCode == 203) {
+                    KeyStates.leftArrowPressed = false;
+                }
+                // Right make
                 if (keyCode == KeyCode.ArrowRight) {
-                    DataManager.player.updatePosition(offset);
+                    KeyStates.rightArrowPressed = true;
                 }
+                // Right break
+                if(keyCode == 205) {
+                    KeyStates.rightArrowPressed = false;
+                }
+                // Fire
                 if (keyCode == KeyCode.Space) {
                     DataManager.player.fire();
                 }
+                // Insta-kill all aliens
                 if (keyCode == KeyCode.K + 32) {
                     for(int i = 0; i < DataManager.alienManager.alienList.length; i++) {
                         DataManager.alienManager.alienList[i].isActive = false;

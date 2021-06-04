@@ -15,7 +15,6 @@ public class ColorMap {
                 DataManager.drawPlane.setPixel(xPosition + x, yPosition + y, colors[y][x]);
             }
         }
-        //DataManager.drawPlane.setPixel(xPosition, yPosition, 5);
     }
 
 
