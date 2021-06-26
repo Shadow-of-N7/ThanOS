@@ -1,7 +1,7 @@
 package kernel.scheduler.tasks.spaceInvaders;
 
 public class Player extends GameObject{
-    private Bullet[] bulletPool;
+    private final Bullet[] bulletPool;
     private int bulletIterator = 0;
     private static final int[][] map = {
             {0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0},
@@ -92,7 +92,7 @@ public class Player extends GameObject{
     }
 
     public void decreaseHealth(int amount) {
-        if (isGodMode) return;
+        if (isGodMode) { return; }
         health -= amount;
         if(health <= 0) {
             isActive = false;
