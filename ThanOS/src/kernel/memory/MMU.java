@@ -1,6 +1,5 @@
 package kernel.memory;
 
-import devices.StaticV24;
 import rte.DynamicRuntime;
 
 public class MMU {
@@ -135,8 +134,6 @@ public class MMU {
             value = 0x3;
         }
         else {
-            StaticV24.print(_currentTargetAddress);
-            StaticV24.println();
             value = 0x2;
         }
         // No shifting required, the lower 12 bits of targetAddress are 0 because of the 4096 bit alignment

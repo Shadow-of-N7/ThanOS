@@ -35,6 +35,7 @@ public class SpaceInvadersTask extends Task {
             DataManager.alienManager = new AlienManager();
             DataManager.obstacleManager = new ObstacleManager();
             Keyboard.redirectBreakCodes = true;
+            setKeyboard();
         }
 
         switch (gameState) {
@@ -51,11 +52,13 @@ public class SpaceInvadersTask extends Task {
 
                 DataManager.alienManager.update();
 
-                if(KeyStates.leftArrowPressed) {
-                    DataManager.player.updatePosition(-_playerMovementSpeed);
-                }
-                if (KeyStates.rightArrowPressed) {
-                    DataManager.player.updatePosition(_playerMovementSpeed);
+                if(!(KeyStates.leftArrowPressed && KeyStates.rightArrowPressed)) {
+                    if (KeyStates.leftArrowPressed) {
+                        DataManager.player.updatePosition(-_playerMovementSpeed);
+                    }
+                    if (KeyStates.rightArrowPressed) {
+                        DataManager.player.updatePosition(_playerMovementSpeed);
+                    }
                 }
 
                 DataManager.player.update();
@@ -128,6 +131,7 @@ public class SpaceInvadersTask extends Task {
         int offset = 3;
         if (keyCode == KeyCode.Escape) {
             Keyboard.redirectBreakCodes = false;
+            resetKeyboard();
             gameState = GameState.OFF;
             _t_state = TaskState.COMPLETED;
             _graphics.setTextMode();
@@ -135,6 +139,8 @@ public class SpaceInvadersTask extends Task {
 
         switch (gameState) {
             case GameState.PLAYING:
+                StaticV24.print(keyCode);
+                StaticV24.print(' ');
                 // Left make
                 if (keyCode == KeyCode.ArrowLeft) {
                     KeyStates.leftArrowPressed = true;
@@ -227,5 +233,21 @@ public class SpaceInvadersTask extends Task {
         for(int i = 0; i < (int)actualLength; i++) {
             _currentDrawPlane.setPixel(i, DataManager.screenHeight -1, 4);
         }
+    }
+
+    /**
+     * Set keyboard repeat rate as low as possible so the keyboard buffer does not need to handle much.
+     */
+    private void setKeyboard() {
+        MAGIC.wIOs8(0x64, (byte) 0xF3);
+        MAGIC.wIOs8(0x60, (byte) 0x7F);
+    }
+
+
+    /**
+     * Resets keyboard back to default.
+     */
+    private void resetKeyboard() {
+        MAGIC.wIOs8(0x64, (byte) 0xFF);
     }
 }
