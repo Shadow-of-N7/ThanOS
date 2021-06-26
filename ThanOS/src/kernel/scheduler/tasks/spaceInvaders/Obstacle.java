@@ -21,14 +21,16 @@ public class Obstacle extends GameObject{
 
     @Override
     public void draw() {
-        ColorMap.draw(map, positionX, positionY, width, height);
+        if(map != null) {
+            ColorMap.draw(map, positionX, positionY, width, height);
+        }
     }
 
     private int [][] generateMap() {
         map = new int[height][width];
         for(int y = 0; y < Obstacle.height; y++) {
             for(int x = 0; x < Obstacle.width; x++) {
-                map[y][x] = 7;
+                map[y][x] = 1;
             }
         }
         return map;
@@ -61,9 +63,14 @@ public class Obstacle extends GameObject{
         if(offsetY >= height) {
             offsetY = height - 1;
         }
+        if(offsetX >= width) {
+            offsetX = width - 1;
+        }
+        if(offsetX < 0) {
+            offsetX = 0;
+        }
 
         if(map[offsetY][offsetX] != 0) {
-            map[offsetY][offsetX] = 0;
             damage(offsetX, offsetY, 1);
             return true;
         }
@@ -71,7 +78,7 @@ public class Obstacle extends GameObject{
     }
 
     private int getHighestY(int xPos, int yPos) {
-        int highest = Obstacle.height;
+        int highest = Obstacle.height - 1;
         for(int y = yPos; y < Obstacle.height; y++) {
             if(map[y][xPos] != 0) {
                 highest = y;
@@ -91,7 +98,7 @@ public class Obstacle extends GameObject{
     }
 
     private void damage(int x, int y, int iteration) {
-        if(y < Obstacle.height && y >= 0 && x >= 0 && y < Obstacle.width) {
+        if(y < Obstacle.height && y >= 0 && x >= 0 && x < Obstacle.width) {
             map[y][x] = 0;
         }
         else return;

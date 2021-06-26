@@ -161,6 +161,9 @@ public class SpaceInvadersTask extends Task {
                         DataManager.alienManager.alienList[i].isActive = false;
                     }
                 }
+                if(keyCode == KeyCode.K || keyCode == KeyCode.K + 32) {
+                    DataManager.player.isGodMode =! DataManager.player.isGodMode;
+                }
                 break;
 
             case GameState.DEAD:

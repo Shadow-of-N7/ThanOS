@@ -15,6 +15,7 @@ public class Player extends GameObject{
     };
     public static final int baseHealth = 100;
     public int health = 100;
+    public boolean isGodMode = false;
 
     public Player() {
         width = 11;
@@ -91,6 +92,7 @@ public class Player extends GameObject{
     }
 
     public void decreaseHealth(int amount) {
+        if (isGodMode) return;
         health -= amount;
         if(health <= 0) {
             isActive = false;
